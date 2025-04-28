@@ -1,12 +1,14 @@
 from flask import Flask
-from .config import Config
+from .settings import Settings
 from .extensions import db, migrate, mail, login_manager
 from .views.auth import auth_bp
 
 
-def create_app(config_class=Config):
+def create_app():
+    settings = Settings()
+
     app = Flask(__name__)
-    app.config.from_object(config_class)
+    app.config.from_object(settings)
 
     db.init_app(app)
     migrate.init_app(app, db)
