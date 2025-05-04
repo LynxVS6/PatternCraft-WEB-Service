@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{% block title %}PatternCraft Lab{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}" />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Fira+Code&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-container">
+      <div class="logo">
+        <i class="fas fa-cubes logo-icon" aria-hidden="true"></i>
+        <h1>PatternCraft Lab</h1>
+      </div>
+      
+      <button class="mobile-menu-btn" aria-label="Меню">
+        <i class="fas fa-bars"></i>
+      </button>
+      
+      <nav class="main-nav" aria-label="Главное меню">
+        <ul>
+          {% if current_user.is_authenticated %}
+            <li><a href="{{ url_for('main.index') }}"><i class="fas fa-home"></i> Главная</a></li>
+            <li><a href="{{ url_for('users.account') }}"><i class="fas fa-user"></i> Аккаунт</a></li>
+            <li><a href="{{ url_for('auth.logout') }}"><i class="fas fa-sign-out-alt"></i> Выйти</a></li>
+          {% else %}
+            <li><a href="{{ url_for('auth.login') }}"><i class="fas fa-sign-in-alt"></i> Войти</a></li>
+            <li><a href="{{ url_for('auth.register') }}"><i class="fas fa-user-plus"></i> Регистрация</a></li>
+          {% endif %}
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }}">
+            {{ message }}
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+    
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-column">
+        <h3>PatternCraft Lab</h3>
+        <p>Интерактивная лаборатория для изучения шаблонов проектирования</p>
+        <div class="social-links">
+          <a href="#"><i class="fab fa-github"></i></a>
+          <a href="#"><i class="fab fa-telegram"></i></a>
+          <a href="#"><i class="fab fa-youtube"></i></a>
+        </div>
+      </div>
+      <div class="footer-column">
+        <h3>Быстрые ссылки</h3>
+        <ul>
+          <li><a href="#">GitHub репозиторий</a></li>
+          <li><a href="#">Чат сообщества</a></li>
+          <li><a href="#">Политика конфиденциальности</a></li>
+        </ul>
+      </div>
+      <div class="footer-column">
+        <h3>Контакты</h3>
+        <ul>
+          <li><i class="fas fa-envelope"></i> contact@patterncraftlab.dev</li>
+          <li><i class="fab fa-github"></i> github.com/patterncraft</li>
+          <li><i class="fas fa-map-marker-alt"></i> Россия</li>
+        </ul>
+      </div>
+    </div>
+    <div class="copyright">
+      <p>&copy; 2025 PatternCraft Lab. Все права защищены.</p>
+    </div>
+  </footer>
+
+  {% block scripts %}
+  <script>
+    document.querySelector('.mobile-menu-btn').addEventListener('click', function() {
+      document.querySelector('.main-nav').classList.toggle('active');
+      document.body.classList.toggle('nav-open');
+    });
+
+    document.querySelectorAll('.main-nav a').forEach(link => {
+      link.addEventListener('click', () => {
+        document.querySelector('.main-nav').classList.remove('active');
+        document.body.classList.remove('nav-open');
+      });
+    });
+  </script>
+  {% endblock %}
+</body>
+</html>

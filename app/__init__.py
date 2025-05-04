@@ -1,12 +1,10 @@
 from flask import Flask
-from .settings import Settings
+from .settings import settings
 from .extensions import db, migrate, mail, login_manager
-from .views.auth import auth_bp
+from .views import auth, main, users
 
 
 def create_app():
-    settings = Settings()
-
     app = Flask(__name__)
     app.config.from_object(settings)
 
@@ -15,5 +13,7 @@ def create_app():
     mail.init_app(app)
     login_manager.init_app(app)
 
-    app.register_blueprint(auth_bp, url_prefix="/auth")
+    app.register_blueprint(auth.bp)
+    app.register_blueprint(main.bp)
+    app.register_blueprint(users.bp)
     return app

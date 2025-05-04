@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block title %}PatternCraft Lab - Авторизация{% endblock %}
+{% block extra_css %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}" />
+{% endblock %}
+
+{% block content %}
+  <div class="auth-container" role="main">
+    <div class="auth-box" role="form" aria-labelledby="auth-title">
+      <div class="tabs" role="tablist" aria-label="Переключение между входом и регистрацией">
+        <button class="tab-button active" data-tab="login" role="tab" aria-selected="true" aria-controls="login" id="tab-login">Вход</button>
+        <button class="tab-button" data-tab="register" role="tab" aria-selected="false" aria-controls="register" id="tab-register">Регистрация</button>
+      </div>
+
+      <form id="login" class="auth-form active" novalidate role="tabpanel" aria-labelledby="tab-login" method="POST" action="{{ url_for('auth.login') }}">
+        <h2 id="auth-title">Вход в аккаунт</h2>
+        {{ login_form.hidden_tag() }}
+        <div class="form-group">
+          <label for="login-identity"><i class="fas fa-user"></i> Логин</label>
+          {{ login_form.identity(id="login-identity", placeholder="Введите логин или email", autocomplete="username") }}
+        </div>
+        <div class="form-group">
+          <label for="login-password"><i class="fas fa-lock"></i> Пароль</label>
+          {{ login_form.password(id="login-password", placeholder="Введите пароль", autocomplete="current-password") }}
+        </div>
+        <button type="submit" class="btn">Войти</button>
+        <p class="switch-text">Нет аккаунта? <button type="button" class="switch-tab" data-tab="register" aria-controls="register" aria-selected="false">Зарегистрироваться</button></p>
+      </form>
+
+      <form id="register" class="auth-form" novalidate role="tabpanel" aria-labelledby="tab-register" method="POST" action="{{ url_for('auth.register') }}">
+        <h2>Регистрация</h2>
+        {{ register_form.hidden_tag() }}
+        <div class="form-group">
+          <label for="reg-username"><i class="fas fa-user"></i> Имя пользователя</label>
+          {{ register_form.username(id="reg-username", placeholder="Введите имя пользователя", autocomplete="username") }}
+        </div>
+        <div class="form-group">
+          <label for="reg-email"><i class="fas fa-envelope"></i> Email</label>
+          {{ register_form.email(id="reg-email", placeholder="Введите email", autocomplete="email") }}
+        </div>
+        <div class="form-group">
+          <label for="reg-password"><i class="fas fa-lock"></i> Пароль</label>
+          {{ register_form.password(id="reg-password", placeholder="Введите пароль", autocomplete="new-password") }}
+        </div>
+        <div class="form-group">
+          <label for="reg-password-confirm"><i class="fas fa-lock"></i> Подтвердите пароль</label>
+          {{ register_form.password_confirm(id="reg-password-confirm", placeholder="Повторите пароль", autocomplete="new-password") }}
+        </div>
+        <button type="submit" class="btn">Зарегистрироваться</button>
+        <p class="switch-text">Уже есть аккаунт? <button type="button" class="switch-tab" data-tab="login" aria-controls="login" aria-selected="false">Войти</button></p>
+      </form>
+    </div>
+  </div>
+{% endblock %}
+
+{% block scripts %}
+  {{ super() }}
+  <script>
+    const tabButtons = document.querySelectorAll('.tab-button, .switch-tab');
+    const forms = document.querySelectorAll('.auth-form');
+
+    tabButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const target = btn.getAttribute('data-tab');
+
+        document.querySelectorAll('.tab-button').forEach(b => {
+          const isActive = b.getAttribute('data-tab') === target;
+          b.classList.toggle('active', isActive);
+          b.setAttribute('aria-selected', isActive);
+          document.getElementById(b.getAttribute('data-tab')).setAttribute('aria-hidden', !isActive);
+        });
+
+        forms.forEach(f => f.classList.toggle('active', f.id === target));
+      });
+    });
+
+    forms.forEach(form => {
+      form.addEventListener('submit', e => {
+        if (!form.checkValidity()) {
+          e.preventDefault();
+          form.reportValidity();
+        }
+      });
+    });
+  </script>
+{% endblock %}

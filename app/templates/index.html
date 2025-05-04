@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="info-block">
+    <h2>Добро пожаловать!</h2>
+    <p class="info-text">
+      <strong>PatternCraft Lab</strong> — это интерактивная лаборатория для изучения и практики <b>шаблонов проектирования</b> в программировании. Здесь вы найдете теорию, примеры и наглядные карточки по самым популярным паттернам: <span class="primary-text">Creational</span>, <span class="secondary-text">Structural</span> и <span class="behavioral-text">Behavioral</span>.
+    </p>
+  </div>
+
+  <section class="project-info">
+    <h2>О проекте</h2>
+    <p class="info-text">
+      PatternCraft Lab — это удобный и современный ресурс для изучения шаблонов проектирования. В лаборатории вы найдете подробные описания, примеры кода и практические задания, которые помогут закрепить знания.
+    </p>
+    <p class="info-text">
+      Вы можете скачать всю лабораторию целиком и использовать её офлайн для обучения и разработки.
+    </p>
+    <a href="{{ url_for('static', filename='downloads/patterncraft-lab.zip') }}" class="download-btn" download>
+      <i class="fas fa-download"></i> Скачать лабораторию
+    </a>
+  </section>
+
+  <h3>Разделы</h3>
+  <div class="divider"></div>
+  <div class="nav-cards-container">
+    <a href="{{ url_for('main.creational') }}" class="nav-card">
+      <i class="fas fa-cubes"></i>
+      <div class="nav-card-title">Creational Patterns</div>
+      <div class="nav-card-desc">
+        Паттерны, которые помогают создавать объекты гибко и эффективно. Factory, Singleton, Builder и другие.
+      </div>
+    </a>
+    <a href="{{ url_for('main.structural') }}" class="nav-card">
+      <i class="fas fa-project-diagram"></i>
+      <div class="nav-card-title">Structural Patterns</div>
+      <div class="nav-card-desc">
+        Паттерны, которые описывают способы построения связей между объектами и классами. Adapter, Decorator, Facade и др.
+      </div>
+    </a>
+    <a href="{{ url_for('main.behavioral') }}" class="nav-card">
+      <i class="fas fa-brain"></i>
+      <div class="nav-card-title">Behavioral Patterns</div>
+      <div class="nav-card-desc">
+        Паттерны, которые определяют способы взаимодействия между объектами. Observer, Strategy, Command и другие.
+      </div>
+    </a>
+  </div>
+{% endblock %}

@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}Редактировать профиль - PatternCraft Lab{% endblock %}
+{% block extra_css %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/edit-profile.css') }}" />
+{% endblock %}
+
+{% block content %}
+  <h2>Редактировать профиль</h2>
+  <form id="edit-profile-form" novalidate method="POST" action="{{ url_for('users.edit_profile') }}">
+    {{ form.hidden_tag() }}
+    <div class="form-group">
+      <label for="username">Логин</label>
+      {{ form.username(id="username", value=current_user.username, minlength="3", maxlength="20") }}
+    </div>
+
+    <button type="submit" class="btn"><i class="fas fa-save"></i> Сохранить изменения</button>
+  </form>
+{% endblock %}
