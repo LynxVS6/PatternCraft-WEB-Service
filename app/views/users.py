@@ -24,27 +24,27 @@ def edit_profile():
                 flash("Этот логин уже занят", "error")
                 return render_template("edit_profile.html", form=form)
             current_user.username = form.username.data
-        
+
         if form.email.data != current_user.email:
             if User.query.filter_by(email=form.email.data).first():
                 flash("Этот email уже зарегистрирован", "error")
                 return render_template("edit_profile.html", form=form)
-            
+
             current_user.new_email = form.email.data
             db.session.commit()
-            
+
             send_confirmation_email(current_user)
             flash("На новый email отправлено письмо для подтверждения", "info")
         else:
             db.session.commit()
             flash("Профиль успешно обновлён!", "success")
-        
+
         return redirect(url_for("users.account"))
-    
+
     elif request.method == "GET":
         form.username.data = current_user.username
         form.email.data = current_user.email
-    
+
     return render_template("edit_profile.html", form=form)
 
 

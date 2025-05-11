@@ -8,24 +8,7 @@ from sqlalchemy.exc import SQLAlchemyError
 class LikeService:
     @staticmethod
     def toggle_like(user_id: int, solution_id: int) -> Tuple[int, bool]:
-        """
-        Toggle like status for a solution.
-        
-        Args:
-            user_id: ID of the user performing the action
-            solution_id: ID of the solution to like/unlike
-            
-        Returns:
-            Tuple containing:
-            - int: Updated likes count
-            - bool: New like status (True if liked, False if unliked)
-            
-        Raises:
-            ValueError: If solution doesn't exist
-            SQLAlchemyError: If database operation fails
-        """
-        solution = Solution.query.get(solution_id)
-        if not solution:
+        if not Solution.query.get(solution_id):
             raise ValueError(f"Solution with id {solution_id} not found")
 
         try:
@@ -35,22 +18,15 @@ class LikeService:
             ).first()
 
             if existing_like:
-                # Unlike
                 db.session.delete(existing_like)
                 liked = False
             else:
-                # Like
-                new_like = Like(user_id=user_id, solution_id=solution_id)
-                db.session.add(new_like)
+                db.session.add(Like(user_id=user_id, solution_id=solution_id))
                 liked = True
 
             db.session.commit()
-
-            # Get updated likes count
-            likes_count = Like.query.filter_by(solution_id=solution_id).count()
-            
-            return likes_count, liked
+            return Like.query.filter_by(solution_id=solution_id).count(), liked
 
         except SQLAlchemyError as e:
             db.session.rollback()
-            raise SQLAlchemyError(f"Failed to toggle like: {str(e)}") 
+            raise SQLAlchemyError(f"Failed to toggle like: {str(e)}")
