@@ -52,19 +52,25 @@ def register():
                            register_form=register_form)
 
 
-@bp.route("/confirm/<token>")
+@bp.route("/confirm-email/<token>")
 def confirm_email(token):
-    if current_user.is_authenticated and current_user.email_confirmed:
+    if current_user.is_authenticated and current_user.email_confirmed and not current_user.new_email:
         return redirect(url_for("main.index"))
 
     email = confirm_token(token)
     if not email:
         flash("Ссылка просрочена или недействительна", "error")
-        return redirect(url_for("auth.login_page"))
+        return redirect(url_for("auth.login"))
 
     user = User.query.filter_by(email=email).first_or_404()
 
-    if not user.email_confirmed:
+    if user.new_email:
+        user.email = user.new_email
+        user.new_email = None
+        user.email_confirmed = True
+        db.session.commit()
+        flash("Новый email успешно подтверждён!", "success")
+    elif not user.email_confirmed:
         user.email_confirmed = True
         user.email_confirmed_at = datetime.utcnow()
         db.session.commit()
@@ -92,7 +98,8 @@ def login():
 
         if user and user.check_password(login_form.password.data):
             if not user.email_confirmed:
-                flash("Сначала подтвердите e‑mail", "error")
+                flash("Сначала подтвердите e‑mail, письмо отправлено повторно", "error")
+                send_confirmation_email(user)
             else:
                 login_user(user, remember=login_form.remember_me.data)
                 user.last_login = datetime.utcnow()
