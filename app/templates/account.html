@@ -14,8 +14,8 @@
       <h3>Данные профиля</h3>
       <ul>
         <li><strong>Логин:</strong> {{ current_user.username }}</li>
-        <li><strong>Роль:</strong> {{ current_user.role }}</li>
-        <li><strong>Дата регистрации:</strong> {{ current_user.created_at.strftime('%d %B %Y') }}</li>
+        <li><strong>Email:</strong> {{ current_user.email }}</li>
+        <li><strong>Дата регистрации:</strong> {{ current_user.created_at.strftime('%d.%m.%Y') }}</li>
       </ul>
     </div>
 

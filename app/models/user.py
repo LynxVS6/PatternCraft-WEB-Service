@@ -8,17 +8,15 @@ class User(UserMixin, db.Model):
     __tablename__ = 'users'
 
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(64), unique=True, nullable=False)
-    email = db.Column(db.String(120), unique=True, nullable=False, index=True)
+    username = db.Column(db.String(80), unique=True, nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
     email_confirmed = db.Column(db.Boolean, default=False)
     password_hash = db.Column(db.String(255), nullable=False)
-    role = db.Column(db.String(20), default="user")
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    last_login = db.Column(db.DateTime)
-    is_active = db.Column(db.Boolean, default=True)
+    last_login = db.Column(db.DateTime, nullable=True)
 
-    tasks = db.relationship('Task', back_populates='user',
-                            cascade='all, delete-orphan')
+    solutions = db.relationship('Solution', back_populates='user')
+    comments = db.relationship('Comment', back_populates='user')
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
