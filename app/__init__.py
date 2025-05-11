@@ -1,7 +1,7 @@
 from flask import Flask
 from .settings import settings
 from .extensions import db, migrate, mail, login_manager
-from .views import auth, main, users
+from .views import auth, main, users, solved_problems, tasks
 
 
 def create_app():
@@ -16,4 +16,6 @@ def create_app():
     app.register_blueprint(auth.bp)
     app.register_blueprint(main.bp)
     app.register_blueprint(users.bp)
+    app.register_blueprint(solved_problems.bp)
+    app.register_blueprint(tasks.bp)
     return app
