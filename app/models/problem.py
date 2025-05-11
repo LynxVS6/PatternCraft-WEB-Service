@@ -9,5 +9,4 @@ class Problem(db.Model):
     description = db.Column(db.Text, nullable=False)
     tags_json = db.Column(db.JSON, nullable=True)
 
-    # Relationships
-    solutions = db.relationship('Solution', back_populates='problem') 
+    solutions = db.relationship('Solution', back_populates='problem')

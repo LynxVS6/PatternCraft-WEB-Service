@@ -18,6 +18,7 @@ class User(UserMixin, db.Model):
 
     solutions = db.relationship('Solution', back_populates='user')
     comments = db.relationship('Comment', back_populates='user')
+    likes = db.relationship('Like', back_populates='user')
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)

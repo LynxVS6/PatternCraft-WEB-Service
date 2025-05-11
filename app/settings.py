@@ -27,7 +27,7 @@ class Settings(BaseSettings):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.SQLALCHEMY_DATABASE_URI = self.DATABASE_URL
+        self.SQLALCHEMY_DATABASE_URI = self.DATABASE_URL.replace('\\x3a', ':')
 
 
 settings = Settings()
