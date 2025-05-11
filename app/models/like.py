@@ -9,7 +9,6 @@ class Like(db.Model):
     solution_id = db.Column(db.Integer, db.ForeignKey('solutions.id'), nullable=False)
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
 
-    # Relationships
     user = db.relationship('User', back_populates='likes')
     solution = db.relationship('Solution', back_populates='likes')
 

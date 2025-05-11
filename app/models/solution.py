@@ -10,7 +10,6 @@ class Solution(db.Model):
         'problems.id'), nullable=False)
     solution = db.Column(db.Text, nullable=False)
 
-    # Relationships
     user = db.relationship('User', back_populates='solutions')
     problem = db.relationship('Problem', back_populates='solutions')
     comments = db.relationship('Comment', back_populates='solution')
