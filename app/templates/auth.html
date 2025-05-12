@@ -57,31 +57,38 @@
 {% block scripts %}
   {{ super() }}
   <script>
-    const tabButtons = document.querySelectorAll('.tab-button, .switch-tab');
-    const forms = document.querySelectorAll('.auth-form');
+    document.addEventListener('DOMContentLoaded', () => {
+  const tabButtons = document.querySelectorAll('.tab-button, .switch-tab');
+  const forms = document.querySelectorAll('.auth-form');
 
-    tabButtons.forEach(btn => {
-      btn.addEventListener('click', () => {
-        const target = btn.getAttribute('data-tab');
+  tabButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const target = btn.getAttribute('data-tab');
 
-        document.querySelectorAll('.tab-button').forEach(b => {
-          const isActive = b.getAttribute('data-tab') === target;
-          b.classList.toggle('active', isActive);
-          b.setAttribute('aria-selected', isActive);
-          document.getElementById(b.getAttribute('data-tab')).setAttribute('aria-hidden', !isActive);
-        });
+      // Переключаем активность табов
+      document.querySelectorAll('.tab-button').forEach(b => {
+        const isActive = b.getAttribute('data-tab') === target;
+        b.classList.toggle('active', isActive);
+        b.setAttribute('aria-selected', isActive);
+      });
 
-        forms.forEach(f => f.classList.toggle('active', f.id === target));
+      // Переключаем видимость форм
+      forms.forEach(f => {
+        const isActive = f.id === target;
+        f.classList.toggle('active', isActive);
+        f.setAttribute('aria-hidden', !isActive);
       });
     });
+  });
 
-    forms.forEach(form => {
-      form.addEventListener('submit', e => {
-        if (!form.checkValidity()) {
-          e.preventDefault();
-          form.reportValidity();
-        }
-      });
+  forms.forEach(form => {
+    form.addEventListener('submit', e => {
+      if (!form.checkValidity()) {
+        e.preventDefault();
+        form.reportValidity();
+      }
     });
+  });
+});
   </script>
 {% endblock %}
