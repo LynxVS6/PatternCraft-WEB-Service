@@ -249,6 +249,12 @@ body {
     background: linear-gradient(90deg, #81c784, #aed581);
     box-shadow: 0 7px 28px rgba(102, 187, 106, 0.2);
 }
+.btn.full-width {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    text-align: center;
+}
 
 .btn i {
     font-size: 1.3rem;
