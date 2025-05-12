@@ -80,6 +80,18 @@ body {
     filter: none;
     animation: none;
 }
+.logo-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: inherit;
+}
+
+.logo-link:hover {
+  text-decoration: none;
+  color: inherit;
+}
+
 
 @keyframes logoGlow {
     0% {

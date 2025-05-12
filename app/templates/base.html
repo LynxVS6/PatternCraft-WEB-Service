@@ -13,8 +13,10 @@
   <header class="site-header">
     <div class="header-container">
       <div class="logo">
-        <i class="fas fa-cubes logo-icon" aria-hidden="true"></i>
-        <h1>PatternCraft Lab</h1>
+         <a href="{{ url_for('main.index') }}" class="logo-link">
+    <i class="fas fa-cubes logo-icon" aria-hidden="true"></i>
+    <h1>PatternCraft Lab</h1>
+  </a>
       </div>
       
       <button class="mobile-menu-btn" aria-label="Меню">
@@ -24,7 +26,6 @@
       <nav class="main-nav" aria-label="Главное меню">
         <ul>
           {% if current_user.is_authenticated %}
-            <li><a href="{{ url_for('main.index') }}"><i class="fas fa-home"></i> Главная</a></li>
             <li><a href="{{ url_for('users.account') }}"><i class="fas fa-user"></i> Аккаунт</a></li>
             <li><a href="{{ url_for('auth.logout') }}"><i class="fas fa-sign-out-alt"></i> Выйти</a></li>
           {% else %}
