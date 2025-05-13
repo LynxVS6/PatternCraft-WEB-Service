@@ -1,21 +1,18 @@
 :root {
   --bg-dark: linear-gradient(to bottom, #222244, #000000);
   --bg-card: rgba(28, 23, 46, 0.92);
-  --bg-hover: #2e2a4a;
   --primary: #ae9dfc;
-  --primary-variant: #ae9dfc;
   --secondary: #ae9dfc;
   --accent: #ae9dfc;
   --text-primary: #FFFFFF;
   --text-secondary: #b8b3d1;
   --divider: #453f5f;
-  --footer-bg: #241e3a;
-  --footer-text: #b2aec9;
-  --neon: none;
+  --password-weak: #d93025;
+  --password-medium: #fbbc04;
+  --password-strong: #28a745;
 }
 
 body {
-  min-height: 100vh;
   font-family: 'Roboto', 'Fira Code', monospace, sans-serif;
   color: var(--text-primary);
   background: var(--bg-dark) no-repeat;
@@ -24,141 +21,45 @@ body {
   padding: 0;
   display: flex;
   flex-direction: column;
-  transition: background 0.4s;
-  line-height: 1.7;
+  min-height: 100vh;
+  line-height: 1.6;
 }
 
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
+/* Внешний контейнер с рамкой */
+.change-passwords-wrapper {
+  max-width: 480px;
+  width: 100%;
+  margin: 40px auto;
+  padding: 2px; /* Толщина рамки */
+  border: 2px solid var(--divider);
+  border-radius: 20px;
+  box-sizing: border-box;
+  background: var(--bg-card);
+  box-shadow: 0 8px 40px 0 #6a34c766;
+  display: flex;
+  justify-content: center;
+}
+
+/* Внутренний блок с отступами */
+.change-passwords-card {
+  width: 100%;
   padding: 2.5rem 2rem;
-  flex: 1 0 auto;
-  animation: fadeIn 0.7s cubic-bezier(.4,0,.2,1);
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(30px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* Шапка */
-.site-header {
-  background: rgba(35,28,61,0.95);
-  box-shadow: 0 6px 30px 0 #6a34c733;
-  border-bottom: 2px solid var(--divider);
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-  transition: background 0.4s;
-  animation: headerFadeIn 1s cubic-bezier(.4,0,.2,1);
-}
-
-@keyframes headerFadeIn {
-  from { opacity: 0; transform: translateY(-40px);}
-  to { opacity: 1; transform: translateY(0);}
-}
-
-.header-container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 2rem;
-}
-
-.logo {
-  display: flex;
-  align-items: center;
-  gap: 0.7rem;
-  cursor: pointer;
-  user-select: none;
-}
-
-.logo-icon {
-  font-size: 2.5rem;
-  background: linear-gradient(135deg, var(--primary), var(--secondary));
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  animation: none; /* Отключаем анимацию */
-}
-
-@keyframes logoGlow {
-  0% {
-      filter: drop-shadow(0 0 2px var(--primary));
-  }
-  100% {
-      filter: drop-shadow(0 0 8px var(--secondary));
-  }
-}
-
-.logo h1 {
-  font-size: 2rem;
-  font-weight: 700;
-  letter-spacing: 0.5px;
-  background: linear-gradient(90deg, var(--primary), var(--secondary));
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-
-.main-nav ul {
-  display: flex;
-  gap: 2rem;
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.main-nav a {
-  color: var(--text-secondary);
-  text-decoration: none;
-  font-weight: 600;
-  font-size: 1.1rem;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.4rem 0;
-  border-bottom: 2px solid transparent;
-  transition: color 0.3s, border-color 0.3s;
+  box-sizing: border-box;
   position: relative;
+  overflow: hidden;
 }
 
-.main-nav a i {
-  font-size: 1.2rem;
-  color: var(--primary);
-  transition: color 0.3s, text-shadow 0.3s;
-}
-
-.main-nav a:hover,
-.main-nav a:focus {
-  color: var(--primary);
-  border-bottom: 2px solid var(--primary);
-}
-
-.main-nav a:hover i,
-.main-nav a:focus i {
-  color: var(--secondary);
-  text-shadow: var(--neon);
-}
-
-.main-nav a.active {
-  color: var(--secondary);
-  border-bottom: 2px solid var(--secondary);
-}
-
-/* Форма */
-h2 {
+/* Заголовок */
+.change-passwords-card h2 {
   font-size: 2rem;
-  margin-bottom: 2.5rem;
+  margin-bottom: 2rem;
   color: var(--secondary);
-  font-weight: 700;
-  position: relative;
   text-align: center;
+  font-weight: 700;
+  position: relative;
 }
 
-h2::after {
+.change-passwords-card h2::after {
   content: '';
   position: absolute;
   left: 50%;
@@ -170,74 +71,58 @@ h2::after {
   border-radius: 2px;
 }
 
+/* Форма */
 #change-password-form {
-  background: var(--bg-card);
-  border-radius: 18px;
-  padding: 3rem;
-  box-shadow: 0 8px 40px 0 #6a34c766;
-  border: 1.5px solid var(--divider);
-  max-width: 600px;
-  margin: 0 auto;
-  position: relative;
-  overflow: hidden;
-  transition: transform 0.3s, box-shadow 0.3s;
+  width: 100%;
 }
 
-#change-password-form:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 12px 48px 0 #6a34c788;
-}
-
-#change-password-form::before {
-  content: '';
-  position: absolute;
-  top: -60px;
-  left: -60px;
-  width: 180px;
-  height: 180px;
-  background: radial-gradient(circle, var(--primary) 0%, transparent 80%);
-  opacity: 0.15;
-  z-index: 0;
-}
-
+/* Группы полей */
 .form-group {
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
+  text-align: left;
   position: relative;
   z-index: 1;
+  width: 100%;
 }
 
 .form-group label {
   display: block;
-  margin-bottom: 1rem;
+  margin-bottom: 0.7rem;
   color: var(--text-primary);
   font-weight: 600;
-  font-size: 1.1rem;
+  font-size: 1rem;
 }
 
-/* Стили для всех полей пароля */
-.password-field-container {
-  position: relative;
-  margin-bottom: 0.5rem;
-}
-
-.password-field-container input {
-  padding-right: 3rem !important;
+/* Поля ввода */
+.form-group input {
   width: 100%;
-  padding: 1rem 1.5rem;
+  padding: 0.9rem 1.2rem;
   background: rgba(20, 14, 38, 0.7);
   border: 1.8px solid var(--divider);
   border-radius: 10px;
   color: var(--text-primary);
-  font-size: 1.1rem;
-  transition: all 0.3s ease;
+  font-size: 1rem;
+  transition: all 0.3s;
+  box-sizing: border-box;
+  box-shadow: none;
 }
 
-.password-field-container input:focus {
+.form-group input:focus {
   outline: none;
   border-color: var(--primary);
-  box-shadow: 0 0 12px var(--primary);
+  box-shadow: none;
 }
 
+/* Контейнер для поля пароля с кнопкой */
+.password-field-container {
+  position: relative;
+}
+
+.password-field-container input {
+  padding-right: 3rem !important;
+}
+
+/* Кнопка показать/скрыть пароль */
 .password-toggle {
   position: absolute;
   right: 1rem;
@@ -247,108 +132,92 @@ h2::after {
   border: none;
   color: var(--text-secondary);
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: color 0.3s;
   padding: 0.5rem;
   border-radius: 50%;
-  width: 2.5rem;
-  height: 2.5rem;
+  width: 2.2rem;
+  height: 2.2rem;
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 2;
 }
 
-.password-toggle:hover {
+.password-toggle:hover,
+.password-toggle:focus {
   color: var(--primary);
-  background: rgba(122, 79, 255, 0.1);
+  background: rgba(122, 79, 255, 0.08);
+  outline: none;
 }
 
-.password-toggle:active {
-  transform: translateY(-50%) scale(0.95);
+/* Кнопка отправки */
+.btn {
+  width: 100%;
+  padding: 12px;
+  background: linear-gradient(90deg, var(--primary), var(--secondary));
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 1.15rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.3s;
+  margin-top: 1rem;
+  box-sizing: border-box;
 }
 
-/* Индикатор сложности пароля (только для нового пароля) */
-#new-password-container .password-strength-meter {
-  height: 6px;
-  background: rgba(188, 183, 226, 0.2);
-  border-radius: 3px;
-  margin: 1rem 0;
+.btn:hover,
+.btn:focus {
+  background: linear-gradient(90deg, var(--secondary), var(--primary));
+  outline: none;
+}
+
+/* Индикатор силы пароля */
+.password-strength-meter {
+  height: 8px;
+  background-color: #e0e0e0;
+  border-radius: 4px;
+  margin-top: 5px;
   overflow: hidden;
-  position: relative;
+  border: none;
+  box-shadow: none;
 }
 
-#new-password-container .strength-bar {
+.strength-bar {
   height: 100%;
   width: 0;
-  border-radius: 3px;
-  background: var(--password-weak);
-  transition: width 0.5s ease, background 0.5s ease;
-  position: relative;
+  background-color: var(--password-weak);
+  transition: width 0.3s, background-color 0.3s;
 }
 
-#new-password-container .strength-bar::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(90deg, 
-    rgba(255,255,255,0) 0%, 
-    rgba(255,255,255,0.3) 50%, 
-    rgba(255,255,255,0) 100%);
-  animation: shine 2s infinite;
+/* Информация о силе пароля */
+.password-strength-info {
+  margin-top: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  min-height: 1.2em;
 }
 
-@keyframes shine {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(100%); }
-}
-
-#new-password-container .password-strength-info {
-  font-size: 0.9rem;
-  font-weight: 500;
-  margin-bottom: 1rem;
-  height: 1.2rem;
-  transition: all 0.3s ease;
-}
-
-/* Карточка с требованиями */
+/* Карточка требований к паролю */
 .password-rules-card {
-  background: rgba(35, 28, 61, 0.7);
-  border-radius: 12px;
-  padding: 1.5rem;
+  margin-top: 15px;
+  padding: 10px;
+  background: rgba(20, 14, 38, 0.7);
+  border-radius: 8px;
   border: 1px solid var(--divider);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-  margin-top: 1rem;
-  transform: translateY(10px);
-  opacity: 0.9;
-  transition: all 0.4s ease;
-}
-
-.password-rules-card:hover {
-  transform: translateY(0);
-  opacity: 1;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
 }
 
 .rules-header {
   display: flex;
   align-items: center;
-  gap: 0.8rem;
-  margin-bottom: 1rem;
+  margin-bottom: 5px;
   color: var(--secondary);
+  font-weight: 700;
+  font-size: 1rem;
 }
 
 .rules-header i {
-  font-size: 1.2rem;
-  color: var(--secondary);
-}
-
-.rules-header h4 {
-  margin: 0;
-  font-size: 1.1rem;
-  font-weight: 600;
+  margin-right: 5px;
 }
 
 .rules-list {
@@ -360,188 +229,47 @@ h2::after {
 .rule-item {
   display: flex;
   align-items: center;
-  gap: 0.8rem;
-  margin-bottom: 0.7rem;
+  margin-bottom: 5px;
   color: var(--text-secondary);
-  transition: all 0.3s ease;
+  font-size: 0.9rem;
 }
 
-.rule-icon {
-  width: 1.2rem;
-  height: 1.2rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.3s ease;
-}
-
-.rule-item.valid {
-  color: var(--text-primary);
-}
-
-.rule-item.valid .rule-icon {
-  color: var(--password-strong);
-}
-
-.rule-item.valid .rule-icon i {
-  content: '\f00c';
-  font-family: 'Font Awesome 6 Free';
-  font-weight: 900;
-  color: var(--password-strong);
-}
-
-.rule-text {
-  flex: 1;
-  font-size: 0.95rem;
-}
-
-/* Кнопка */
-.btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.8rem;
-  padding: 1rem 2.3rem;
-  background: linear-gradient(90deg, var(--primary), var(--secondary));
-  color: #fff;
-  border-radius: 10px;
-  font-weight: 700;
-  font-size: 1.15rem;
-  text-decoration: none;
-  box-shadow: 0 6px 24px 0 #8a63c744;
-  border: none;
-  cursor: pointer;
-  transition: background 0.25s, box-shadow 0.3s, transform 0.2s;
-  width: 100%;
-  justify-content: center;
-  margin-top: 1rem;
-}
-
-.btn:hover,
-.btn:focus {
-  background: linear-gradient(90deg, var(--secondary), var(--primary));
-  box-shadow: 0 10px 32px 0 #8a63c777;
-  transform: translateY(-3px) scale(1.04);
-  outline: none;
-}
-
-/* Подвал */
-.site-footer {
-  background: linear-gradient(90deg, #241e3a 60%, #2a2343 100%);
-  padding: 3.5rem 0 2rem;
-  margin-top: 5rem;
-  border-top: 2px solid var(--divider);
-  box-shadow: 0 -4px 24px #6a34c733;
-  color: var(--footer-text);
-  position: relative;
-}
-
-.footer-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 2.5rem;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 2rem;
-}
-
-.footer-column h3 {
-  font-size: 1.2rem;
-  color: var(--primary);
-  margin-bottom: 1.2rem;
-  font-weight: 700;
-  letter-spacing: 0.5px;
-}
-
-.footer-column ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.footer-column ul li {
-  margin-bottom: 0.7rem;
-  color: var(--footer-text);
-  font-size: 1rem;
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-}
-
-.footer-column a {
-  color: var(--footer-text);
-  text-decoration: none;
+.rule-item .rule-icon {
+  margin-right: 5px;
+  color: var(--divider);
+  font-size: 0.8rem;
   transition: color 0.3s;
 }
 
-.footer-column a:hover, 
-.footer-column a:focus {
-  color: var(--secondary);
-  text-decoration: underline;
-}
-
-.social-links {
-  display: flex;
-  gap: 1.1rem;
-  margin-top: 1.2rem;
-}
-
-.social-links a {
-  color: var(--secondary);
-  font-size: 1.5rem;
-  transition: color 0.3s, transform 0.3s;
-  filter: drop-shadow(0 0 4px var(--secondary));
-}
-
-.social-links a:hover {
+.rule-item.valid {
   color: var(--primary);
-  transform: scale(1.15) rotate(-5deg);
-}
-
-.copyright {
-  grid-column: 1 / -1;
-  text-align: center;
-  margin-top: 3rem;
-  padding-top: 2rem;
-  border-top: 1px solid var(--divider);
-  color: var(--footer-text);
-  font-size: 1rem;
-  letter-spacing: 0.2px;
-}
-
-/* Адаптивность */
-@media (max-width: 768px) {
-  .header-container {
-      flex-direction: column;
-      gap: 1.3rem;
-  }
-
-  #change-password-form {
-      padding: 2rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .container {
-      padding: 1.5rem 1rem;
-  }
-
-  #change-password-form {
-      padding: 1.5rem;
-  }
-
-  .logo h1 {
-      font-size: 1.5rem;
-  }
-}
-
-
-
-/* Анимации для выполнения правил */
-@keyframes bounce {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.1); }
 }
 
 .rule-item.valid .rule-icon {
-  animation: bounce 0.5s ease;
+  color: var(--password-strong);
+}
+
+/* Ошибки валидации */
+.errors {
+  list-style: none;
+  padding: 0;
+  margin-top: 5px;
+  color: var(--password-weak);
+  font-size: 0.9rem;
+}
+
+/* Адаптивность */
+@media (max-width: 520px) {
+  .change-passwords-wrapper,
+  .change-passwords-card {
+    max-width: 100%;
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+}
+
+@media (max-width: 380px) {
+  .change-passwords-card h2 {
+    font-size: 1.3rem;
+  }
 }
