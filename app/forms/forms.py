@@ -1,17 +1,36 @@
+import re
 from flask_wtf import FlaskForm
 from wtforms import BooleanField, PasswordField, StringField, SubmitField
 from wtforms.validators import DataRequired, Length, EqualTo, Email, ValidationError
 from app.models.user import User
 
 
+def password_complexity_check(form, field):
+    password = field.data
+    if not re.search(r'[A-Z]', password):
+        raise ValidationError('Пароль должен содержать хотя бы одну заглавную букву')
+    if not re.search(r'[0-9]', password):
+        raise ValidationError('Пароль должен содержать хотя бы одну цифру')
+    if not re.search(r'[^A-Za-z0-9]', password):
+        raise ValidationError('Пароль должен содержать хотя бы один спецсимвол')
+
+
 class LoginForm(FlaskForm):
-    identity = StringField('Логин', validators=[DataRequired(message='Введите логин')])
-    password = PasswordField('Пароль', validators=[DataRequired(message='Введите пароль')])
+    identity = StringField(
+        'Логин',
+        validators=[DataRequired(message='Введите логин')]
+    )
+    password = PasswordField(
+        'Пароль',
+        validators=[DataRequired(message='Введите пароль')]
+    )
     remember_me = BooleanField('Запомнить меня')
     submit = SubmitField('Войти')
 
     def validate_identity(self, identity):
-        user = User.query.filter((User.username == identity.data) | (User.email == identity.data)).first()
+        user = User.query.filter(
+            (User.username == identity.data) | (User.email == identity.data)
+        ).first()
         if user is None:
             raise ValidationError('Пользователь не найден')
 
@@ -35,7 +54,8 @@ class RegistrationForm(FlaskForm):
         'Пароль',
         validators=[
             DataRequired(message='Введите пароль'),
-            Length(min=6, message='Пароль должен быть не менее 6 символов')
+            Length(min=6, message='Пароль должен быть не менее 6 символов'),
+            password_complexity_check
         ]
     )
     password_confirm = PasswordField(
@@ -83,7 +103,8 @@ class ChangePasswordForm(FlaskForm):
         'Новый пароль',
         validators=[
             DataRequired(message='Введите новый пароль'),
-            Length(min=6, message='Пароль должен быть не менее 6 символов')
+            Length(min=6, message='Пароль должен быть не менее 6 символов'),
+            password_complexity_check
         ]
     )
     confirm_password = PasswordField(

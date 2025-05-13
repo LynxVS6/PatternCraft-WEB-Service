@@ -1,94 +1,237 @@
 {% extends "base.html" %}
 
 {% block title %}PatternCraft Lab - Авторизация{% endblock %}
+
 {% block extra_css %}
   <link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
 {% endblock %}
 
 {% block content %}
-  <div class="auth-container" role="main">
+  <main class="auth-container" role="main">
     <div class="auth-box" role="form" aria-labelledby="auth-title">
       <div class="tabs" role="tablist" aria-label="Переключение между входом и регистрацией">
         <button class="tab-button active" data-tab="login" role="tab" aria-selected="true" aria-controls="login" id="tab-login">Вход</button>
         <button class="tab-button" data-tab="register" role="tab" aria-selected="false" aria-controls="register" id="tab-register">Регистрация</button>
       </div>
 
+      <!-- Форма входа -->
       <form id="login" class="auth-form active" novalidate role="tabpanel" aria-labelledby="tab-login" method="POST" action="{{ url_for('auth.login') }}">
         <h2 id="auth-title">Вход в аккаунт</h2>
         {{ login_form.hidden_tag() }}
+
         <div class="form-group">
-          <label for="login-identity"><i class="fas fa-user"></i> Логин</label>
+          <label for="login-identity"><i class="fas fa-user"></i> Логин или Email</label>
           {{ login_form.identity(id="login-identity", placeholder="Введите логин или email", autocomplete="username") }}
+          {% if login_form.identity.errors %}
+            <div class="error-message">{{ login_form.identity.errors[0] }}</div>
+          {% endif %}
         </div>
+
         <div class="form-group">
           <label for="login-password"><i class="fas fa-lock"></i> Пароль</label>
-          {{ login_form.password(id="login-password", placeholder="Введите пароль", autocomplete="current-password") }}
+          <div class="password-field-container">
+            {{ login_form.password(id="login-password", placeholder="Введите пароль", autocomplete="current-password") }}
+            <button type="button" class="password-toggle" aria-label="Показать пароль">
+              <i class="fas fa-eye"></i>
+            </button>
+          </div>
+          {% if login_form.password.errors %}
+            <div class="error-message">{{ login_form.password.errors[0] }}</div>
+          {% endif %}
         </div>
+
         <button type="submit" class="btn">Войти</button>
-        <p class="switch-text">Нет аккаунта? <button type="button" class="switch-tab" data-tab="register" aria-controls="register" aria-selected="false">Зарегистрироваться</button></p>
+        <p class="switch-text">
+          Нет аккаунта? 
+          <button type="button" class="switch-tab" data-tab="register" aria-controls="register" aria-selected="false">Зарегистрироваться</button>
+        </p>
       </form>
 
+      <!-- Форма регистрации -->
       <form id="register" class="auth-form" novalidate role="tabpanel" aria-labelledby="tab-register" method="POST" action="{{ url_for('auth.register') }}">
         <h2>Регистрация</h2>
         {{ register_form.hidden_tag() }}
+
         <div class="form-group">
           <label for="reg-username"><i class="fas fa-user"></i> Имя пользователя</label>
           {{ register_form.username(id="reg-username", placeholder="Введите имя пользователя", autocomplete="username") }}
+          {% if register_form.username.errors %}
+            <div class="error-message">{{ register_form.username.errors[0] }}</div>
+          {% endif %}
         </div>
+
         <div class="form-group">
           <label for="reg-email"><i class="fas fa-envelope"></i> Email</label>
           {{ register_form.email(id="reg-email", placeholder="Введите email", autocomplete="email") }}
+          {% if register_form.email.errors %}
+            <div class="error-message">{{ register_form.email.errors[0] }}</div>
+          {% endif %}
         </div>
-        <div class="form-group">
+
+        <div class="form-group" id="reg-password-container">
           <label for="reg-password"><i class="fas fa-lock"></i> Пароль</label>
-          {{ register_form.password(id="reg-password", placeholder="Введите пароль", autocomplete="new-password") }}
+          <div class="password-field-container">
+            {{ register_form.password(id="reg-password", placeholder="Введите пароль", autocomplete="new-password", oninput="checkPasswordStrength(this.value, 'reg')") }}
+            <button type="button" class="password-toggle" aria-label="Показать пароль">
+              <i class="fas fa-eye"></i>
+            </button>
+          </div>
+          <div class="password-strength-meter">
+            <div class="strength-bar" id="reg-strength-bar"></div>
+          </div>
+          <div class="password-strength-info" id="reg-password-strength-info"></div>
+          <div class="password-rules-card">
+            <div class="rules-header">
+              <i class="fas fa-shield-alt"></i>
+              <h4>Требования к паролю</h4>
+            </div>
+            <ul class="rules-list">
+              <li class="rule-item" data-rule="length">
+                <span class="rule-icon"><i class="fas fa-circle"></i></span>
+                <span class="rule-text">Минимум 6 символов</span>
+              </li>
+              <li class="rule-item" data-rule="uppercase">
+                <span class="rule-icon"><i class="fas fa-circle"></i></span>
+                <span class="rule-text">Хотя бы одна заглавная буква</span>
+              </li>
+              <li class="rule-item" data-rule="number">
+                <span class="rule-icon"><i class="fas fa-circle"></i></span>
+                <span class="rule-text">Хотя бы одна цифра</span>
+              </li>
+              <li class="rule-item" data-rule="special">
+                <span class="rule-icon"><i class="fas fa-circle"></i></span>
+                <span class="rule-text">Хотя бы один спецсимвол</span>
+              </li>
+            </ul>
+          </div>
+          {% if register_form.password.errors %}
+            <div class="error-message">{{ register_form.password.errors[0] }}</div>
+          {% endif %}
         </div>
+
         <div class="form-group">
           <label for="reg-password-confirm"><i class="fas fa-lock"></i> Подтвердите пароль</label>
-          {{ register_form.password_confirm(id="reg-password-confirm", placeholder="Повторите пароль", autocomplete="new-password") }}
+          <div class="password-field-container">
+            {{ register_form.password_confirm(id="reg-password-confirm", placeholder="Повторите пароль", autocomplete="new-password") }}
+            <button type="button" class="password-toggle" aria-label="Показать пароль">
+              <i class="fas fa-eye"></i>
+            </button>
+          </div>
+          {% if register_form.password_confirm.errors %}
+            <div class="error-message">{{ register_form.password_confirm.errors[0] }}</div>
+          {% endif %}
         </div>
+
         <button type="submit" class="btn">Зарегистрироваться</button>
-        <p class="switch-text">Уже есть аккаунт? <button type="button" class="switch-tab" data-tab="login" aria-controls="login" aria-selected="false">Войти</button></p>
+        <p class="switch-text">
+          Уже есть аккаунт? 
+          <button type="button" class="switch-tab" data-tab="login" aria-controls="login" aria-selected="false">Войти</button>
+        </p>
       </form>
     </div>
-  </div>
+  </main>
 {% endblock %}
 
 {% block scripts %}
   {{ super() }}
   <script>
+    // Переключение вкладок
     document.addEventListener('DOMContentLoaded', () => {
-  const tabButtons = document.querySelectorAll('.tab-button, .switch-tab');
-  const forms = document.querySelectorAll('.auth-form');
+      const tabButtons = document.querySelectorAll('.tab-button, .switch-tab');
+      const forms = document.querySelectorAll('.auth-form');
 
-  tabButtons.forEach(btn => {
-    btn.addEventListener('click', () => {
-      const target = btn.getAttribute('data-tab');
+      tabButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const target = btn.getAttribute('data-tab');
 
-      // Переключаем активность табов
-      document.querySelectorAll('.tab-button').forEach(b => {
-        const isActive = b.getAttribute('data-tab') === target;
-        b.classList.toggle('active', isActive);
-        b.setAttribute('aria-selected', isActive);
+          // Активируем табы
+          document.querySelectorAll('.tab-button').forEach(b => {
+            const isActive = b.getAttribute('data-tab') === target;
+            b.classList.toggle('active', isActive);
+            b.setAttribute('aria-selected', isActive);
+          });
+
+          // Показываем/скрываем формы
+          forms.forEach(f => {
+            const isActive = f.id === target;
+            f.classList.toggle('active', isActive);
+            f.setAttribute('aria-hidden', !isActive);
+          });
+        });
       });
 
-      // Переключаем видимость форм
-      forms.forEach(f => {
-        const isActive = f.id === target;
-        f.classList.toggle('active', isActive);
-        f.setAttribute('aria-hidden', !isActive);
+      // Валидация форм перед отправкой
+      forms.forEach(form => {
+        form.addEventListener('submit', e => {
+          if (!form.checkValidity()) {
+            e.preventDefault();
+            form.reportValidity();
+          }
+        });
       });
     });
-  });
 
-  forms.forEach(form => {
-    form.addEventListener('submit', e => {
-      if (!form.checkValidity()) {
-        e.preventDefault();
-        form.reportValidity();
+    // Проверка сложности пароля
+    function checkPasswordStrength(password, prefix='reg') {
+      const strengthBar = document.getElementById(prefix + '-strength-bar');
+      const strengthInfo = document.getElementById(prefix + '-password-strength-info');
+      const ruleItems = document.querySelectorAll(`#${prefix}-password-container .rule-item`);
+
+      const rules = {
+        length: password.length >= 6,
+        uppercase: /[A-Z]/.test(password),
+        number: /[0-9]/.test(password),
+        special: /[^A-Za-z0-9]/.test(password)
+      };
+
+      ruleItems.forEach(item => {
+        const rule = item.dataset.rule;
+        if (rules[rule]) {
+          item.classList.add('valid');
+        } else {
+          item.classList.remove('valid');
+        }
+      });
+
+      const strength = Object.values(rules).filter(Boolean).length;
+      const strengthPercent = (strength / 4) * 100;
+
+      strengthBar.style.width = `${strengthPercent}%`;
+
+      if (strengthPercent < 40) {
+        strengthBar.style.background = 'var(--password-weak)';
+        strengthInfo.textContent = 'Слабый пароль';
+        strengthInfo.style.color = 'var(--password-weak)';
+      } else if (strengthPercent < 70) {
+        strengthBar.style.background = 'var(--password-medium)';
+        strengthInfo.textContent = 'Средний пароль';
+        strengthInfo.style.color = 'var(--password-medium)';
+      } else {
+        strengthBar.style.background = 'var(--password-strong)';
+        strengthInfo.textContent = 'Сильный пароль!';
+        strengthInfo.style.color = 'var(--password-strong)';
       }
+    }
+
+    // Кнопки показать/скрыть пароль
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('.password-toggle').forEach(button => {
+        button.addEventListener('click', function() {
+          const input = this.parentElement.querySelector('input');
+          const icon = this.querySelector('i');
+
+          if (input.type === 'password') {
+            input.type = 'text';
+            icon.classList.replace('fa-eye', 'fa-eye-slash');
+            this.setAttribute('aria-label', 'Скрыть пароль');
+          } else {
+            input.type = 'password';
+            icon.classList.replace('fa-eye-slash', 'fa-eye');
+            this.setAttribute('aria-label', 'Показать пароль');
+          }
+        });
+      });
     });
-  });
-});
   </script>
 {% endblock %}

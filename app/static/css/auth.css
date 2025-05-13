@@ -426,3 +426,243 @@ input[type="password"]:focus {
     font-size: 1.5rem;
   }
 }
+
+/* Основные стили контейнера */
+.auth-container {
+  max-width: 420px;
+  margin: 40px auto;
+  padding: 20px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
+}
+
+/* Вкладки */
+.tabs {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+  border-bottom: 2px solid #ddd;
+}
+
+.tab-button {
+  flex: 1;
+  padding: 12px 0;
+  background: none;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  transition: border-color 0.3s;
+  color: #555;
+}
+
+.tab-button.active,
+.tab-button:focus {
+  border-color: #007bff;
+  color: #007bff;
+  outline: none;
+}
+
+/* Формы */
+.auth-form {
+  display: none;
+}
+
+.auth-form.active {
+  display: block;
+}
+
+.auth-form h2 {
+  margin-bottom: 24px;
+  font-weight: 600;
+  font-size: 24px;
+  text-align: center;
+}
+
+/* Группы полей */
+.form-group {
+  margin-bottom: 18px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 15px;
+  border: 1.5px solid #ccc;
+  border-radius: 6px;
+  transition: border-color 0.3s;
+}
+
+.form-group input:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+/* Контейнер для поля пароля с кнопкой */
+.password-field-container {
+  position: relative;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #888;
+  font-size: 18px;
+  padding: 4px;
+}
+
+.password-toggle:hover,
+.password-toggle:focus {
+  color: #007bff;
+  outline: none;
+}
+
+/* Кнопка отправки */
+.btn {
+  width: 100%;
+  padding: 12px 0;
+  background-color: #007bff;
+  border: none;
+  border-radius: 6px;
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.btn:hover,
+.btn:focus {
+  background-color: #0056b3;
+  outline: none;
+}
+
+/* Текст переключения между формами */
+.switch-text {
+  margin-top: 16px;
+  font-size: 14px;
+  text-align: center;
+  color: #555;
+}
+
+.switch-text button {
+  background: none;
+  border: none;
+  color: #007bff;
+  cursor: pointer;
+  font-weight: 600;
+  padding: 0;
+  margin-left: 4px;
+  font-size: 14px;
+}
+
+.switch-text button:hover,
+.switch-text button:focus {
+  text-decoration: underline;
+  outline: none;
+}
+
+/* Ошибки валидации */
+.error-message {
+  margin-top: 4px;
+  color: #d93025;
+  font-size: 13px;
+}
+
+/* Индикатор силы пароля */
+.password-strength-meter {
+  height: 6px;
+  background-color: #e0e0e0;
+  border-radius: 4px;
+  margin-top: 6px;
+  overflow: hidden;
+}
+
+.strength-bar {
+  height: 100%;
+  width: 0;
+  background-color: #d93025; /* по умолчанию красный */
+  transition: width 0.3s, background-color 0.3s;
+}
+
+/* Информация о силе пароля */
+.password-strength-info {
+  margin-top: 6px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* Карточка требований к паролю */
+.password-rules-card {
+  margin-top: 12px;
+  padding: 12px 16px;
+  background: #f9f9f9;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+}
+
+.rules-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+  color: #007bff;
+  font-weight: 700;
+  font-size: 16px;
+}
+
+.rules-header i {
+  margin-right: 8px;
+}
+
+/* Список правил */
+.rules-list {
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+}
+
+.rule-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 6px;
+  color: #888;
+  font-size: 14px;
+}
+
+.rule-item:last-child {
+  margin-bottom: 0;
+}
+
+.rule-icon {
+  margin-right: 8px;
+  color: #bbb;
+  font-size: 10px;
+  transition: color 0.3s;
+}
+
+/* Активное правило - зеленый цвет */
+.rule-item.valid .rule-icon {
+  color: #28a745;
+}
+
+/* Цвета для индикатора */
+:root {
+  --password-weak: #d93025;
+  --password-medium: #fbbc04;
+  --password-strong: #28a745;
+}
