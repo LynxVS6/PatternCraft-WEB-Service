@@ -1,0 +1,333 @@
+
+
+/* Контейнер для списка задач */
+.problems-list {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+/* Карточка задачи */
+.problem-card {
+    background: var(--bg-card);
+    border-radius: 12px;
+    border: 1.5px solid var(--divider);
+    box-shadow: 0 6px 24px 0 #4a3a8030;
+    overflow: hidden;
+    transition: transform 0.25s, box-shadow 0.3s;
+}
+
+.problem-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 32px 0 #6c5fc755;
+}
+
+/* Заголовок задачи */
+.problem-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+    background: rgba(35, 28, 61, 0.95);
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.problem-header:hover {
+    background: var(--bg-hover);
+}
+
+.problem-header h3 {
+    font-size: 1.4rem;
+    margin: 0;
+    color: var(--secondary);
+    font-weight: 700;
+}
+
+.problem-header i {
+    font-size: 1.2rem;
+    color: var(--primary);
+    transition: transform 0.3s;
+}
+
+.problem-header i.fa-chevron-down.active {
+    transform: rotate(180deg);
+}
+
+/* Контент задачи */
+.problem-content {
+    padding: 1.5rem;
+}
+
+/* Описание задачи */
+.problem-description {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+}
+
+/* Секция решений */
+.solutions-section {
+    margin-top: 1.5rem;
+}
+
+.show-solutions {
+    background: var(--primary);
+    border: none;
+    padding: 0.8rem 1.5rem;
+    font-weight: 600;
+    font-size: 1rem;
+    border-radius: 8px;
+    transition: background 0.25s, transform 0.2s, box-shadow 0.3s;
+}
+
+.show-solutions:hover,
+.show-solutions:focus {
+    background: var(--secondary);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 18px rgba(106, 52, 199, 0.3);
+}
+
+/* Список решений */
+.solutions-list {
+    margin-top: 1.5rem;
+}
+
+/* Карточка решения */
+.solution-card {
+    background: rgba(40, 35, 55, 0.4);
+    border-radius: 8px;
+    padding: 1.2rem;
+    border: 1px solid var(--divider);
+    margin-bottom: 1rem;
+}
+
+/* Контент решения (например, код) */
+.solution-content {
+    color: var(--text-primary);
+    font-family: 'Fira Code', monospace;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    background: rgba(30, 25, 40, 0.8);
+    padding: 1rem;
+    border-radius: 5px;
+    overflow-x: auto;
+}
+
+/* Кнопки действий (лайки, комментарии) */
+.solution-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.btn-like, .btn-comment {
+    background: transparent;
+    border: 1px solid var(--primary);
+    color: var(--primary);
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: background 0.25s, color 0.25s, transform 0.2s;
+}
+
+.btn-like:hover, .btn-comment:hover {
+    background: var(--primary);
+    color: #f2f2fa;
+    transform: translateY(-1px);
+}
+
+.btn-like i, .btn-comment i {
+    font-size: 1rem;
+}
+
+.btn-like i.fas {
+    color: #ff4d4d;
+}
+
+/* Секция комментариев */
+.comments-section {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    border-top: 1px solid var(--divider);
+}
+
+/* Список комментариев */
+.comments-list {
+    margin-bottom: 1.5rem;
+}
+
+/* Комментарий */
+.comment {
+    background: rgba(40, 35, 55, 0.3);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.comment-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.comment-header strong {
+    color: var(--secondary);
+    font-size: 1rem;
+}
+
+.comment-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.btn-edit, .btn-delete {
+    background: transparent;
+    border: none;
+    color: var(--primary);
+    font-size: 0.9rem;
+    padding: 0.3rem;
+    cursor: pointer;
+    transition: color 0.25s, transform 0.2s;
+}
+
+.btn-edit:hover, .btn-delete:hover {
+    color: var(--secondary);
+    transform: scale(1.1);
+}
+
+.comment-text {
+    color: var(--text-secondary);
+    font-size: 1rem;
+    line-height: 1.5;
+}
+
+/* Форма редактирования комментария */
+.comment-edit-form .form-control {
+    background: rgba(40, 35, 55, 0.6);
+    border: 1px solid var(--divider);
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    border-radius: 6px;
+    padding: 0.8rem;
+    margin-bottom: 0.8rem;
+}
+
+.comment-edit-form .btn-primary {
+    background: var(--primary);
+    border: none;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+}
+
+.comment-edit-form .btn-secondary {
+    background: var(--divider);
+    border: none;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    color: var(--text-primary);
+}
+
+.comment-edit-form .btn-primary:hover,
+.comment-edit-form .btn-secondary:hover {
+    transform: translateY(-1px);
+}
+
+/* Форма добавления комментария */
+.comment-form .form-control {
+    background: rgba(40, 35, 55, 0.6);
+    border: 1px solid var(--divider);
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    border-radius: 6px;
+    padding: 0.8rem;
+    margin-bottom: 0.8rem;
+}
+
+.comment-form .btn-primary {
+    background: var(--primary);
+    border: none;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+}
+
+.comment-form .btn-primary:hover {
+    background: var(--secondary);
+    transform: translateY(-1px);
+}
+
+/* Кнопка "Показать больше" */
+.show-more {
+    color: var(--primary);
+    font-size: 0.95rem;
+    padding: 0.5rem 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: color 0.25s, transform 0.2s;
+}
+
+.show-more:hover {
+    color: var(--secondary);
+    transform: translateY(-1px);
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .problems-list {
+        gap: 1rem;
+    }
+
+    .problem-card {
+        padding: 1rem;
+    }
+
+    .problem-header h3 {
+        font-size: 1.2rem;
+    }
+
+    .problem-description {
+        font-size: 1rem;
+    }
+
+    .show-solutions {
+        width: 100%;
+        text-align: center;
+    }
+
+    .solution-card {
+        padding: 1rem;
+    }
+
+    .solution-content {
+        font-size: 0.9rem;
+    }
+
+    .solution-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .btn-like, .btn-comment {
+        justify-content: center;
+    }
+
+    .comment {
+        padding: 0.8rem;
+    }
+
+    .comment-header strong {
+        font-size: 0.9rem;
+    }
+
+    .comment-text {
+        font-size: 0.9rem;
+    }
+}
