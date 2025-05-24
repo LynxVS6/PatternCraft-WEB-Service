@@ -1,31 +1,31 @@
 {% extends "base.html" %}
 
-{% block title %}PatternCraft Lab - Личный кабинет{% endblock %}
+{% block title %}{{ _('account_title') }}{% endblock %}<!-- PatternCraft Lab - Личный кабинет -->
 {% block extra_css %}
   <link rel="stylesheet" href="{{ url_for('static', filename='css/account.css') }}" />
 {% endblock %}
 
 {% block content %}
   <section class="account-info">
-    <h2>Добро пожаловать, <span class="username">{{ current_user.username }}</span>!</h2>
-    <p class="intro-text">Здесь вы можете просмотреть и изменить информацию о вашем аккаунте.</p>
+    <h2>{{ _('account_welcome_message') }}{% if current_user.username %}, <span class="username">{{ current_user.username }}</span>{% endif %}!</h2><!-- Добро пожаловать -->
+    <p class="intro-text">{{ _('account_intro_text') }}</p><!-- Здесь вы можете просмотреть и изменить информацию о вашем аккаунте. -->
 
     <div class="info-block">
-      <h3>Данные профиля</h3>
+      <h3>{{ _('account_profile_data_heading') }}</h3><!-- Данные профиля -->
       <ul>
-        <li><strong>Логин:</strong> {{ current_user.username }}</li>
-        <li><strong>Email:</strong> {{ current_user.email }}</li>
-        <li><strong>Дата регистрации:</strong> {{ current_user.created_at.strftime('%d.%m.%Y') }}</li>
+        <li><strong>{{ _('account_login_label') }}:</strong> {{ current_user.username }}</li><!-- Логин -->
+        <li><strong>{{ _('account_email_label') }}:</strong> {{ current_user.email }}</li><!-- Email -->
+        <li><strong>{{ _('account_registration_date_label') }}:</strong> {{ current_user.created_at.strftime('%d.%m.%Y') }}</li><!-- Дата регистрации -->
       </ul>
     </div>
 
     <div class="actions">
-      <a href="{{ url_for('users.edit_profile') }}" class="btn" role="button" aria-label="Редактировать профиль">
-    <i class="fas fa-edit"></i> Редактировать профиль
-  </a>
-  <a href="{{ url_for('users.change_password') }}" class="btn secondary full-width" role="button" aria-label="Изменить пароль">
-    <i class="fas fa-key"></i> Изменить пароль
-  </a>
+      <a href="{{ url_for('users.edit_profile') }}" class="btn" role="button" aria-label="{{ _('account_edit_profile_button_aria_label') }}"><!-- Редактировать профиль -->
+    <i class="fas fa-edit"></i> {{ _('account_edit_profile_button') }}
+  </a><!-- Редактировать профиль -->
+  <a href="{{ url_for('users.change_password') }}" class="btn secondary full-width" role="button" aria-label="{{ _('account_change_password_button_aria_label') }}"><!-- Изменить пароль -->
+    <i class="fas fa-key"></i> {{ _('account_change_password_button') }}
+  </a><!-- Изменить пароль -->
     </div>
   </section>
 {% endblock %}

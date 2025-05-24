@@ -1,0 +1,874 @@
+{
+  "account_title": {
+    "en": "PatternCraft Lab - Personal Account",
+    "ja": "PatternCraft Lab - 個人アカウント",
+    "kk": "PatternCraft Lab - Жеке шоты",
+    "ru": "PatternCraft Lab - Личный кабинет",
+    "tt": "PatternCraft Lab - Шәхси хисап",
+    "ce": "PatternCraft Lab - Ша йукъара хьашт"
+  },
+  "account_welcome_message": {
+    "en": "Welcome",
+    "ja": "ようこそ",
+    "kk": "Қош келдіңіз",
+    "ru": "Добро пожаловать",
+    "tt": "Рәхим итегез",
+    "ce": "Марша гIойла"
+  },
+  "account_intro_text": {
+    "en": "Here you can view and modify your account information.",
+    "ja": "ここでアカウント情報の閲覧と変更ができます。",
+    "kk": "Мұнда сіз өзіңіздің шот ақпаратыңызды көре аласыз және өзгерте аласыз.",
+    "ru": "Здесь вы можете просмотреть и изменить информацию о вашем аккаунте.",
+    "tt": "Монда сез үз хисап мәгълүматларыгызны карый һәм үзгәртә аласыз.",
+    "ce": "Цунна тхье хьо йукъара хьашт тIехьара хьаьжар а, хийцар а гойтуш бу."
+  },
+  "account_profile_data_heading": {
+    "en": "Profile Data",
+    "ja": "プロフィールデータ",
+    "kk": "Профиль деректері",
+    "ru": "Данные профиля",
+    "tt": "Профиль мәгълүматлары",
+    "ce": "Профилан хаамаш"
+  },
+  "account_login_label": {
+    "en": "Login",
+    "ja": "ログイン",
+    "kk": "Логин",
+    "ru": "Логин",
+    "tt": "Керү исеме",
+    "ce": "Кхета"
+  },
+  "account_email_label": {
+    "en": "Email",
+    "ja": "メールアドレス",
+    "kk": "Email",
+    "ru": "Email",
+    "tt": "Email",
+    "ce": "Email"
+  },
+  "account_registration_date_label": {
+    "en": "Registration Date",
+    "ja": "登録日",
+    "kk": "Тіркелу күні",
+    "ru": "Дата регистрации",
+    "tt": "Теркәлү датасы",
+    "ce": "Теркйолан де"
+  },
+  "account_edit_profile_button_aria_label": {
+    "en": "Edit Profile",
+    "ja": "プロフィールを編集",
+    "kk": "Профильді өзгерту",
+    "ru": "Редактировать профиль",
+    "tt": "Профильне үзгәртү",
+    "ce": "Профиль хийцар"
+  },
+  "account_edit_profile_button": {
+    "en": "Edit Profile",
+    "ja": "プロフィールを編集",
+    "kk": "Профильді өзгерту",
+    "ru": "Редактировать профиль",
+    "tt": "Профильне үзгәртү",
+    "ce": "Профиль хийцар"
+  },
+  "account_change_password_button_aria_label": {
+    "en": "Change Password",
+    "ja": "パスワードを変更",
+    "kk": "Құпия сөзді өзгерту",
+    "ru": "Изменить пароль",
+    "tt": "Серсүзне үзгәртү",
+    "ce": "Долу дош хийцар"
+  },
+  "account_change_password_button": {
+    "en": "Change Password",
+    "ja": "パスワードを変更",
+    "kk": "Құпия сөзді өзгерту",
+    "ru": "Изменить пароль",
+    "tt": "Серсүзне үзгәртү",
+    "ce": "Долу дош хийцар"
+  },
+  "auth_title": {
+    "en": "Authorization | PatternCraft Lab",
+    "ja": "認証 | PatternCraft Lab",
+    "kk": "Авторизация | PatternCraft Lab",
+    "ru": "Авторизация | PatternCraft Lab",
+    "tt": "Авторизация | PatternCraft Lab",
+    "ce": "Авторизаци | PatternCraft Lab"
+  },
+  "auth_tab_login": {
+    "en": "Login",
+    "ja": "ログイン",
+    "kk": "Кіру",
+    "ru": "Вход",
+    "tt": "Керү",
+    "ce": "Кхета"
+  },
+  "auth_tab_register": {
+    "en": "Register",
+    "ja": "登録",
+    "kk": "Тіркелу",
+    "ru": "Регистрация",
+    "tt": "Теркәлү",
+    "ce": "Теркйола"
+  },
+  "auth_login_heading": {
+    "en": "Login",
+    "ja": "ログイン",
+    "kk": "Кіру",
+    "ru": "Вход",
+    "tt": "Керү",
+    "ce": "Кхета"
+  },
+  "auth_login_identity_label": {
+    "en": "Login or Email",
+    "ja": "ログインまたはメールアドレス",
+    "kk": "Логин немесе Email",
+    "ru": "Логин или Email",
+    "tt": "Керү исеме яки Email",
+    "ce": "Кхета я Email"
+  },
+  "auth_login_identity_placeholder": {
+    "en": "Login or Email",
+    "ja": "ログインまたはメールアドレス",
+    "kk": "Логин немесе Email",
+    "ru": "Логин или Email",
+    "tt": "Керү исеме яки Email",
+    "ce": "Кхета я Email"
+  },
+  "auth_login_password_label": {
+    "en": "Password",
+    "ja": "パスワード",
+    "kk": "Құпия сөз",
+    "ru": "Пароль",
+    "tt": "Серсүз",
+    "ce": "Долу дош"
+  },
+  "auth_login_password_placeholder": {
+    "en": "Password",
+    "ja": "パスワード",
+    "kk": "Құпия сөз",
+    "ru": "Пароль",
+    "tt": "Серсүз",
+    "ce": "Долу дош"
+  },
+  "auth_login_button": {
+    "en": "Login",
+    "ja": "ログイン",
+    "kk": "Кіру",
+    "ru": "Войти",
+    "tt": "Керү",
+    "ce": "Кхета"
+  },
+  "auth_no_account_text": {
+    "en": "No account?",
+    "ja": "アカウントをお持ちでないですか？",
+    "kk": "Шотыңыз жоқ па?",
+    "ru": "Нет аккаунта?",
+    "tt": "Хисап юкмы?",
+    "ce": "Хьашт йоцуш ву?"
+  },
+  "auth_register_link": {
+    "en": "Register",
+    "ja": "登録",
+    "kk": "Тіркелу",
+    "ru": "Зарегистрироваться",
+    "tt": "Теркәлү",
+    "ce": "Теркйола"
+  },
+  "auth_register_heading": {
+    "en": "Registration",
+    "ja": "登録",
+    "kk": "Тіркелу",
+    "ru": "Регистрация",
+    "tt": "Теркәлү",
+    "ce": "Теркйола"
+  },
+  "auth_register_username_label": {
+    "en": "Username",
+    "ja": "ユーザー名",
+    "kk": "Пайдаланушы аты",
+    "ru": "Имя пользователя",
+    "tt": "Кулланучы исеме",
+    "ce": "Декъашхочун цIе"
+  },
+  "auth_register_username_placeholder": {
+    "en": "Username",
+    "ja": "ユーザー名",
+    "kk": "Пайдаланушы аты",
+    "ru": "Имя пользователя",
+    "tt": "Кулланучы исеме",
+    "ce": "Декъашхочун цIе"
+  },
+  "auth_register_email_label": {
+    "en": "Email",
+    "ja": "メールアドレス",
+    "kk": "Email",
+    "ru": "Email",
+    "tt": "Email",
+    "ce": "Email"
+  },
+  "auth_register_email_placeholder": {
+    "en": "Email",
+    "ja": "メールアドレス",
+    "kk": "Email",
+    "ru": "Email",
+    "tt": "Email",
+    "ce": "Email"
+  },
+  "auth_register_password_label": {
+    "en": "Password",
+    "ja": "パスワード",
+    "kk": "Құпия сөз",
+    "ru": "Пароль",
+    "tt": "Серсүз",
+    "ce": "Долу дош"
+  },
+  "auth_register_password_placeholder": {
+    "en": "Password",
+    "ja": "パスワード",
+    "kk": "Құпия сөз",
+    "ru": "Пароль",
+    "tt": "Серсүз",
+    "ce": "Долу дош"
+  },
+  "auth_password_requirements_heading": {
+    "en": "Password Requirements",
+    "ja": "パスワード要件",
+    "kk": "Құпия сөз талаптары",
+    "ru": "Требования к паролю",
+    "tt": "Серсүз таләпләре",
+    "ce": "Долу дошан хьаьжарш"
+  },
+  "auth_password_rule_length": {
+    "en": "Minimum 6 characters",
+    "ja": "最低6文字",
+    "kk": "Кемінде 6 таңба",
+    "ru": "Минимум 6 символов",
+    "tt": "Ким дигәндә 6 символ",
+    "ce": "Кхетаме 6 элп"
+  },
+  "auth_password_rule_uppercase": {
+    "en": "At least one uppercase letter",
+    "ja": "大文字を1つ以上",
+    "kk": "Кемінде бір бас әріп",
+    "ru": "Хотя бы одна заглавная буква",
+    "tt": "Ким дигәндә бер зур хәреф",
+    "ce": "Кхетаме цхьа йоккха элп"
+  },
+  "auth_password_rule_number": {
+    "en": "At least one number",
+    "ja": "数字を1つ以上",
+    "kk": "Кемінде бір сан",
+    "ru": "Хотя бы одна цифра",
+    "tt": "Ким дигәндә бер сан",
+    "ce": "Кхетаме цхьа терахь"
+  },
+  "auth_password_rule_special": {
+    "en": "At least one special character",
+    "ja": "特殊文字を1つ以上",
+    "kk": "Кемінде бір арнайы таңба",
+    "ru": "Хотя бы один спецсимвол",
+    "tt": "Ким дигәндә бер махсус символ",
+    "ce": "Кхетаме цхьа махсус элп"
+  },
+  "auth_register_password_confirm_label": {
+    "en": "Confirm Password",
+    "ja": "新しいパスワードの確認",
+    "kk": "Жаңа құпия сөзді растау",
+    "ru": "Подтвердите новый пароль",
+    "tt": "Яңа серсүзне раслау",
+    "ce": "Керла долу дош бакъо"
+  },
+  "auth_register_password_confirm_placeholder": {
+    "en": "Confirm Password",
+    "ja": "新しいパスワードの確認",
+    "kk": "Жаңа құпия сөзді растау",
+    "ru": "Подтвердите новый пароль",
+    "tt": "Яңа серсүзне раслау",
+    "ce": "Керла долу дош бакъо"
+  },
+  "auth_register_button": {
+    "en": "Register",
+    "ja": "登録",
+    "kk": "Тіркелу",
+    "ru": "Зарегистрироваться",
+    "tt": "Теркәлү",
+    "ce": "Теркйола"
+  },
+  "auth_has_account_text": {
+    "en": "Already have an account?",
+    "ja": "すでにアカウントをお持ちですか？",
+    "kk": "Сізде қазірдің өзінде шот бар ма?",
+    "ru": "Уже есть аккаунт?",
+    "tt": "Хисап бармы?",
+    "ce": "Хьашт йоцуш ву?"
+  },
+  "auth_login_link": {
+    "en": "Login",
+    "ja": "ログイン",
+    "kk": "Кіру",
+    "ru": "Войти",
+    "tt": "Керү",
+    "ce": "Кхета"
+  },
+  "base_title": {
+    "en": "PatternCraft Lab",
+    "ja": "PatternCraft Lab",
+    "kk": "PatternCraft Lab",
+    "ru": "PatternCraft Lab",
+    "tt": "PatternCraft Lab",
+    "ce": "PatternCraft Lab"
+  },
+  "base_logo_text": {
+    "en": "PatternCraft Lab",
+    "ja": "PatternCraft Lab",
+    "kk": "PatternCraft Lab",
+    "ru": "PatternCraft Lab",
+    "tt": "PatternCraft Lab",
+    "ce": "PatternCraft Lab"
+  },
+  "base_menu_button_aria_label": {
+    "en": "Menu",
+    "ja": "メニュー",
+    "kk": "Мәзір",
+    "ru": "Меню",
+    "tt": "Меню",
+    "ce": "Меню"
+  },
+  "base_main_nav_aria_label": {
+    "en": "Main Menu",
+    "ja": "メインメニュー",
+    "kk": "Басты мәзір",
+    "ru": "Главное меню",
+    "tt": "Төп меню",
+    "ce": "Коьрта меню"
+  },
+  "base_nav_account": {
+    "en": "Account",
+    "ja": "アカウント",
+    "kk": "Шот",
+    "ru": "Аккаунт",
+    "tt": "Хисап",
+    "ce": "Хьашт"
+  },
+  "base_nav_logout": {
+    "en": "Logout",
+    "ja": "ログアウト",
+    "kk": "Шығу",
+    "ru": "Выйти",
+    "tt": "Чыгу",
+    "ce": "ГIо"
+  },
+  "base_nav_login": {
+    "en": "Login",
+    "ja": "ログイン",
+    "kk": "Кіру",
+    "ru": "Войти",
+    "tt": "Керү",
+    "ce": "Кхета"
+  },
+  "base_nav_register": {
+    "en": "Register",
+    "ja": "登録",
+    "kk": "Тіркелу",
+    "ru": "Регистрация",
+    "tt": "Теркәлү",
+    "ce": "Теркйола"
+  },
+  "base_footer_title": {
+    "en": "PatternCraft Lab",
+    "ja": "PatternCraft Lab",
+    "kk": "PatternCraft Lab",
+    "ru": "PatternCraft Lab",
+    "tt": "PatternCraft Lab",
+    "ce": "PatternCraft Lab"
+  },
+  "base_footer_description": {
+    "en": "Interactive laboratory for learning design patterns",
+    "ja": "デザインパターンを学ぶためのインタラクティブな研究室",
+    "kk": "Жобалау үлгілерін зерттеуге арналған интерактивті зертхана",
+    "ru": "Интерактивная лаборатория для изучения шаблонов проектирования",
+    "tt": "Проектлау үрнәкләрен өйрәнү өчен интерактив лаборатория",
+    "ce": "Проектировани шаблонаш дешар деш интерактивни лаборатори"
+  },
+  "base_footer_quick_links": {
+    "en": "Quick Links",
+    "ja": "クイックリンク",
+    "kk": "Жылдам сілтемелер",
+    "ru": "Быстрые ссылки",
+    "tt": "Тиз сылтамалар",
+    "ce": "Кхетаме хьаьжарш"
+  },
+  "base_footer_github_repo": {
+    "en": "GitHub Repository",
+    "ja": "GitHubリポジトリ",
+    "kk": "GitHub репозиторий",
+    "ru": "GitHub репозиторий",
+    "tt": "GitHub репозиторий",
+    "ce": "GitHub репозитори"
+  },
+  "base_footer_community_chat": {
+    "en": "Community Chat",
+    "ja": "コミュニティチャット",
+    "kk": "Қауымдастық чаты",
+    "ru": "Чат сообщества",
+    "tt": "Җәмгыять чаты",
+    "ce": "Къаьмний чат"
+  },
+  "base_footer_privacy_policy": {
+    "en": "Privacy Policy",
+    "ja": "プライバシーポリシー",
+    "kk": "Құпиялылық саясаты",
+    "ru": "Политика конфиденциальности",
+    "tt": "Хосусыйлык сәясәте",
+    "ce": "Къонахчулла политика"
+  },
+  "base_footer_contacts": {
+    "en": "Contacts",
+    "ja": "お問い合わせ",
+    "kk": "Байланыстар",
+    "ru": "Контакты",
+    "tt": "Бәйләнешләр",
+    "ce": "Белхало"
+  },
+  "base_footer_location": {
+    "en": "Russia",
+    "ja": "ロシア",
+    "kk": "Ресей",
+    "ru": "Россия",
+    "tt": "Россия",
+    "ce": "Росси"
+  },
+  "base_copyright_text": {
+    "en": "PatternCraft Lab. All rights reserved.",
+    "ja": "PatternCraft Lab. All rights reserved.",
+    "kk": "PatternCraft Lab. Барлық құқықтар қорғалған.",
+    "ru": "PatternCraft Lab. Все права защищены.",
+    "tt": "PatternCraft Lab. Барлык хокуклар сакланган.",
+    "ce": "PatternCraft Lab. Массо бакъонаш ларжа йина."
+  },
+  "change_password_title": {
+    "en": "Change Password | PatternCraft Lab",
+    "ja": "パスワード変更 | PatternCraft Lab",
+    "kk": "Құпия сөзді өзгерту | PatternCraft Lab",
+    "ru": "Смена пароля | PatternCraft Lab",
+    "tt": "Серсүзне үзгәртү | PatternCraft Lab",
+    "ce": "Долу дош хийцар | PatternCraft Lab"
+  },
+  "change_password_heading": {
+    "en": "Change Password",
+    "ja": "パスワード変更",
+    "kk": "Құпия сөзді өзгерту",
+    "ru": "Смена пароля",
+    "tt": "Серсүзне үзгәртү",
+    "ce": "Долу дош хийцар"
+  },
+  "change_password_current_label": {
+    "en": "Current Password",
+    "ja": "現在のパスワード",
+    "kk": "Ағымдағы құпия сөз",
+    "ru": "Текущий пароль",
+    "tt": "Хәзерге серсүз",
+    "ce": "ХIинцIе долу дош"
+  },
+  "change_password_current_placeholder": {
+    "en": "Current Password",
+    "ja": "現在のパスワード",
+    "kk": "Ағымдағы құпия сөз",
+    "ru": "Текущий пароль",
+    "tt": "Хәзерге серсүз",
+    "ce": "ХIинцIе долу дош"
+  },
+  "change_password_show_password_aria_label": {
+    "en": "Show Password",
+    "ja": "パスワードを表示",
+    "kk": "Құпия сөзді көрсету",
+    "ru": "Показать пароль",
+    "tt": "Серсүзне күрсәтү",
+    "ce": "Долу дош гайта"
+  },
+  "change_password_new_label": {
+    "en": "New Password",
+    "ja": "新しいパスワード",
+    "kk": "Жаңа құпия сөз",
+    "ru": "Новый пароль",
+    "tt": "Яңа серсүз",
+    "ce": "Керла долу дош"
+  },
+  "change_password_new_placeholder": {
+    "en": "New Password",
+    "ja": "新しいパスワード",
+    "kk": "Жаңа құпия сөз",
+    "ru": "Новый пароль",
+    "tt": "Яңа серсүз",
+    "ce": "Керла долу дош"
+  },
+  "change_password_requirements_heading": {
+    "en": "Password Requirements",
+    "ja": "パスワード要件",
+    "kk": "Құпия сөз талаптары",
+    "ru": "Требования к паролю",
+    "tt": "Серсүз таләпләре",
+    "ce": "Долу дошан хьаьжарш"
+  },
+  "change_password_rule_length": {
+    "en": "Minimum 6 characters",
+    "ja": "最低6文字",
+    "kk": "Кемінде 6 таңба",
+    "ru": "Минимум 6 символов",
+    "tt": "Ким дигәндә 6 символ",
+    "ce": "Кхетаме 6 элп"
+  },
+  "change_password_rule_uppercase": {
+    "en": "At least one uppercase letter",
+    "ja": "大文字を1つ以上",
+    "kk": "Кемінде бір бас әріп",
+    "ru": "Хотя бы одна заглавная буква",
+    "tt": "Ким дигәндә бер зур хәреф",
+    "ce": "Кхетаме цхьа йоккха элп"
+  },
+  "change_password_rule_number": {
+    "en": "At least one number",
+    "ja": "数字を1つ以上",
+    "kk": "Кемінде бір сан",
+    "ru": "Хотя бы одна цифра",
+    "tt": "Ким дигәндә бер сан",
+    "ce": "Кхетаме цхьа терахь"
+  },
+  "change_password_rule_special": {
+    "en": "At least one special character",
+    "ja": "特殊文字を1つ以上",
+    "kk": "Кемінде бір арнайы таңба",
+    "ru": "Хотя бы один спецсимвол",
+    "tt": "Ким дигәндә бер махсус символ",
+    "ce": "Кхетаме цхьа махсус элп"
+  },
+  "change_password_confirm_label": {
+    "en": "Confirm New Password",
+    "ja": "新しいパスワードの確認",
+    "kk": "Жаңа құпия сөзді растау",
+    "ru": "Подтвердите новый пароль",
+    "tt": "Яңа серсүзне раслау",
+    "ce": "Керла долу дош бакъо"
+  },
+  "change_password_confirm_placeholder": {
+    "en": "Confirm New Password",
+    "ja": "新しいパスワードの確認",
+    "kk": "Жаңа құпия сөзді растау",
+    "ru": "Подтвердите новый пароль",
+    "tt": "Яңа серсүзне раслау",
+    "ce": "Керла долу дош бакъо"
+  },
+  "change_password_submit": {
+    "en": "Change Password",
+    "ja": "パスワードを変更",
+    "kk": "Құпия сөзді өзгерту",
+    "ru": "Сменить пароль",
+    "tt": "Серсүзне үзгәртү",
+    "ce": "Долу дош хийцар"
+  },
+  "change_password_hide_password_aria_label": {
+    "en": "Hide Password",
+    "ja": "パスワードを隠す",
+    "kk": "Құпия сөзді жасыру",
+    "ru": "Скрыть пароль",
+    "tt": "Серсүзне яшерү",
+    "ce": "Долу дош кхета"
+  },
+  "change_password_strength_weak": {
+    "en": "Weak Password",
+    "ja": "弱いパスワード",
+    "kk": "Әлсіз құпия сөз",
+    "ru": "Слабый пароль",
+    "tt": "Зәгыйфь серсүз",
+    "ce": "Нисса долу дош"
+  },
+  "change_password_strength_medium": {
+    "en": "Medium Password",
+    "ja": "中程度のパスワード",
+    "kk": "Орташа құпия сөз",
+    "ru": "Средний пароль",
+    "tt": "Уртача серсүз",
+    "ce": "Юкъера долу дош"
+  },
+  "change_password_strength_strong": {
+    "en": "Strong Password!",
+    "ja": "強いパスワード！",
+    "kk": "Күшті құпия сөз!",
+    "ru": "Сильный пароль!",
+    "tt": "Көчле серсүз!",
+    "ce": "Къаьстанбул долу дош!"
+  },
+  "edit_profile_title": {
+    "en": "Edit Profile - PatternCraft Lab",
+    "ja": "プロフィール編集 - PatternCraft Lab",
+    "kk": "Профильді өзгерту - PatternCraft Lab",
+    "ru": "Редактировать профиль - PatternCraft Lab",
+    "tt": "Профильне үзгәртү - PatternCraft Lab",
+    "ce": "Профиль хийцар - PatternCraft Lab"
+  },
+  "edit_profile_heading": {
+    "en": "Edit Profile",
+    "ja": "プロフィール編集",
+    "kk": "Профильді өзгерту",
+    "ru": "Редактировать профиль",
+    "tt": "Профильне үзгәртү",
+    "ce": "Профиль хийцар"
+  },
+  "edit_profile_username_label": {
+    "en": "Login",
+    "ja": "ログイン",
+    "kk": "Логин",
+    "ru": "Логин",
+    "tt": "Керү исеме",
+    "ce": "Кхета"
+  },
+  "edit_profile_email_label": {
+    "en": "Email",
+    "ja": "メールアドレス",
+    "kk": "Email",
+    "ru": "Email",
+    "tt": "Email",
+    "ce": "Email"
+  },
+  "edit_profile_submit": {
+    "en": "Save Changes",
+    "ja": "変更を保存",
+    "kk": "Өзгерістерді сақтау",
+    "ru": "Сохранить изменения",
+    "tt": "Үзгәрешләрне саклау",
+    "ce": "Хийцарш хадор"
+  },
+  "index_welcome_heading": {
+    "en": "Welcome!",
+    "ja": "ようこそ！",
+    "kk": "Қош келдіңіз!",
+    "ru": "Добро пожаловать!",
+    "tt": "Рәхим итегез!",
+    "ce": "Марша гIойла!"
+  },
+  "index_project_name": {
+    "en": "PatternCraft Lab",
+    "ja": "PatternCraft Lab",
+    "kk": "PatternCraft Lab",
+    "ru": "PatternCraft Lab",
+    "tt": "PatternCraft Lab",
+    "ce": "PatternCraft Lab"
+  },
+  "index_project_description": {
+    "en": "— is an interactive laboratory for learning and practicing",
+    "ja": "— は学習と実践のためのインタラクティブな研究室です",
+    "kk": "— оқу және тәжірибе үшін интерактивті зертхана",
+    "ru": "— это интерактивная лаборатория для изучения и практики",
+    "tt": "— уку һәм практика өчен интерактив лаборатория",
+    "ce": "— дешар а, практика деш интерактивни лаборатори ю"
+  },
+  "index_design_patterns": {
+    "en": "design patterns",
+    "ja": "デザインパターン",
+    "kk": "жобалау үлгілері",
+    "ru": "шаблонов проектирования",
+    "tt": "проектлау үрнәкләре",
+    "ce": "проектировани шаблонаш"
+  },
+  "index_in_programming": {
+    "en": "in programming",
+    "ja": "プログラミングにおける",
+    "kk": "бағдарламалауда",
+    "ru": "в программировании",
+    "tt": "программалауда",
+    "ce": "программировани чу"
+  },
+  "index_find_theory": {
+    "en": "Here you will find theory, examples, and visual cards for the most popular patterns:",
+    "ja": "ここでは最も人気のあるパターンの理論、例、視覚的なカードを見つけることができます：",
+    "kk": "Мұнда ең танымал үлгілер бойынша теория, мысалдар және көрнекі карточкаларды таба аласыз:",
+    "ru": "Здесь вы найдете теорию, примеры и наглядные карточки по самым популярным паттернам:",
+    "tt": "Монда сез иң популяр үрнәкләр буенча теория, мисаллар һәм күренешле карточкаларны таба аласыз:",
+    "ce": "Цунна тхье хьо уггара популяр шаблонаш тIехьара теори, масалаш а, гайтамаш а, карточкаш а караш бу:"
+  },
+  "index_pattern_creational": {
+    "en": "Creational",
+    "ja": "生成",
+    "kk": "Жарату",
+    "ru": "Creational",
+    "tt": "Ярату",
+    "ce": "Кхолла"
+  },
+  "index_pattern_structural": {
+    "en": "Structural",
+    "ja": "構造",
+    "kk": "Структуралық",
+    "ru": "Structural",
+    "tt": "Структуралы",
+    "ce": "Структурин"
+  },
+  "index_pattern_and": {
+    "en": "and",
+    "ja": "と",
+    "kk": "және",
+    "ru": "и",
+    "tt": "һәм",
+    "ce": "а"
+  },
+  "index_pattern_behavioral": {
+    "en": "Behavioral",
+    "ja": "振る舞い",
+    "kk": "Мінез-құлық",
+    "ru": "Behavioral",
+    "tt": "Эшчәнлек",
+    "ce": "Куллама"
+  },
+  "index_go_to_solved": {
+    "en": "Go to Solved Problems",
+    "ja": "解決済みの問題へ",
+    "kk": "Шешілген есептерге өту",
+    "ru": "Перейти к решенным задачам",
+    "tt": "Чишелгән мәсьәләләргә күчү",
+    "ce": "Дийцар дина хатIашна кхета"
+  },
+  "index_about_project_heading": {
+    "en": "About the Project",
+    "ja": "プロジェクトについて",
+    "kk": "Жоба туралы",
+    "ru": "О проекте",
+    "tt": "Проект турында",
+    "ce": "Проект тIехьара"
+  },
+  "index_project_description_full": {
+    "en": "PatternCraft Lab is a convenient and modern resource for learning design patterns. In the laboratory, you will find detailed descriptions, code examples, and practical tasks that will help reinforce your knowledge.",
+    "ja": "PatternCraft Labは、デザインパターンを学ぶための便利で現代的なリソースです。研究室では、知識を強化するのに役立つ詳細な説明、コード例、実践的なタスクを見つけることができます。",
+    "kk": "PatternCraft Lab — жобалау үлгілерін зерттеуге арналған ыңғайлы және заманауи ресурс. Зертханада сіз біліміңізді нығайтуға көмектесетін егжей-тегжейлі сипаттамалар, код мысалдары және тәжірибелік тапсырмаларды таба аласыз.",
+    "ru": "PatternCraft Lab — это удобный и современный ресурс для изучения шаблонов проектирования. В лаборатории вы найдете подробные описания, примеры кода и практические задания, которые помогут закрепить знания.",
+    "tt": "PatternCraft Lab — проектлау үрнәкләрен өйрәнү өчен уңайлы һәм заманча ресурс. Лабораториядә сез белемегезне ныгытуга ярдәм итүче егъҗәй-төгъҗәйле тасвирламалар, код мисаллары һәм практик биремнәрне таба аласыз.",
+    "ce": "PatternCraft Lab — проектировани шаблонаш дешар деш узаманни а, кхетаме а ресурс ю. Лаборатори чу тхье хьо хьо белам нисбалакх дешар деш егъҗай-тогъҗайли тасвирламаш, код масалаш а, практикин хатIош а караш бу."
+  },
+  "index_download_info": {
+    "en": "You can download the entire laboratory and use it offline for learning and development.",
+    "ja": "研究室全体をダウンロードして、学習と開発のためにオフラインで使用できます。",
+    "kk": "Сіз бүкіл зертхананы жүктеп алып, оқу және даму үшін офлайн режимінде пайдалана аласыз.",
+    "ru": "Вы можете скачать всю лабораторию целиком и использовать её офлайн для обучения и разработки.",
+    "tt": "Сез бөтен лабораторияне йөкләп алып, уку һәм үсеш өчен офлайн режимында куллана аласыз.",
+    "ce": "Хьо масса лаборатори йохка а, дешар а, кхолла а деш офлайн режимехьа лело гойтуш бу."
+  },
+  "index_download_lab": {
+    "en": "Download Laboratory",
+    "ja": "研究室をダウンロード",
+    "kk": "Зертхананы жүктеп алу",
+    "ru": "Скачать лабораторию",
+    "tt": "Лабораторияне йөкләү",
+    "ce": "Лаборатори йохка а"
+  },
+  "index_sections_heading": {
+    "en": "Sections",
+    "ja": "セクション",
+    "kk": "Бөлімдер",
+    "ru": "Разделы",
+    "tt": "Бүлекләр",
+    "ce": "Дакъаш"
+  },
+  "index_creational_title": {
+    "en": "Creational Patterns",
+    "ja": "生成パターン",
+    "kk": "Жарату үлгілері",
+    "ru": "Creational Patterns",
+    "tt": "Ярату үрнәкләре",
+    "ce": "Кхолла шаблонаш"
+  },
+  "index_creational_description": {
+    "en": "Patterns that help create objects flexibly and efficiently. Factory, Singleton, Builder, and others.",
+    "ja": "オブジェクトを柔軟かつ効率的に作成するのに役立つパターン。Factory、Singleton、Builderなど。",
+    "kk": "Объектілерді икемді және тиімді түрде жасауға көмектесетін үлгілер. Factory, Singleton, Builder және басқалар.",
+    "ru": "Паттерны, которые помогают создавать объекты гибко и эффективно. Factory, Singleton, Builder и другие.",
+    "tt": "Объектларны икемле һәм нәтиҗәле итеп яратуга ярдәм итүче үрнәкләр. Factory, Singleton, Builder һәм башкалар.",
+    "ce": "Объекташ икемли а, нетижали а кхолла дешар деш гойтуш болу шаблонаш. Factory, Singleton, Builder а, кхин а."
+  },
+  "index_structural_title": {
+    "en": "Structural Patterns",
+    "ja": "構造パターン",
+    "kk": "Структуралық үлгілер",
+    "ru": "Structural Patterns",
+    "tt": "Структуралы үрнәкләр",
+    "ce": "Структурин шаблонаш"
+  },
+  "index_structural_description": {
+    "en": "Patterns that describe ways to build relationships between objects and classes. Adapter, Decorator, Facade, and others.",
+    "ja": "オブジェクトとクラス間の関係を構築する方法を説明するパターン。Adapter、Decorator、Facadeなど。",
+    "kk": "Объектілер мен кластар арасындағы байланыстарды құру тәсілдерін сипаттайтын үлгілер. Adapter, Decorator, Facade және басқалар.",
+    "ru": "Паттерны, которые описывают способы построения связей между объектами и классами. Adapter, Decorator, Facade и др.",
+    "tt": "Объектлар һәм класслар арасындагы бәйләнешләрне төзү ысулларын тасвирлаган үрнәкләр. Adapter, Decorator, Facade һәм башкалар.",
+    "ce": "Объекташ а, классан а юкъара бойланаш кхолла цанаш тасвирлой шаблонаш. Adapter, Decorator, Facade а, кхин а."
+  },
+  "index_behavioral_title": {
+    "en": "Behavioral Patterns",
+    "ja": "振る舞いパターン",
+    "kk": "Мінез-құлық үлгілері",
+    "ru": "Behavioral Patterns",
+    "tt": "Эшчәнлек үрнәкләре",
+    "ce": "Куллама шаблонаш"
+  },
+  "index_behavioral_description": {
+    "en": "Patterns that define ways of interaction between objects. Observer, Strategy, Command, and others.",
+    "ja": "オブジェクト間の相互作用の方法を定義するパターン。Observer、Strategy、Commandなど。",
+    "kk": "Объектілер арасындағы өзара әрекеттесу тәсілдерін анықтайтын үлгілер. Observer, Strategy, Command және басқалар.",
+    "ru": "Паттерны, которые определяют способы взаимодействия между объектами. Observer, Strategy, Command и другие.",
+    "tt": "Объектлар арасындагы үзара бәйләнеш ысулларын билгеләүче үрнәкләр. Observer, Strategy, Command һәм башкалар.",
+    "ce": "Объекташ юкъара бойланаш цанаш билгалой шаблонаш. Observer, Strategy, Command а, кхин а."
+  },
+  "solved_problems_heading": {
+    "en": "Solved Problems",
+    "ja": "解決済みの問題",
+    "kk": "Шешілген есептер",
+    "ru": "Решенные задачи",
+    "tt": "Чишелгән мәсьәләләр",
+    "ce": "Дийцар дина хатIаш"
+  },
+  "solved_problems_show_solutions": {
+    "en": "Show Solutions",
+    "ja": "解決策を表示",
+    "kk": "Шешімдерді көрсету",
+    "ru": "Показать решения",
+    "tt": "Чишүләрне күрсәтү",
+    "ce": "Дийцарш гайта"
+  },
+  "solved_problems_save_comment": {
+    "en": "Save",
+    "ja": "保存",
+    "kk": "Сақтау",
+    "ru": "Сохранить",
+    "tt": "Саклау",
+    "ce": "Хадор"
+  },
+  "solved_problems_cancel_edit": {
+    "en": "Cancel",
+    "ja": "キャンセル",
+    "kk": "Бас тарту",
+    "ru": "Отмена",
+    "tt": "Бас тарту",
+    "ce": "ДIадаккхар"
+  },
+  "solved_problems_comment_placeholder": {
+    "en": "Write a comment...",
+    "ja": "コメントを書く...",
+    "kk": "Пікір жазу...",
+    "ru": "Написать комментарий...",
+    "tt": "Аңлатма язырга...",
+    "ce": "Къамел яз..."
+  },
+  "solved_problems_send_comment": {
+    "en": "Send",
+    "ja": "送信",
+    "kk": "Жіберу",
+    "ru": "Отправить",
+    "tt": "Җибәрү",
+    "ce": "Дийта"
+  },
+  "solved_problems_show_more": {
+    "en": "Show More",
+    "ja": "もっと見る",
+    "kk": "Тағы көрсету",
+    "ru": "Показать больше",
+    "tt": "Тагын күрсәтү",
+    "ce": "Кхин а гайта"
+  }
+}

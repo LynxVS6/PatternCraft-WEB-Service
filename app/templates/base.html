@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="{{ g.get('lang_code', 'ru') }}">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>{% block title %}PatternCraft Lab{% endblock %}</title>
+  <title>{% block title %}{{ _('base_title') }}{% endblock %}</title><!-- PatternCraft Lab -->
   <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}" />
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Fira+Code&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
@@ -15,22 +15,22 @@
       <div class="logo">
          <a href="{{ url_for('main.index') }}" class="logo-link">
     <i class="fas fa-cubes logo-icon" aria-hidden="true"></i>
-    <h1>PatternCraft Lab</h1>
+    <h1>{{ _('base_logo_text') }}</h1><!-- PatternCraft Lab -->
   </a>
       </div>
       
-      <button class="mobile-menu-btn" aria-label="Меню">
+      <button class="mobile-menu-btn" aria-label="{{ _('base_menu_button_aria_label') }}"><!-- Меню -->
         <i class="fas fa-bars"></i>
       </button>
       
-      <nav class="main-nav" aria-label="Главное меню">
+      <nav class="main-nav" aria-label="{{ _('base_main_nav_aria_label') }}"><!-- Главное меню -->
         <ul>
           {% if current_user.is_authenticated %}
-            <li><a href="{{ url_for('users.account') }}"><i class="fas fa-user"></i> Аккаунт</a></li>
-            <li><a href="{{ url_for('auth.logout') }}"><i class="fas fa-sign-out-alt"></i> Выйти</a></li>
+            <li><a href="{{ url_for('users.account') }}"><i class="fas fa-user"></i> {{ _('base_nav_account') }}</a></li><!-- Аккаунт -->
+            <li><a href="{{ url_for('auth.logout') }}"><i class="fas fa-sign-out-alt"></i> {{ _('base_nav_logout') }}</a></li><!-- Выйти -->
           {% else %}
-            <li><a href="{{ url_for('auth.login') }}"><i class="fas fa-sign-in-alt"></i> Войти</a></li>
-            <li><a href="{{ url_for('auth.register') }}"><i class="fas fa-user-plus"></i> Регистрация</a></li>
+            <li><a href="{{ url_for('auth.login') }}"><i class="fas fa-sign-in-alt"></i> {{ _('base_nav_login') }}</a></li><!-- Войти -->
+            <li><a href="{{ url_for('auth.register') }}"><i class="fas fa-user-plus"></i> {{ _('base_nav_register') }}</a></li><!-- Регистрация -->
           {% endif %}
         </ul>
       </nav>
@@ -54,8 +54,8 @@
   <footer class="site-footer">
     <div class="footer-container">
       <div class="footer-column">
-        <h3>PatternCraft Lab</h3>
-        <p>Интерактивная лаборатория для изучения шаблонов проектирования</p>
+        <h3>{{ _('base_footer_title') }}</h3><!-- PatternCraft Lab -->
+        <p>{{ _('base_footer_description') }}</p><!-- Интерактивная лаборатория для изучения шаблонов проектирования -->
         <div class="social-links">
           <a href="#"><i class="fab fa-github"></i></a>
           <a href="#"><i class="fab fa-telegram"></i></a>
@@ -63,24 +63,24 @@
         </div>
       </div>
       <div class="footer-column">
-        <h3>Быстрые ссылки</h3>
+        <h3>{{ _('base_footer_quick_links') }}</h3><!-- Быстрые ссылки -->
         <ul>
-          <li><a href="#">GitHub репозиторий</a></li>
-          <li><a href="#">Чат сообщества</a></li>
-          <li><a href="#">Политика конфиденциальности</a></li>
+          <li><a href="#">{{ _('base_footer_github_repo') }}</a></li><!-- GitHub репозиторий -->
+          <li><a href="#">{{ _('base_footer_community_chat') }}</a></li><!-- Чат сообщества -->
+          <li><a href="#">{{ _('base_footer_privacy_policy') }}</a></li><!-- Политика конфиденциальности -->
         </ul>
       </div>
       <div class="footer-column">
-        <h3>Контакты</h3>
+        <h3>{{ _('base_footer_contacts') }}</h3><!-- Контакты -->
         <ul>
           <li><i class="fas fa-envelope"></i> contact@patterncraftlab.dev</li>
           <li><i class="fab fa-github"></i> github.com/patterncraft</li>
-          <li><i class="fas fa-map-marker-alt"></i> Россия</li>
+          <li><i class="fas fa-map-marker-alt"></i> {{ _('base_footer_location') }}</li><!-- Россия -->
         </ul>
       </div>
     </div>
     <div class="copyright">
-      <p>&copy; 2025 PatternCraft Lab. Все права защищены.</p>
+      <p>&copy; 2025 {{ _('base_copyright_text') }}</p><!-- PatternCraft Lab. Все права защищены. -->
     </div>
   </footer>
 

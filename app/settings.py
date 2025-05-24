@@ -10,6 +10,8 @@ class Settings(BaseSettings):
     SQLALCHEMY_DATABASE_URI: str | None = None
     SQLALCHEMY_TRACK_MODIFICATIONS: bool = False
 
+    BABEL_TRANSLATION_DIRECTORIES: str = str(BASE_DIR / "app" / "translations")
+
     SECRET_KEY: str = Field(..., env="SECRET_KEY")
     SECURITY_PASSWORD_SALT: str = Field(..., env="SECURITY_PASSWORD_SALT")
 
@@ -27,7 +29,7 @@ class Settings(BaseSettings):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.SQLALCHEMY_DATABASE_URI = self.DATABASE_URL.replace('\\x3a', ':')
+        self.SQLALCHEMY_DATABASE_URI = self.DATABASE_URL.replace("\\x3a", ":")
 
 
 settings = Settings()

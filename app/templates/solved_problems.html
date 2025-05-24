@@ -2,7 +2,7 @@
 
 {% block content %}
 <div class="info-block">
-    <h2>Решенные задачи</h2>
+    <h2>{{ _('solved_problems_heading') }}</h2><!-- Решенные задачи -->
 
     <div class="problems-list">
         {% for problem in problems %}
@@ -19,7 +19,7 @@
                 
                 <div class="solutions-section">
                     <button class="btn btn-primary show-solutions" onclick="showSolutions({{ problem.id }})">
-                        Показать решения ({{ problem.solutions|length }})
+                        {{ _('solved_problems_show_solutions') }} ({{ problem.solutions|length }})<!-- Показать решения -->
                     </button>
                     
                     <div class="solutions-list" id="solutions-{{ problem.id }}" style="display: none;">
@@ -60,16 +60,16 @@
                                         <div class="comment-edit-form" style="display: none;">
                                             <textarea class="form-control">{{ comment.comment }}</textarea>
                                             <div class="mt-2">
-                                                <button class="btn btn-sm btn-primary" onclick="saveEditComment({{ comment.id }})">Сохранить</button>
-                                                <button class="btn btn-sm btn-secondary" onclick="cancelEditComment({{ comment.id }})">Отмена</button>
+                                                <button class="btn btn-sm btn-primary" onclick="saveEditComment({{ comment.id }})">{{ _('solved_problems_save_comment') }}</button><!-- Сохранить -->
+                                                <button class="btn btn-sm btn-secondary" onclick="cancelEditComment({{ comment.id }})">{{ _('solved_problems_cancel_edit') }}</button><!-- Отмена -->
                                             </div>
                                         </div>
                                     </div>
                                     {% endfor %}
                                 </div>
                                 <form class="comment-form" onsubmit="submitComment(event, {{ solution.id }})">
-                                    <textarea class="form-control" placeholder="Написать комментарий..."></textarea>
-                                    <button type="submit" class="btn btn-primary mt-2">Отправить</button>
+                                    <textarea class="form-control" placeholder="{{ _('solved_problems_comment_placeholder') }}"></textarea><!-- Написать комментарий... -->
+                                    <button type="submit" class="btn btn-primary mt-2">{{ _('solved_problems_send_comment') }}</button><!-- Отправить -->
                                 </form>
                             </div>
                         </div>
@@ -77,7 +77,7 @@
                         
                         {% if problem.solutions|length > 3 %}
                         <button class="btn btn-link show-more" onclick="showMoreSolutions({{ problem.id }})">
-                            Показать больше ({{ problem.solutions|length - 3 }})
+                            {{ _('solved_problems_show_more') }} ({{ problem.solutions|length - 3 }})<!-- Показать больше -->
                         </button>
                         {% endif %}
                     </div>
