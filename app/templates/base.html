@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>{% block title %}{{ _('base_title') }}{% endblock %}</title><!-- PatternCraft Lab -->
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}" />
+  <title>{% block title %}{{ _('base_title') }}{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css', v='1.0') }}" />
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Fira+Code&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
   {% block extra_css %}{% endblock %}
@@ -15,22 +15,22 @@
       <div class="logo">
          <a href="{{ url_for('main.index') }}" class="logo-link">
     <i class="fas fa-cubes logo-icon" aria-hidden="true"></i>
-    <h1>{{ _('base_logo_text') }}</h1><!-- PatternCraft Lab -->
+    <h1>{{ _('base_logo_text') }}</h1>
   </a>
       </div>
       
-      <button class="mobile-menu-btn" aria-label="{{ _('base_menu_button_aria_label') }}"><!-- Меню -->
+      <button class="mobile-menu-btn" aria-label="{{ _('base_menu_button_aria_label') }}">
         <i class="fas fa-bars"></i>
       </button>
       
-      <nav class="main-nav" aria-label="{{ _('base_main_nav_aria_label') }}"><!-- Главное меню -->
+      <nav class="main-nav" aria-label="{{ _('base_main_nav_aria_label') }}">
         <ul>
           {% if current_user.is_authenticated %}
-            <li><a href="{{ url_for('users.account') }}"><i class="fas fa-user"></i> {{ _('base_nav_account') }}</a></li><!-- Аккаунт -->
-            <li><a href="{{ url_for('auth.logout') }}"><i class="fas fa-sign-out-alt"></i> {{ _('base_nav_logout') }}</a></li><!-- Выйти -->
+            <li><a href="{{ url_for('users.account') }}"><i class="fas fa-user"></i> {{ _('base_nav_account') }}</a></li>
+            <li><a href="{{ url_for('auth.logout') }}"><i class="fas fa-sign-out-alt"></i> {{ _('base_nav_logout') }}</a></li>
           {% else %}
-            <li><a href="{{ url_for('auth.login') }}"><i class="fas fa-sign-in-alt"></i> {{ _('base_nav_login') }}</a></li><!-- Войти -->
-            <li><a href="{{ url_for('auth.register') }}"><i class="fas fa-user-plus"></i> {{ _('base_nav_register') }}</a></li><!-- Регистрация -->
+            <li><a href="{{ url_for('auth.login') }}"><i class="fas fa-sign-in-alt"></i> {{ _('base_nav_login') }}</a></li>
+            <li><a href="{{ url_for('auth.register') }}"><i class="fas fa-user-plus"></i> {{ _('base_nav_register') }}</a></li>
           {% endif %}
         </ul>
       </nav>
@@ -42,7 +42,10 @@
       {% if messages %}
         {% for category, message in messages %}
           <div class="alert alert-{{ category }}">
-            {{ message }}
+            <span class="alert-message">{{ message }}</span>
+            <button class="alert-close" aria-label="Закрыть уведомление">
+              <i class="fas fa-times"></i>
+            </button>
           </div>
         {% endfor %}
       {% endif %}
@@ -54,8 +57,8 @@
   <footer class="site-footer">
     <div class="footer-container">
       <div class="footer-column">
-        <h3>{{ _('base_footer_title') }}</h3><!-- PatternCraft Lab -->
-        <p>{{ _('base_footer_description') }}</p><!-- Интерактивная лаборатория для изучения шаблонов проектирования -->
+        <h3>{{ _('base_footer_title') }}</h3>
+        <p>{{ _('base_footer_description') }}</p>
         <div class="social-links">
           <a href="#"><i class="fab fa-github"></i></a>
           <a href="#"><i class="fab fa-telegram"></i></a>
@@ -63,24 +66,24 @@
         </div>
       </div>
       <div class="footer-column">
-        <h3>{{ _('base_footer_quick_links') }}</h3><!-- Быстрые ссылки -->
+        <h3>{{ _('base_footer_quick_links') }}</h3>
         <ul>
-          <li><a href="#">{{ _('base_footer_github_repo') }}</a></li><!-- GitHub репозиторий -->
-          <li><a href="#">{{ _('base_footer_community_chat') }}</a></li><!-- Чат сообщества -->
-          <li><a href="#">{{ _('base_footer_privacy_policy') }}</a></li><!-- Политика конфиденциальности -->
+          <li><a href="#">{{ _('base_footer_github_repo') }}</a></li>
+          <li><a href="#">{{ _('base_footer_community_chat') }}</a></li>
+          <li><a href="#">{{ _('base_footer_privacy_policy') }}</a></li>
         </ul>
       </div>
       <div class="footer-column">
-        <h3>{{ _('base_footer_contacts') }}</h3><!-- Контакты -->
+        <h3>{{ _('base_footer_contacts') }}</h3>
         <ul>
           <li><i class="fas fa-envelope"></i> contact@patterncraftlab.dev</li>
           <li><i class="fab fa-github"></i> github.com/patterncraft</li>
-          <li><i class="fas fa-map-marker-alt"></i> {{ _('base_footer_location') }}</li><!-- Россия -->
+          <li><i class="fas fa-map-marker-alt"></i> {{ _('base_footer_location') }}</li>
         </ul>
       </div>
     </div>
     <div class="copyright">
-      <p>&copy; 2025 {{ _('base_copyright_text') }}</p><!-- PatternCraft Lab. Все права защищены. -->
+      <p>© 2025 {{ _('base_copyright_text') }}</p>
     </div>
   </footer>
 
@@ -95,6 +98,15 @@
       link.addEventListener('click', () => {
         document.querySelector('.main-nav').classList.remove('active');
         document.body.classList.remove('nav-open');
+      });
+    });
+
+    // Закрытие уведомлений
+    document.querySelectorAll('.alert-close').forEach(button => {
+      button.addEventListener('click', () => {
+        const alert = button.closest('.alert');
+        alert.style.animation = 'fadeOut 0.5s ease-in forwards';
+        setTimeout(() => alert.remove(), 500);
       });
     });
   </script>
