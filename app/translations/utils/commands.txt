@@ -1,0 +1,4 @@
+pybabel extract -F app/translations/utils/babel.cfg -o app/translations/utils/messages.pot app/ app/translations
+pybabel init -i app/translations/utils/messages.pot -d app/translations -l en
+pybabel update -i app/translations/utils/messages.pot -d app/translations -l en
+pybabel compile -d app/translations

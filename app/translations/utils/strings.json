@@ -1,0 +1,566 @@
+{
+  "account_title": {
+    "en": "PatternCraft Lab - Personal Account",
+    "ru": "PatternCraft Lab - Личный кабинет"
+  },
+  "account_welcome_message": {
+    "en": "Welcome",
+    "ru": "Добро пожаловать"
+  },
+  "account_intro_text": {
+    "en": "Here you can view and modify your account information.",
+    "ru": "Здесь вы можете просмотреть и изменить информацию о вашем аккаунте."
+  },
+  "account_profile_data_heading": {
+    "en": "Profile Data",
+    "ru": "Данные профиля"
+  },
+  "account_login_label": {
+    "en": "Login",
+    "ru": "Логин"
+  },
+  "account_email_label": {
+    "en": "Email",
+    "ru": "Email"
+  },
+  "account_registration_date_label": {
+    "en": "Registration Date",
+    "ru": "Дата регистрации"
+  },
+  "account_edit_profile_button_aria_label": {
+    "en": "Edit Profile",
+    "ru": "Редактировать профиль"
+  },
+  "account_edit_profile_button": {
+    "en": "Edit Profile",
+    "ru": "Редактировать профиль"
+  },
+  "account_change_password_button_aria_label": {
+    "en": "Change Password",
+    "ru": "Изменить пароль"
+  },
+  "account_change_password_button": {
+    "en": "Change Password",
+    "ru": "Изменить пароль"
+  },
+  "auth_title": {
+    "en": "Authorization | PatternCraft Lab",
+    "ru": "Авторизация | PatternCraft Lab"
+  },
+  "auth_tab_login": {
+    "en": "Login",
+    "ru": "Вход"
+  },
+  "auth_tab_register": {
+    "en": "Register",
+    "ru": "Регистрация"
+  },
+  "auth_login_heading": {
+    "en": "Login",
+    "ru": "Вход"
+  },
+  "auth_login_identity_label": {
+    "en": "Login or Email",
+    "ru": "Логин или Email"
+  },
+  "auth_login_identity_placeholder": {
+    "en": "Login or Email",
+    "ru": "Логин или Email"
+  },
+  "auth_login_password_label": {
+    "en": "Password",
+    "ru": "Пароль"
+  },
+  "auth_login_password_placeholder": {
+    "en": "Password",
+    "ru": "Пароль"
+  },
+  "auth_login_button": {
+    "en": "Login",
+    "ru": "Войти"
+  },
+  "auth_no_account_text": {
+    "en": "No account?",
+    "ru": "Нет аккаунта?"
+  },
+  "auth_register_link": {
+    "en": "Register",
+    "ru": "Зарегистрироваться"
+  },
+  "auth_register_heading": {
+    "en": "Registration",
+    "ru": "Регистрация"
+  },
+  "auth_register_username_label": {
+    "en": "Username",
+    "ru": "Имя пользователя"
+  },
+  "auth_register_username_placeholder": {
+    "en": "Username",
+    "ru": "Имя пользователя"
+  },
+  "auth_register_email_label": {
+    "en": "Email",
+    "ru": "Email"
+  },
+  "auth_register_email_placeholder": {
+    "en": "Email",
+    "ru": "Email"
+  },
+  "auth_register_password_label": {
+    "en": "Password",
+    "ru": "Пароль"
+  },
+  "auth_register_password_placeholder": {
+    "en": "Password",
+    "ru": "Пароль"
+  },
+  "auth_password_requirements_heading": {
+    "en": "Password Requirements",
+    "ru": "Требования к паролю"
+  },
+  "auth_password_rule_length": {
+    "en": "Minimum 6 characters",
+    "ru": "Минимум 6 символов"
+  },
+  "auth_password_rule_uppercase": {
+    "en": "At least one uppercase letter",
+    "ru": "Хотя бы одна заглавная буква"
+  },
+  "auth_password_rule_number": {
+    "en": "At least one number",
+    "ru": "Хотя бы одна цифра"
+  },
+  "auth_password_rule_special": {
+    "en": "At least one special character",
+    "ru": "Хотя бы один спецсимвол"
+  },
+  "auth_register_password_confirm_label": {
+    "en": "Confirm Password",
+    "ru": "Подтвердите пароль"
+  },
+  "auth_register_password_confirm_placeholder": {
+    "en": "Confirm Password",
+    "ru": "Подтвердите пароль"
+  },
+  "auth_register_button": {
+    "en": "Register",
+    "ru": "Зарегистрироваться"
+  },
+  "auth_has_account_text": {
+    "en": "Already have an account?",
+    "ru": "Уже есть аккаунт?"
+  },
+  "auth_login_link": {
+    "en": "Login",
+    "ru": "Войти"
+  },
+  "base_title": {
+    "en": "PatternCraft Lab",
+    "ru": "PatternCraft Lab"
+  },
+  "base_logo_text": {
+    "en": "PatternCraft Lab",
+    "ru": "PatternCraft Lab"
+  },
+  "base_menu_button_aria_label": {
+    "en": "Menu",
+    "ru": "Меню"
+  },
+  "base_main_nav_aria_label": {
+    "en": "Main Menu",
+    "ru": "Главное меню"
+  },
+  "base_nav_account": {
+    "en": "Account",
+    "ru": "Аккаунт"
+  },
+  "base_nav_logout": {
+    "en": "Logout",
+    "ru": "Выйти"
+  },
+  "base_nav_login": {
+    "en": "Login",
+    "ru": "Войти"
+  },
+  "base_nav_register": {
+    "en": "Register",
+    "ru": "Регистрация"
+  },
+  "base_footer_title": {
+    "en": "PatternCraft Lab",
+    "ru": "PatternCraft Lab"
+  },
+  "base_footer_description": {
+    "en": "Interactive laboratory for learning design patterns",
+    "ru": "Интерактивная лаборатория для изучения шаблонов проектирования"
+  },
+  "base_footer_quick_links": {
+    "en": "Quick Links",
+    "ru": "Быстрые ссылки"
+  },
+  "base_footer_github_repo": {
+    "en": "GitHub Repository",
+    "ru": "GitHub репозиторий"
+  },
+  "base_footer_community_chat": {
+    "en": "Community Chat",
+    "ru": "Чат сообщества"
+  },
+  "base_footer_privacy_policy": {
+    "en": "Privacy Policy",
+    "ru": "Политика конфиденциальности"
+  },
+  "base_footer_contacts": {
+    "en": "Contacts",
+    "ru": "Контакты"
+  },
+  "base_footer_location": {
+    "en": "Russia",
+    "ru": "Россия"
+  },
+  "base_copyright_text": {
+    "en": "PatternCraft Lab. All rights reserved.",
+    "ru": "PatternCraft Lab. Все права защищены."
+  },
+  "change_password_title": {
+    "en": "Change Password | PatternCraft Lab",
+    "ru": "Смена пароля | PatternCraft Lab"
+  },
+  "change_password_heading": {
+    "en": "Change Password",
+    "ru": "Смена пароля"
+  },
+  "change_password_current_label": {
+    "en": "Current Password",
+    "ru": "Текущий пароль"
+  },
+  "change_password_current_placeholder": {
+    "en": "Current Password",
+    "ru": "Текущий пароль"
+  },
+  "change_password_show_password_aria_label": {
+    "en": "Show Password",
+    "ru": "Показать пароль"
+  },
+  "change_password_new_label": {
+    "en": "New Password",
+    "ru": "Новый пароль"
+  },
+  "change_password_new_placeholder": {
+    "en": "New Password",
+    "ru": "Новый пароль"
+  },
+  "change_password_requirements_heading": {
+    "en": "Password Requirements",
+    "ru": "Требования к паролю"
+  },
+  "change_password_rule_length": {
+    "en": "Minimum 6 characters",
+    "ru": "Минимум 6 символов"
+  },
+  "change_password_rule_uppercase": {
+    "en": "At least one uppercase letter",
+    "ru": "Хотя бы одна заглавная буква"
+  },
+  "change_password_rule_number": {
+    "en": "At least one number",
+    "ru": "Хотя бы одна цифра"
+  },
+  "change_password_rule_special": {
+    "en": "At least one special character",
+    "ru": "Хотя бы один спецсимвол"
+  },
+  "change_password_confirm_label": {
+    "en": "Confirm New Password",
+    "ru": "Подтвердите новый пароль"
+  },
+  "change_password_confirm_placeholder": {
+    "en": "Confirm New Password",
+    "ru": "Подтвердите новый пароль"
+  },
+  "change_password_submit": {
+    "en": "Change Password",
+    "ru": "Сменить пароль"
+  },
+  "change_password_hide_password_aria_label": {
+    "en": "Hide Password",
+    "ru": "Скрыть пароль"
+  },
+  "change_password_strength_weak": {
+    "en": "Weak Password",
+    "ru": "Слабый пароль"
+  },
+  "change_password_strength_medium": {
+    "en": "Medium Password",
+    "ru": "Средний пароль"
+  },
+  "change_password_strength_strong": {
+    "en": "Strong Password!",
+    "ru": "Сильный пароль!"
+  },
+  "edit_profile_title": {
+    "en": "Edit Profile - PatternCraft Lab",
+    "ru": "Редактировать профиль - PatternCraft Lab"
+  },
+  "edit_profile_heading": {
+    "en": "Edit Profile",
+    "ru": "Редактировать профиль"
+  },
+  "edit_profile_username_label": {
+    "en": "Login",
+    "ru": "Логин"
+  },
+  "edit_profile_email_label": {
+    "en": "Email",
+    "ru": "Email"
+  },
+  "edit_profile_submit": {
+    "en": "Save Changes",
+    "ru": "Сохранить изменения"
+  },
+  "index_welcome_heading": {
+    "en": "Welcome!",
+    "ru": "Добро пожаловать!"
+  },
+  "index_project_name": {
+    "en": "PatternCraft Lab",
+    "ru": "PatternCraft Lab"
+  },
+  "index_project_description": {
+    "en": "— is an interactive laboratory for learning and practicing",
+    "ru": "— это интерактивная лаборатория для изучения и практики"
+  },
+  "index_design_patterns": {
+    "en": "design patterns",
+    "ru": "шаблонов проектирования"
+  },
+  "index_in_programming": {
+    "en": "in programming",
+    "ru": "в программировании"
+  },
+  "index_find_theory": {
+    "en": "Here you will find theory, examples, and visual cards for the most popular patterns:",
+    "ru": "Здесь вы найдете теорию, примеры и наглядные карточки по самым популярным паттернам:"
+  },
+  "index_pattern_creational": {
+    "en": "Creational",
+    "ru": "Creational"
+  },
+  "index_pattern_structural": {
+    "en": "Structural",
+    "ru": "Structural"
+  },
+  "index_pattern_and": {
+    "en": "and",
+    "ru": "и"
+  },
+  "index_pattern_behavioral": {
+    "en": "Behavioral",
+    "ru": "Behavioral"
+  },
+  "index_go_to_solved": {
+    "en": "Go to Solved Problems",
+    "ru": "Перейти к решенным задачам"
+  },
+  "index_about_project_heading": {
+    "en": "About the Project",
+    "ru": "О проекте"
+  },
+  "index_project_description_full": {
+    "en": "PatternCraft Lab is a convenient and modern resource for learning design patterns. In the laboratory, you will find detailed descriptions, code examples, and practical tasks that will help reinforce your knowledge.",
+    "ru": "PatternCraft Lab — это удобный и современный ресурс для изучения шаблонов проектирования. В лаборатории вы найдете подробные описания, примеры кода и практические задания, которые помогут закрепить знания."
+  },
+  "index_download_info": {
+    "en": "You can download the entire laboratory and use it offline for learning and development.",
+    "ru": "Вы можете скачать всю лабораторию целиком и использовать её офлайн для обучения и разработки."
+  },
+  "index_download_lab": {
+    "en": "Download Laboratory",
+    "ru": "Скачать лабораторию"
+  },
+  "index_sections_heading": {
+    "en": "Sections",
+    "ru": "Разделы"
+  },
+  "index_creational_title": {
+    "en": "Creational Patterns",
+    "ru": "Creational Patterns"
+  },
+  "index_creational_description": {
+    "en": "Patterns that help create objects flexibly and efficiently. Factory, Singleton, Builder, and others.",
+    "ru": "Паттерны, которые помогают создавать объекты гибко и эффективно. Factory, Singleton, Builder и другие."
+  },
+  "index_structural_title": {
+    "en": "Structural Patterns",
+    "ru": "Structural Patterns"
+  },
+  "index_structural_description": {
+    "en": "Patterns that describe ways to build relationships between objects and classes. Adapter, Decorator, Facade, and others.",
+    "ru": "Паттерны, которые описывают способы построения связей между объектами и классами. Adapter, Decorator, Facade и др."
+  },
+  "index_behavioral_title": {
+    "en": "Behavioral Patterns",
+    "ru": "Behavioral Patterns"
+  },
+  "index_behavioral_description": {
+    "en": "Patterns that define ways of interaction between objects. Observer, Strategy, Command, and others.",
+    "ru": "Паттерны, которые определяют способы взаимодействия между объектами. Observer, Strategy, Command и другие."
+  },
+  "stats.votes": {
+    "en": "of",
+    "ru": "из"
+  },
+  "nav.details": {
+    "en": "Details",
+    "ru": "Детали"
+  },
+  "nav.solutions": {
+    "en": "Solutions",
+    "ru": "Решения"
+  },
+  "nav.discourse": {
+    "en": "Discourse",
+    "ru": "Обсуждение"
+  },
+  "sections.solutions": {
+    "en": "Solutions",
+    "ru": "Решения"
+  },
+  "actions.save": {
+    "en": "Save",
+    "ru": "Сохранить"
+  },
+  "actions.cancel": {
+    "en": "Cancel",
+    "ru": "Отмена"
+  },
+  "placeholders.write_comment": {
+    "en": "Write a comment...",
+    "ru": "Напишите комментарий..."
+  },
+  "actions.send": {
+    "en": "Send",
+    "ru": "Отправить"
+  },
+  "sections.discourse": {
+    "en": "Discourse",
+    "ru": "Обсуждения"
+  },
+  "actions.reply": {
+    "en": "Reply",
+    "ru": "Ответить"
+  },
+  "solved_problems_votes": {
+    "en": "of",
+    "ru": "из"
+  },
+  "solved_problems_search_placeholder": {
+    "en": "Search...",
+    "ru": "Искать..."
+  },
+  "solved_problems_search_label": {
+    "en": "Search",
+    "ru": "Поиск"
+  },
+  "solved_problems_search_button": {
+    "en": "Search Button",
+    "ru": "Кнопка поиска"
+  },
+  "solved_problems_sort_by": {
+    "en": "Sort by",
+    "ru": "Сортировать по"
+  },
+  "solved_problems_sort_newest": {
+    "en": "Newest",
+    "ru": "Новые"
+  },
+  "solved_problems_sort_oldest": {
+    "en": "Oldest",
+    "ru": "Старые"
+  },
+  "solved_problems_sort_popular": {
+    "en": "Popular",
+    "ru": "Популярные"
+  },
+  "solved_problems_sort_high_rating": {
+    "en": "High rating",
+    "ru": "Высокий рейтинг"
+  },
+  "solved_problems_sort_low_rating": {
+    "en": "Low rating",
+    "ru": "Низкий рейтинг"
+  },
+  "solved_problems_sort_name": {
+    "en": "Name",
+    "ru": "Имя"
+  },
+  "solved_problems_languages": {
+    "en": "Language",
+    "ru": "Язык"
+  },
+  "solved_problems_all_languages": {
+    "en": "All Languages",
+    "ru": "Все языки"
+  },
+  "solved_problems_selected_languages": {
+    "en": "Selected Languages",
+    "ru": "Выбранные языки"
+  },
+  "solved_problems_status": {
+    "en": "Status",
+    "ru": "Статус"
+  },
+  "solved_problems_verified": {
+    "en": "Problems Verified",
+    "ru": "Проверенные задачи"
+  },
+  "solved_problems_beta": {
+    "en": "Problems Beta",
+    "ru": "Задачи в тестировке"
+  },
+  "solved_problems_progress": {
+    "en": "Progress",
+    "ru": "Прогресс"
+  },
+  "solved_problems_all": {
+    "en": "All",
+    "ru": "Все"
+  },
+  "solved_problems_not_started": {
+    "en": "Not Started Problems",
+    "ru": "Неначатые задачи"
+  },
+  "solved_problems_completed": {
+    "en": "Completed Problems",
+    "ru": "Завершенные задачи"
+  },
+  "solved_problems_difficulty": {
+    "en": "Difficulty",
+    "ru": "Сложность"
+  },
+  "solved_problems_easy": {
+    "en": "Easy",
+    "ru": "Легкая"
+  },
+  "solved_problems_medium": {
+    "en": "Medium",
+    "ru": "Средняя"
+  },
+  "solved_problems_hard": {
+    "en": "Hard",
+    "ru": "Сложная"
+  },
+  "solved_problems_tags": {
+    "en": "Tags",
+    "ru": "Тэги"
+  },
+  "pagination.previous": {
+    "en": "Previous",
+    "ru": "Назад"
+  },
+  "pagination.next": {
+    "en": "Next",
+    "ru": "Вперед"
+  }
+}

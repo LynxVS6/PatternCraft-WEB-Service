@@ -14,11 +14,19 @@ class User(UserMixin, db.Model):
     email_confirmed = db.Column(db.Boolean, default=False)
     password_hash = db.Column(db.String(255), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     last_login = db.Column(db.DateTime, nullable=True)
 
     solutions = db.relationship('Solution', back_populates='user')
     comments = db.relationship('Comment', back_populates='user')
     likes = db.relationship('Like', back_populates='user')
+    discourse_comments = db.relationship('DiscourseComment', back_populates='user')
+    discourse_replies = db.relationship('DiscourseReply', back_populates='user')
+    discourse_votes = db.relationship('DiscourseVote', back_populates='user')
+    discourse_reply_votes = db.relationship('DiscourseReplyVote', back_populates='user')
+    bookmarks = db.relationship('Bookmark', back_populates='user')
+    problem_votes = db.relationship('ProblemVote', back_populates='user')
+    authored_problems = db.relationship('Problem', back_populates='author')
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)

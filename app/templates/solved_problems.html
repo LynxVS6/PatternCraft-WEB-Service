@@ -1,91 +1,65 @@
 {% extends "base.html" %}
+{% from "components/filters.html" import render_filters %}
+{% from "components/pagination.html" import render_pagination %}
 
 {% block content %}
-<div class="info-block">
-    <h2>{{ _('solved_problems_heading') }}</h2><!-- Решенные задачи -->
+{{ render_filters(languages, tags) }}
 
+<div class="problems">
     <div class="problems-list">
         {% for problem in problems %}
-        <div class="problem-card mb-3">
-            <div class="problem-header" onclick="toggleProblem({{ problem.id }})">
-                <h3>{{ problem.name }}</h3>
-                <i class="fas fa-chevron-down"></i>
-            </div>
-            
-            <div class="problem-content" id="problem-{{ problem.id }}" style="display: none;">
-                <div class="problem-description mb-3">
-                    {{ problem.description }}
-                </div>
-                
-                <div class="solutions-section">
-                    <button class="btn btn-primary show-solutions" onclick="showSolutions({{ problem.id }})">
-                        {{ _('solved_problems_show_solutions') }} ({{ problem.solutions|length }})<!-- Показать решения -->
-                    </button>
-                    
-                    <div class="solutions-list" id="solutions-{{ problem.id }}" style="display: none;">
-                        {% for solution in problem.solutions[:3] %}
-                        <div class="solution-card mt-3">
-                            <div class="solution-content">
-                                {{ solution.solution }}
-                            </div>
-                            <div class="solution-actions mt-2">
-                                <button class="btn btn-like" onclick="toggleLike({{ solution.id }})">
-                                    <i class="{% if solution.id in current_user.likes|map(attribute='solution_id')|list %}fas{% else %}far{% endif %} fa-heart"></i>
-                                    <span class="likes-count">{{ solution.likes_count }}</span>
-                                </button>
-                                <button class="btn btn-comment" onclick="showComments({{ solution.id }})">
-                                    <i class="far fa-comment"></i>
-                                    <span class="comments-count">{{ solution.comments|length }}</span>
-                                </button>
-                            </div>
-                            
-                            <div class="comments-section" id="comments-{{ solution.id }}" style="display: none;">
-                                <div class="comments-list">
-                                    {% for comment in solution.comments %}
-                                    <div class="comment" id="comment-{{ comment.id }}">
-                                        <div class="comment-header">
-                                            <strong>{{ comment.user.username }}</strong>
-                                            {% if comment.user_id == current_user.id %}
-                                            <div class="comment-actions">
-                                                <button class="btn btn-sm btn-edit" onclick="startEditComment({{ comment.id }})">
-                                                    <i class="fas fa-edit"></i>
-                                                </button>
-                                                <button class="btn btn-sm btn-delete" onclick="deleteComment({{ comment.id }})">
-                                                    <i class="fas fa-trash"></i>
-                                                </button>
-                                            </div>
-                                            {% endif %}
-                                        </div>
-                                        <p class="comment-text">{{ comment.comment }}</p>
-                                        <div class="comment-edit-form" style="display: none;">
-                                            <textarea class="form-control">{{ comment.comment }}</textarea>
-                                            <div class="mt-2">
-                                                <button class="btn btn-sm btn-primary" onclick="saveEditComment({{ comment.id }})">{{ _('solved_problems_save_comment') }}</button><!-- Сохранить -->
-                                                <button class="btn btn-sm btn-secondary" onclick="cancelEditComment({{ comment.id }})">{{ _('solved_problems_cancel_edit') }}</button><!-- Отмена -->
-                                            </div>
-                                        </div>
-                                    </div>
-                                    {% endfor %}
+        <div class="problem-card" data-id="{{ problem.id }}">
+            <div class="problem-content">
+                <div class="problem-main">
+                    <div class="problem-header">
+                        <div class="problem-title">
+                            <div class="problem-difficulty">
+                                <div class="difficulty-badge {{ problem.difficulty|lower }}">
+                                    <span>{{ problem.difficulty }}</span>
                                 </div>
-                                <form class="comment-form" onsubmit="submitComment(event, {{ solution.id }})">
-                                    <textarea class="form-control" placeholder="{{ _('solved_problems_comment_placeholder') }}"></textarea><!-- Написать комментарий... -->
-                                    <button type="submit" class="btn btn-primary mt-2">{{ _('solved_problems_send_comment') }}</button><!-- Отправить -->
-                                </form>
+                            </div>
+                            <h3>{{ problem.name }}</h3>
+                            <div class="language-icon">
+                                <i class="devicon-{{ problem.language_icon }}-plain"></i>
+                                <span>{{ problem.language }}</span>
                             </div>
                         </div>
-                        {% endfor %}
-                        
-                        {% if problem.solutions|length > 3 %}
-                        <button class="btn btn-link show-more" onclick="showMoreSolutions({{ problem.id }})">
-                            {{ _('solved_problems_show_more') }} ({{ problem.solutions|length - 3 }})<!-- Показать больше -->
-                        </button>
-                        {% endif %}
+                        <div class="problem-stats">
+                            <span class="stat-item">
+                                <i class="fas fa-star" aria-hidden="true"></i>
+                                <span class="bookmark-count" data-problem-id="{{ problem.id }}">
+                                    {{ problem.bookmark_count }}
+                                </span>
+                            </span>
+                            <span class="stat-item">
+                                <i class="fas fa-chart-line" aria-hidden="true"></i>
+                                <span>{{ problem.satisfaction_percent }}% {{ _('solved_problems_votes') }} {{ problem.total_votes }}</span>
+                            </span>
+                            <span class="stat-item">
+                                <i class="fas fa-bullseye" aria-hidden="true"></i>
+                                <span>{{ problem.completed_count }}</span>
+                            </span>
+                            <span class="stat-item">
+                                <i class="fas fa-user" aria-hidden="true"></i>
+                                <span>{{ problem.author }}</span>
+                            </span>
+                        </div>
+                        <div class="problem-tags">
+                            <i class="fas fa-tag" aria-hidden="true"></i>
+                            {% for tag in problem.tags %}
+                            <div class="tag">
+                                <a href="?tags={{ tag }}">{{ tag }}</a>
+                            </div>
+                            {% endfor %}
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
         {% endfor %}
     </div>
+
+    {{ render_pagination(pagination, 'solved_problems.solved_problems', max, min) }}
 </div>
 {% endblock %}
 

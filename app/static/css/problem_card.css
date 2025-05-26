@@ -1,0 +1,626 @@
+.problem-card {
+    background: var(--bg-card);
+    border-radius: 12px;
+    border: 1.5px solid var(--divider);
+    box-shadow: 0 6px 24px 0 #4a3a8030;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    width: 100%;
+}
+
+.problem-title h1 {
+    font-size: 2rem;
+    margin: 0;
+    color: var(--secondary);
+    font-weight: 700;
+}
+
+.problem-description {
+    margin: 2rem 0;
+    line-height: 1.6;
+    color: var(--text-primary);
+    text-align: left;
+    width: 100%;
+    max-width: 100%;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+.problem-content {
+    padding: 1.5rem 0 0 0;
+    width: 100%;
+}
+
+.solutions-section h2 {
+    margin: 2rem 0 1rem;
+    color: var(--secondary);
+    font-size: 1.5rem;
+}
+
+.view-navigation {
+    display: flex;
+    gap: 1rem;
+}
+
+.nav-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.8rem 1.5rem;
+    border-radius: 25px;
+    border: 2px solid var(--primary);
+    background: transparent;
+    color: var(--primary);
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.nav-btn i {
+    font-size: 1.1rem;
+}
+
+.nav-btn:hover {
+    background: rgba(106, 52, 199, 0.1);
+    transform: translateY(-2px);
+}
+
+.nav-btn.active {
+    background: var(--primary);
+    color: white;
+}
+
+.content-section {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--divider);
+    width: 100%;
+}
+
+.problem-card:hover {
+    transform: none;
+    box-shadow: 0 6px 24px 0 #4a3a8030;
+}
+
+/* Discourse section styles */
+.discourse-card {
+    background: rgba(40, 35, 55, 0.4);
+    border-radius: 8px;
+    padding: 1.2rem;
+    border: 1px solid var(--divider);
+    margin-bottom: 1rem;
+}
+
+.discourse-actions {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.discourse-comments {
+    margin-top: 1rem;
+}
+
+.discourse-comments .comments-list {
+    margin-bottom: 1.5rem;
+}
+
+.discourse-comments .comment {
+    background: rgba(40, 35, 55, 0.3);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.discourse-comments .comment-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.discourse-comments .comment-header strong {
+    color: var(--secondary);
+    font-size: 1rem;
+}
+
+.discourse-comments .comment-text {
+    color: var(--text-secondary);
+    font-size: 1rem;
+    line-height: 1.5;
+    white-space: pre-wrap;
+}
+
+.discourse-comments .comment-form {
+    margin-top: 1rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.discourse-comments .comment-form textarea {
+    min-height: 100px;
+    background: rgba(40, 35, 55, 0.6);
+    border: 1px solid var(--divider);
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    border-radius: 6px;
+    padding: 0.8rem;
+    margin-bottom: 0.8rem;
+    resize: vertical;
+}
+
+.discourse-comments .comment-form textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px rgba(106, 52, 199, 0.1);
+}
+
+/* Comment actions styles */
+.comment-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 0.5rem;
+}
+
+.btn-reply {
+    color: var(--text-secondary);
+    background: transparent;
+    border: none;
+    padding: 0.3rem 0.5rem;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.btn-reply:hover {
+    color: var(--primary);
+    background: rgba(106, 52, 199, 0.1);
+}
+
+.vote-buttons {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-vote {
+    color: var(--text-secondary);
+    background: transparent;
+    border: none;
+    padding: 0.3rem;
+    font-size: 0.9rem;
+}
+
+.btn-vote:hover {
+    color: var(--primary);
+    background: rgba(106, 52, 199, 0.1);
+}
+
+.vote-count {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    min-width: 1.5rem;
+    text-align: center;
+}
+
+/* Markdown content styles */
+.markdown-content {
+    color: var(--text-primary);
+    line-height: 1.6;
+    text-align: left;
+    width: 100%;
+    max-width: 100%;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+.markdown-content h1,
+.markdown-content h2,
+.markdown-content h3,
+.markdown-content h4,
+.markdown-content h5,
+.markdown-content h6 {
+    color: var(--secondary);
+    margin-top: 1.5em;
+    margin-bottom: 0.5em;
+    font-weight: 600;
+}
+
+.markdown-content h1 { font-size: 1.8em; }
+.markdown-content h2 { font-size: 1.5em; }
+.markdown-content h3 { font-size: 1.3em; }
+.markdown-content h4 { font-size: 1.2em; }
+.markdown-content h5 { font-size: 1.1em; }
+.markdown-content h6 { font-size: 1em; }
+
+.markdown-content p {
+    margin-bottom: 1em;
+}
+
+.markdown-content a {
+    color: var(--primary);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.markdown-content a:hover {
+    color: var(--primary-dark);
+    text-decoration: underline;
+}
+
+.markdown-content code {
+    background: rgba(40, 35, 55, 0.6);
+    padding: 0.2em 0.4em;
+    border-radius: 3px;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+.markdown-content pre {
+    background: rgba(40, 35, 55, 0.6);
+    padding: 1em;
+    border-radius: 6px;
+    overflow-x: auto;
+    margin: 1em 0;
+    width: 100%;
+    box-sizing: border-box;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+.markdown-content pre code {
+    background: none;
+    padding: 0;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    display: block;
+    text-align: left;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    overflow-x: auto;
+    width: 100%;
+}
+
+/* Override Prism.js styles */
+:not(pre) > code[class*="language-"],
+pre[class*="language-"] {
+    background: rgba(40, 35, 55, 0.4) !important;
+}
+
+code[class*="language-"],
+pre[class*="language-"] {
+    background: rgba(40, 35, 55, 0.4) !important;
+}
+
+/* Ensure the background color is consistent in all Prism contexts */
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+    color: #6a9955;
+}
+
+.token.punctuation {
+    color: #d4d4d4;
+}
+
+.token.property,
+.token.tag,
+.token.boolean,
+.token.number,
+.token.constant,
+.token.symbol {
+    color: #b5cea8;
+}
+
+.token.selector,
+.token.attr-name,
+.token.string,
+.token.char,
+.token.builtin {
+    color: #ce9178;
+}
+
+.token.operator,
+.token.entity,
+.token.url,
+.language-css .token.string,
+.style .token.string {
+    color: #d4d4d4;
+}
+
+.token.atrule,
+.token.attr-value,
+.token.keyword {
+    color: #569cd6;
+}
+
+.token.function {
+    color: #dcdcaa;
+}
+
+.token.regex,
+.token.important,
+.token.variable {
+    color: #d16969;
+}
+
+.token.important,
+.token.bold {
+    font-weight: bold;
+}
+
+.token.italic {
+    font-style: italic;
+}
+
+.markdown-content blockquote {
+    border-left: 4px solid var(--primary);
+    margin: 1em 0;
+    padding: 0.5em 1em;
+    background: rgba(40, 35, 55, 0.3);
+    border-radius: 0 6px 6px 0;
+}
+
+.markdown-content ul,
+.markdown-content ol {
+    margin: 1em 0;
+    padding-left: 2em;
+}
+
+.markdown-content li {
+    margin: 0.5em 0;
+}
+
+.markdown-content table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1em 0;
+}
+
+.markdown-content th,
+.markdown-content td {
+    border: 1px solid var(--divider);
+    padding: 0.5em;
+    text-align: left;
+}
+
+.markdown-content th {
+    background: rgba(40, 35, 55, 0.3);
+    font-weight: 600;
+}
+
+.markdown-content tr:nth-child(even) {
+    background: rgba(40, 35, 55, 0.2);
+}
+
+.markdown-content img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 6px;
+    margin: 1em 0;
+}
+
+.markdown-content hr {
+    border: none;
+    border-top: 1px solid var(--divider);
+    margin: 2em 0;
+}
+
+.problem-actions {
+    display: flex;
+    gap: 1rem;
+    margin: 1rem 0;
+}
+
+.problem-title-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.problem-title {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.problem-actions-bar {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.language-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 40px;
+    border-radius: 8px;
+    background: rgba(40, 35, 55, 0.4);
+    border: 2px solid var(--divider);
+    padding: 0 10px 0 10px;
+}
+
+.language-icon i {
+    font-size: 1.5rem;
+    color: var(--primary);
+}
+
+/* Language-specific icon colors */
+.language-icon .devicon-python-plain { color: #3776AB; }
+.language-icon .devicon-javascript-plain { color: #F7DF1E; }
+.language-icon .devicon-java-plain { color: #007396; }
+.language-icon .devicon-cplusplus-plain { color: #00599C; }
+.language-icon .devicon-csharp-plain { color: #239120; }
+.language-icon .devicon-ruby-plain { color: #CC342D; }
+.language-icon .devicon-php-plain { color: #777BB4; }
+.language-icon .devicon-go-plain { color: #00ADD8; }
+.language-icon .devicon-rust-plain { color: #DEA584; }
+.language-icon .devicon-swift-plain { color: #F05138; }
+.language-icon .devicon-kotlin-plain { color: #7F52FF; }
+.language-icon .devicon-typescript-plain { color: #3178C6; }
+
+.btn-bookmark {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    border: 2px solid var(--primary);
+    background: transparent;
+    color: var(--primary);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    padding: 0;
+}
+
+.btn-bookmark:hover {
+    background: rgba(106, 52, 199, 0.1);
+    transform: translateY(-2px);
+}
+
+.btn-bookmark i {
+    font-size: 1.2rem;
+}
+
+.btn-bookmark.active {
+    background: var(--primary);
+    color: white;
+}
+
+.btn-bookmark.active i {
+    color: #ffd700;
+}
+
+.btn-train {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    border: 2px solid var(--primary);
+    background: transparent;
+    color: var(--primary);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    padding: 0;
+    margin-left: 0.5rem;
+}
+
+.btn-train:hover {
+    background: rgba(106, 52, 199, 0.1);
+    transform: translateY(-2px);
+}
+
+.btn-train i {
+    font-size: 1.2rem;
+}
+
+.btn-train.active {
+    background: var(--primary);
+    color: white;
+}
+
+/* Vote buttons styles */
+.vote-buttons-container {
+    display: flex;
+    gap: 0.5rem;
+    margin-left: 0.5rem;
+}
+
+.btn-vote-problem {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    border: 2px solid var(--primary);
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    padding: 0;
+}
+
+.btn-vote-problem:hover {
+    background: rgba(106, 52, 199, 0.1);
+    transform: translateY(-2px);
+}
+
+.btn-vote-problem i {
+    font-size: 1.2rem;
+}
+
+.btn-vote-problem[data-vote-type="positive"] {
+    color: #4CAF50;
+}
+
+.btn-vote-problem[data-vote-type="neutral"] {
+    color: #FFC107;
+}
+
+.btn-vote-problem[data-vote-type="negative"] {
+    color: #f44336;
+}
+
+.btn-vote-problem.active {
+    background: var(--primary);
+}
+
+.btn-vote-problem.active[data-vote-type="positive"] {
+    background: rgba(76, 175, 80, 0.2);
+    border-color: #4CAF50;
+}
+
+.btn-vote-problem.active[data-vote-type="neutral"] {
+    background: rgba(255, 193, 7, 0.2);
+    border-color: #FFC107;
+}
+
+.btn-vote-problem.active[data-vote-type="negative"] {
+    background: rgba(244, 67, 54, 0.2);
+    border-color: #f44336;
+}
+
+.btn-vote-problem.active i {
+    color: inherit;
+}
+
+.solution-card {
+    background: rgba(40, 35, 55, 0.4);
+    border-radius: 8px;
+    padding: 1.2rem;
+    border: 1px solid var(--divider);
+    margin-bottom: 1rem;
+}
+
+.solution-card pre {
+    margin: 0;
+    padding: 1rem;
+    background: rgba(40, 35, 55, 0.6);
+    border-radius: 6px;
+    overflow-x: auto;
+    white-space: pre;
+    tab-size: 4;
+}
+
+.solution-card code {
+    font-family: 'Fira Code', 'Consolas', 'Monaco', monospace;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    color: var(--text-secondary);
+}
+
+.solution-card .solution-content {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+}

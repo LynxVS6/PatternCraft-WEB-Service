@@ -1,0 +1,90 @@
+{% macro render_filters(languages, tags) %}
+<div class="filters-sidebar">
+    <div class="filters-panel">
+        <form class="filters-form" id="search_form">
+            <div class="search-input-container">
+                <input 
+                    type="text" 
+                    id="search_input" 
+                    name="q" 
+                    class="form-control search-input"
+                    placeholder="{{ _('solved_problems_search_placeholder') }}"
+                    aria-label="{{ _('solved_problems_search_label') }}"
+                >
+                <button 
+                    type="button" 
+                    class="search-icon-btn" 
+                    id="search"
+                    aria-label="{{ _('solved_problems_search_button') }}"
+                >
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+
+            <div class="select-container">
+                <label for="order_by">{{ _('solved_problems_sort_by') }}</label>
+                <select id="order_by" name="order_by" class="form-control filter-select">
+                    <option value="sort_date desc" selected>{{ _('solved_problems_sort_newest') }}</option>
+                    <option value="published_at asc">{{ _('solved_problems_sort_oldest') }}</option>
+                    <option value="popularity desc">{{ _('solved_problems_sort_popular') }}</option>
+                    <option value="satisfaction_percent desc,total_completed desc">
+                        {{ _('solved_problems_sort_high_rating') }}
+                    </option>
+                    <option value="satisfaction_percent asc">
+                        {{ _('solved_problems_sort_low_rating') }}
+                    </option>
+                    <option value="name asc">{{ _('solved_problems_sort_name') }}</option>
+                </select>
+            </div>
+
+            <div class="select-container">
+                <label for="language_filter">{{ _('solved_problems_languages') }}</label>
+                <select id="language_filter" name="language" class="form-control filter-select">
+                    <option value="">{{ _('solved_problems_all_languages') }}</option>
+                    <option value="my-languages" selected>{{ _('solved_problems_selected_languages') }}</option>
+                    {% for lang in languages %}
+                    <option value="{{ lang.code }}">{{ lang.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="select-container">
+                <label for="beta_filter">{{ _('solved_problems_status') }}</label>
+                <select id="beta_filter" name="beta" class="form-control filter-select">
+                    <option value="false" selected>{{ _('solved_problems_verified') }}</option>
+                    <option value="true">{{ _('solved_problems_beta') }}</option>
+                </select>
+            </div>
+
+            <div class="select-container">
+                <label for="ids_filter">{{ _('solved_problems_progress') }}</label>
+                <select id="ids_filter" name="xids" class="form-control filter-select">
+                    <option value="all" selected>{{ _('solved_problems_all') }}</option>
+                    <option value="completed">{{ _('solved_problems_not_started') }}</option>
+                    <option value="not_completed">{{ _('solved_problems_completed') }}</option>
+                </select>
+            </div>
+
+            <div class="select-container">
+                <label for="ranks_filter">{{ _('solved_problems_difficulty') }}</label>
+                <select id="ranks_filter" name="r" class="form-control filter-select" multiple>
+                    <option value="easy" selected>{{ _('solved_problems_easy') }}</option>
+                    <option value="middle">{{ _('solved_problems_medium') }}</option>
+                    <option value="hard">{{ _('solved_problems_hard') }}</option>
+                </select>
+            </div>
+
+            <div class="select-container">
+                <label for="tags_filter">{{ _('solved_problems_tags') }}</label>
+                <select id="tags_filter" name="tags" class="form-control filter-select" multiple>
+                    {% for tag in tags %}
+                    <option value="{{ tag.name }}" {% if tag.selected %}selected{% endif %}>
+                        {{ tag.name }} ({{ tag.count }})
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+        </form>
+    </div>
+</div>
+{% endmacro %} 

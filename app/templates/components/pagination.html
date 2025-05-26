@@ -1,0 +1,24 @@
+{% macro render_pagination(pagination, endpoint, max_func, min_func) %}
+{% if pagination.total_pages > 1 %}
+<div class="pagination">
+    {% if pagination.page > 1 %}
+    <a href="{{ url_for(endpoint, page=pagination.page-1) }}" class="page-link">
+        <i class="fas fa-chevron-left"></i> {{ _('pagination.previous') }}
+    </a>
+    {% endif %}
+
+    {% for p in range(max_func(1, pagination.page-2), min_func(pagination.total_pages+1, pagination.page+3)) %}
+    <a href="{{ url_for(endpoint, page=p) }}" 
+       class="page-link {% if p == pagination.page %}active{% endif %}">
+        {{ p }}
+    </a>
+    {% endfor %}
+
+    {% if pagination.page < pagination.total_pages %}
+    <a href="{{ url_for(endpoint, page=pagination.page+1) }}" class="page-link">
+        {{ _('pagination.next') }} <i class="fas fa-chevron-right"></i>
+    </a>
+    {% endif %}
+</div>
+{% endif %}
+{% endmacro %} 

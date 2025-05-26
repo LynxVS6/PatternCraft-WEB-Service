@@ -1,113 +1,158 @@
-from flask import Blueprint, render_template, jsonify, request
+from flask import Blueprint, render_template, request
 from app.models.problem import Problem
 from app.models.solution import Solution
-from app.models.comment import Comment
-from app.extensions import db
-from flask_login import login_required, current_user
-from app.services.like_service import LikeService
-from sqlalchemy.exc import SQLAlchemyError
+from flask_login import login_required
+from sqlalchemy import func
+from app.models.user import User
 
-bp = Blueprint('solved_problems', __name__)
+bp = Blueprint("solved_problems", __name__)
 
 
-@bp.route('/solved-problems')
-@login_required
-def solved_problems():
-    problems = Problem.query.all()
-    return render_template('solved_problems.html', problems=problems)
+def process_language_for_devicon(language):
+    """Convert language names to devicon-compatible format."""
+    language_map = {
+        "c++": "cplusplus",
+        "c#": "csharp",
+        "csharp": "csharp",
+        "cpp": "cplusplus",
+        "js": "javascript",
+        "typescript": "typescript",
+        "ts": "typescript",
+        "python": "python",
+        "java": "java",
+        "ruby": "ruby",
+        "php": "php",
+        "go": "go",
+        "rust": "rust",
+        "swift": "swift",
+        "kotlin": "kotlin",
+    }
+    return language_map.get(language.lower(), language.lower())
 
 
-@bp.route('/api/problems/<int:problem_id>/solutions')
-@login_required
-def get_more_solutions(problem_id):
-    offset = request.args.get('offset', default=3, type=int)
-    solutions = Solution.query.filter_by(
-        problem_id=problem_id).offset(offset).limit(3).all()
-
-    return jsonify([{
-        'id': solution.id,
-        'solution': solution.solution,
-        'likes': solution.likes,
-        'username': solution.user.username
-    } for solution in solutions])
-
-
-@bp.route('/api/solutions/<int:solution_id>/like', methods=['POST'])
-@login_required
-def toggle_solution_like(solution_id):
-    try:
-        likes_count, liked = LikeService.toggle_like(current_user.id, solution_id)
-        return jsonify({
-            'likes': likes_count,
-            'liked': liked
-        })
-    except ValueError as e:
-        return jsonify({'error': str(e)}), 404
-    except SQLAlchemyError:
-        return jsonify({'error': 'Database error occurred'}), 500
-
-
-@bp.route('/api/solutions/<int:solution_id>/comments', methods=['POST'])
-@login_required
-def add_comment(solution_id):
-    data = request.get_json()
-    comment_text = data.get('comment')
-
-    if not comment_text:
-        return jsonify({'error': 'Comment is required'}), 400
-
-    Solution.query.get_or_404(solution_id)  # Verify solution exists
-    comment = Comment(
-        user_id=current_user.id,
-        solution_id=solution_id,
-        comment=comment_text
+def get_problem_query():
+    """Returns a base query for Problem model with aggregated columns."""
+    return (
+        Problem.query.join(User, Problem.author_id == User.id)
+        .add_columns(
+            Problem.id,
+            Problem.name,
+            Problem.description,
+            Problem.difficulty,
+            Problem.author_id,
+            Problem.bookmark_count,
+            Problem.created_at,
+            Problem.tags_json,
+            Problem.language,
+            func.count(Solution.id).label("completed_count"),
+            (
+                Problem.positive_vote + Problem.negative_vote + Problem.neutral_vote
+            ).label("total_votes"),
+            func.round(
+                func.coalesce(
+                    (Problem.positive_vote * 100.0)
+                    / func.nullif(
+                        Problem.positive_vote
+                        + Problem.negative_vote
+                        + Problem.neutral_vote,
+                        0,
+                    ),
+                    0,
+                )
+            ).label("satisfaction_percent"),
+        )
+        .outerjoin(Solution, Problem.id == Solution.problem_id)
+        .group_by(
+            Problem.id,
+            Problem.name,
+            Problem.description,
+            Problem.difficulty,
+            Problem.author_id,
+            Problem.bookmark_count,
+            Problem.created_at,
+            Problem.language,
+            Problem.tags_json,
+            Problem.positive_vote,
+            Problem.negative_vote,
+            Problem.neutral_vote,
+        )
     )
 
-    db.session.add(comment)
-    db.session.commit()
 
-    return jsonify({
-        'id': comment.id,
-        'comment': comment.comment,
-        'username': current_user.username
-    })
-
-
-@bp.route('/api/comments/<int:comment_id>', methods=['PUT'])
+@bp.route("/solved-problems")
 @login_required
-def edit_comment(comment_id):
-    comment = Comment.query.get_or_404(comment_id)
-    
-    # Check if the current user is the author of the comment
-    if comment.user_id != current_user.id:
-        return jsonify({'error': 'Unauthorized'}), 403
-    
-    data = request.get_json()
-    new_comment_text = data.get('comment')
-    
-    if not new_comment_text:
-        return jsonify({'error': 'Comment is required'}), 400
-    
-    comment.comment = new_comment_text
-    db.session.commit()
-    
-    return jsonify({
-        'id': comment.id,
-        'comment': comment.comment,
-        'username': comment.user.username
-    })
+def solved_problems():
+    page = request.args.get("page", 1, type=int)
+    per_page = 10
 
+    # Get total count for pagination
+    total_problems = get_problem_query().count()
+    total_pages = (total_problems + per_page - 1) // per_page
 
-@bp.route('/api/comments/<int:comment_id>', methods=['DELETE'])
-@login_required
-def delete_comment(comment_id):
-    comment = Comment.query.get_or_404(comment_id)
-    
-    # Check if the current user is the author of the comment
-    if comment.user_id != current_user.id:
-        return jsonify({'error': 'Unauthorized'}), 403
-    
-    db.session.delete(comment)
-    db.session.commit()
-    
-    return jsonify({'message': 'Comment deleted successfully'})
+    # Get paginated problems
+    problems_query = get_problem_query().paginate(
+        page=page, per_page=per_page, error_out=False
+    )
+    problems = problems_query.items
+
+    # Process the problems to include solutions and format the data
+    processed_problems = []
+    for problem in problems:
+        # Get the author's username
+        author = User.query.get(problem.author_id)
+
+        problem_dict = {
+            "id": problem.id,
+            "name": problem.name,
+            "description": problem.description,
+            "difficulty": problem.difficulty,
+            "language": problem.language,
+            "language_icon": process_language_for_devicon(problem.language),
+            "author": author.username if author else None,
+            "completed_count": problem.completed_count or 0,
+            "satisfaction_percent": round(problem.satisfaction_percent or 0),
+            "total_votes": problem.total_votes or 0,
+            "bookmark_count": problem.bookmark_count or 0,
+            "solutions": Solution.query.filter_by(problem_id=problem.id).all(),
+            "tags": problem.tags_json,
+        }
+        processed_problems.append(problem_dict)
+
+    # Get languages and tags for filters
+    languages = [
+        {"code": "python", "name": "Python"},
+        {"code": "java", "name": "Java"},
+        {"code": "javascript", "name": "JavaScript"},
+        {"code": "cplusplus", "name": "C++"},
+        {"code": "csharp", "name": "C#"},
+    ]
+
+    # Get unique tags from all problems
+    all_tags = set()
+    for problem in Problem.query.all():
+        if problem.tags_json:
+            all_tags.update(problem.tags_json)
+
+    tags = [
+        {
+            "name": tag,
+            "count": Problem.query.filter(Problem.tags_json.contains([tag])).count(),
+            "selected": False,
+        }
+        for tag in sorted(all_tags)
+    ]
+
+    return render_template(
+        "solved_problems.html",
+        problems=processed_problems,
+        pagination={
+            "page": page,
+            "per_page": per_page,
+            "total_pages": total_pages,
+            "total_problems": total_problems,
+        },
+        languages=languages,
+        max=max,
+        min=min,
+        tags=tags,
+    )

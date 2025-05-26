@@ -1,11 +1,115 @@
+:root {
+    /* Difficulty colors */
+    --difficulty-easy: #4CAF50;
+    --difficulty-middle: #FFC107;
+    --difficulty-hard: #F44336;
+}
 
+/* Main Container Layout */
+.container {
+    display: flex;
+    gap: 2rem;
+    padding: 2rem;
+    max-width: none;
+    margin: 0;
+}
+
+/* Filters Sidebar */
+.filters-sidebar {
+    top: 2rem;
+    height: fit-content;
+}
+
+.filters-panel {
+    background: rgba(35, 28, 61, 0.95);
+    border: 1.5px solid var(--divider);
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 6px 24px 0 #4a3a8030;
+    backdrop-filter: blur(10px);
+}
+
+.filters-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.selected-item {
+    background: rgba(106, 52, 199, 0.2);
+    padding: 4px 10px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--primary);
+    font-size: 0.9rem;
+    transition: background 0.25s, transform 0.2s;
+}
+
+.selected-item:hover {
+    background: rgba(106, 52, 199, 0.3);
+    transform: translateY(-1px);
+}
+
+.selected-item .remove-item {
+    cursor: pointer;
+    color: var(--primary);
+    opacity: 0.7;
+    transition: opacity 0.25s, transform 0.2s;
+    padding: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.selected-item .remove-item:hover {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+/* Responsive Layout */
+@media (max-width: 1024px) {
+    .solved-problems-container {
+        grid-template-columns: 1fr;
+        padding: 1rem;
+    }
+
+    .filters-sidebar {
+        position: static;
+        margin-bottom: 2rem;
+    }
+
+    .filters-panel {
+        position: relative;
+    }
+}
+
+@media (max-width: 768px) {
+    .solved-problems-container {
+        padding: 0.5rem;
+    }
+
+    .filters-panel {
+        padding: 1rem;
+    }
+
+    .problems-list {
+        gap: 1rem;
+    }
+}
 
 /* Контейнер для списка задач */
+.problems {
+    display: flex;
+    flex-direction: column;
+}
+
 .problems-list {
+    flex-grow: 1;
     display: grid;
     grid-template-columns: 1fr;
     gap: 1.5rem;
-    margin-top: 2rem;
 }
 
 /* Карточка задачи */
@@ -16,6 +120,7 @@
     box-shadow: 0 6px 24px 0 #4a3a8030;
     overflow: hidden;
     transition: transform 0.25s, box-shadow 0.3s;
+    margin-bottom: 1rem;
 }
 
 .problem-card:hover {
@@ -23,49 +128,130 @@
     box-shadow: 0 8px 32px 0 #6c5fc755;
 }
 
-/* Заголовок задачи */
+.problem-content {
+    padding: 1.5rem;
+}
+
+.problem-main {
+    width: 100%;
+}
+
 .problem-header {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.problem-title {
+    display: flex;
     align-items: center;
-    padding: 1.5rem;
-    background: rgba(35, 28, 61, 0.95);
-    cursor: pointer;
-    transition: background 0.3s;
+    gap: 1rem;
+    width: 100%;
 }
 
-.problem-header:hover {
-    background: var(--bg-hover);
+.problem-rank {
+    display: flex;
+    align-items: center;
 }
 
-.problem-header h3 {
+.rank-badge {
+    background: var(--primary);
+    color: #fff;
+    padding: 0.3rem 0.8rem;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.problem-title h3 {
     font-size: 1.4rem;
     margin: 0;
     color: var(--secondary);
     font-weight: 700;
 }
 
-.problem-header i {
-    font-size: 1.2rem;
+.problem-toggle {
     color: var(--primary);
+    font-size: 1.2rem;
     transition: transform 0.3s;
+    margin-left: auto;
 }
 
-.problem-header i.fa-chevron-down.active {
+.problem-toggle.active {
     transform: rotate(180deg);
 }
 
-/* Контент задачи */
-.problem-content {
-    padding: 1.5rem;
+.problem-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: center;
 }
 
-/* Описание задачи */
-.problem-description {
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
     color: var(--text-secondary);
-    font-size: 1.1rem;
-    line-height: 1.6;
-    margin-bottom: 1.5rem;
+    font-size: 0.9rem;
+}
+
+.stat-item i {
+    color: var(--primary);
+    font-size: 1rem;
+}
+
+.problem-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.problem-tags i {
+    color: var(--primary);
+    margin-right: 0.5rem;
+}
+
+.tag {
+    background: rgba(106, 52, 199, 0.1);
+    padding: 0.3rem 0.8rem;
+    border-radius: 4px;
+    font-size: 0.9rem;
+}
+
+.tag a {
+    color: var(--primary);
+    text-decoration: none;
+    transition: color 0.25s;
+}
+
+.tag a:hover {
+    color: var(--secondary);
+}
+
+.problem-details {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--divider);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .problem-stats {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+    
+    .problem-tags {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .problem-tags i {
+        margin-bottom: 0.5rem;
+    }
 }
 
 /* Секция решений */
@@ -106,6 +292,7 @@
 
 /* Контент решения (например, код) */
 .solution-content {
+    display: block;
     color: var(--text-primary);
     font-family: 'Fira Code', monospace;
     font-size: 0.95rem;
@@ -115,6 +302,80 @@
     padding: 1rem;
     border-radius: 5px;
     overflow-x: auto;
+    margin: 0;
+    tab-size: 4;
+}
+
+/* Syntax highlighting */
+.solution-content.language-python {
+    color: #f8f8f2;
+}
+
+.solution-content.language-python .keyword {
+    color: #ff79c6;
+}
+
+.solution-content.language-python .string {
+    color: #f1fa8c;
+}
+
+.solution-content.language-python .comment {
+    color: #6272a4;
+}
+
+.solution-content.language-python .function {
+    color: #50fa7b;
+}
+
+.solution-content.language-python .class {
+    color: #8be9fd;
+}
+
+.solution-content.language-python .number {
+    color: #bd93f9;
+}
+
+.solution-content.language-python .operator {
+    color: #ff79c6;
+}
+
+.solution-content.language-python .decorator {
+    color: #ff79c6;
+}
+
+.solution-content.language-python .builtin {
+    color: #50fa7b;
+}
+
+/* Code block scrollbar */
+.solution-content::-webkit-scrollbar {
+    height: 8px;
+    width: 8px;
+}
+
+.solution-content::-webkit-scrollbar-track {
+    background: rgba(40, 35, 55, 0.4);
+    border-radius: 4px;
+}
+
+.solution-content::-webkit-scrollbar-thumb {
+    background: var(--primary);
+    border-radius: 4px;
+}
+
+.solution-content::-webkit-scrollbar-thumb:hover {
+    background: var(--secondary);
+}
+
+/* Code block selection */
+.solution-content::selection {
+    background: rgba(106, 52, 199, 0.3);
+}
+
+/* Code block focus */
+.solution-content:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(106, 52, 199, 0.2);
 }
 
 /* Кнопки действий (лайки, комментарии) */
@@ -164,7 +425,7 @@
 }
 
 /* Комментарий */
-.comment {
+.comments-list .comment {
     background: rgba(40, 35, 55, 0.3);
     border-radius: 8px;
     padding: 1rem;
@@ -251,11 +512,17 @@
     margin-bottom: 0.8rem;
 }
 
+.comment-form {
+    display: flex;
+    flex-direction: column;
+}
+
 .comment-form .btn-primary {
     background: var(--primary);
     border: none;
     padding: 0.5rem 1rem;
     font-size: 0.9rem;
+    max-width: min-content;
 }
 
 .comment-form .btn-primary:hover {
@@ -279,55 +546,364 @@
     transform: translateY(-1px);
 }
 
-/* Адаптивность */
+/* Custom Select Styles */
+.select-container {
+    position: relative;
+    margin-bottom: 1.5rem;
+}
+
+.select-container label {
+    display: block;
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    margin-bottom: 0.5rem;
+}
+
+.custom-select {
+    position: relative;
+    width: 100%;
+}
+
+.custom-select .select-selected {
+    background: rgba(40, 35, 55, 0.4);
+    border: 1px solid var(--divider);
+    border-radius: 8px;
+    padding: 0.8rem 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    transition: border-color 0.25s, box-shadow 0.3s;
+}
+
+.custom-select .select-selected:hover {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px rgba(106, 52, 199, 0.1);
+}
+
+.custom-select .select-selected .selected-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    flex: 1;
+}
+
+.custom-select .select-selected .selected-tag {
+    background: rgba(106, 52, 199, 0.2);
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--primary);
+    transition: background 0.25s, transform 0.2s;
+}
+
+.custom-select .select-selected .selected-tag:hover {
+    background: rgba(106, 52, 199, 0.3);
+    transform: translateY(-1px);
+}
+
+.custom-select .select-selected .remove-tag {
+    background: none;
+    border: none;
+    padding: 0;
+    color: var(--primary);
+    opacity: 0.7;
+    cursor: pointer;
+    font-size: 0.75rem;
+    transition: opacity 0.25s, transform 0.2s;
+}
+
+.custom-select .select-selected .remove-tag:hover {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+.custom-select .select-selected .select-arrow {
+    border: solid var(--primary);
+    border-width: 0 2px 2px 0;
+    display: inline-block;
+    padding: 3px;
+    transform: rotate(45deg);
+    margin-left: 8px;
+    transition: transform 0.3s;
+}
+
+.custom-select .select-selected.select-arrow-active .select-arrow {
+    transform: rotate(-135deg);
+}
+
+.custom-select .select-items {
+    position: absolute;
+    background: rgba(35, 28, 61, 0.95);
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 99;
+    border: 1px solid var(--divider);
+    border-radius: 8px;
+    margin-top: 4px;
+    max-height: 300px;
+    overflow-y: auto;
+    box-shadow: 0 6px 24px 0 #4a3a8030;
+    backdrop-filter: blur(10px);
+}
+
+.custom-select .select-items.select-hide {
+    display: none;
+}
+
+.custom-select .select-item {
+    padding: 0.8rem 1rem;
+    cursor: pointer;
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    transition: background 0.25s, color 0.25s;
+}
+
+.custom-select .select-item:hover {
+    background: var(--bg-hover);
+    color: var(--text-primary);
+}
+
+.custom-select .select-item.selected {
+    background: rgba(106, 52, 199, 0.2);
+    color: var(--primary);
+}
+
+/* Scrollbar styles for the select items */
+.custom-select .select-items::-webkit-scrollbar {
+    width: 8px;
+}
+
+.custom-select .select-items::-webkit-scrollbar-track {
+    background: rgba(40, 35, 55, 0.4);
+    border-radius: 4px;
+}
+
+.custom-select .select-items::-webkit-scrollbar-thumb {
+    background: var(--primary);
+    border-radius: 4px;
+}
+
+.custom-select .select-items::-webkit-scrollbar-thumb:hover {
+    background: var(--secondary);
+}
+
+/* Focus styles for accessibility */
+.custom-select .select-selected:focus,
+.custom-select .select-item:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px rgba(106, 52, 199, 0.1);
+}
+
+/* Disabled state */
+.custom-select.disabled .select-selected {
+    background: rgba(40, 35, 55, 0.2);
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+/* Loading state */
+.custom-select.loading .select-selected::after {
+    content: '';
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid var(--primary);
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin-left: 8px;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.problem-difficulty {
+    display: flex;
+    align-items: center;
+}
+
+.difficulty-badge {
+    padding: 0.3rem 0.8rem;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #fff;
+    text-transform: capitalize;
+}
+
+.difficulty-badge.easy {
+    background: var(--difficulty-easy);
+}
+
+.difficulty-badge.medium {
+    background: var(--difficulty-middle);
+}
+
+.difficulty-badge.hard {
+    background: var(--difficulty-hard);
+}
+
+/* Language icon */
+.language-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 40px;
+    border-radius: 8px;
+    background: rgba(40, 35, 55, 0.4);
+    border: 2px solid var(--divider);
+    padding: 0 10px 0 10px;
+    gap: 0.5rem;
+}
+
+/* Language-specific icon colors */
+.language-icon .devicon-python-plain { color: #3776AB; }
+.language-icon .devicon-javascript-plain { color: #F7DF1E; }
+.language-icon .devicon-java-plain { color: #008aff; }
+.language-icon .devicon-cplusplus-plain { color: #00599C; }
+.language-icon .devicon-csharp-plain { color: #239120; }
+.language-icon .devicon-ruby-plain { color: #CC342D; }
+.language-icon .devicon-php-plain { color: #777BB4; }
+.language-icon .devicon-go-plain { color: #00ADD8; }
+.language-icon .devicon-rust-plain { color: #DEA584; }
+.language-icon .devicon-swift-plain { color: #F05138; }
+.language-icon .devicon-kotlin-plain { color: #7F52FF; }
+.language-icon .devicon-typescript-plain { color: #3178C6; }
+
+/* Search Input Styles */
+.search-input-container {
+    display: flex;
+    position: relative;
+    margin-bottom: 1.5rem;
+    background: rgba(40, 35, 55, 0.4);
+    border: 1px solid var(--divider);
+    border-radius: 8px;
+    padding: 0.8rem 2.5rem 0.8rem 1rem;
+}
+
+.search-input {
+    width: 100%;
+    border: none;
+    background: rgba(40, 35, 55, 0.4);
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    transition: border-color 0.25s, box-shadow 0.3s;
+}
+
+.search-input:focus {
+    outline: none;
+    background: none;
+    border-color: none;
+    box-shadow: none;
+}
+
+/* .search-input:hover {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px rgba(106, 52, 199, 0.1);
+} */
+
+.search-icon-btn {
+    position: absolute;
+    right: 0.8rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--primary);
+    padding: 0.5rem;
+    cursor: pointer;
+    transition: color 0.25s, transform 0.2s;
+}
+
+.search-icon-btn:hover {
+    color: var(--secondary);
+    transform: translateY(-50%) scale(1.1);
+}
+
+.search-icon-btn i {
+    font-size: 1rem;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 2rem 0;
+    padding: 1rem;
+    background: rgba(35, 28, 61, 0.95);
+    border: 1.5px solid var(--divider);
+    border-radius: 12px;
+    box-shadow: 0 6px 24px 0 #4a3a8030;
+    backdrop-filter: blur(10px);
+}
+
+.page-link {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    border: 1.5px solid var(--divider);
+    border-radius: 8px;
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: all 0.25s ease-in-out;
+    background: rgba(40, 35, 55, 0.4);
+    font-size: 0.95rem;
+}
+
+.page-link:hover {
+    background: rgba(106, 52, 199, 0.2);
+    border-color: var(--primary);
+    color: var(--primary);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(106, 52, 199, 0.2);
+}
+
+.page-link.active {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: #fff;
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(106, 52, 199, 0.3);
+}
+
+.page-link.active:hover {
+    background: var(--secondary);
+    border-color: var(--secondary);
+    transform: translateY(-1px);
+}
+
+.page-link i {
+    font-size: 0.875rem;
+    margin: 0 0.25rem;
+    transition: transform 0.25s ease-in-out;
+}
+
+.page-link:hover i {
+    transform: scale(1.1);
+}
+
+/* Responsive pagination */
 @media (max-width: 768px) {
-    .problems-list {
-        gap: 1rem;
+    .pagination {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        padding: 0.75rem;
     }
 
-    .problem-card {
-        padding: 1rem;
-    }
-
-    .problem-header h3 {
-        font-size: 1.2rem;
-    }
-
-    .problem-description {
-        font-size: 1rem;
-    }
-
-    .show-solutions {
-        width: 100%;
-        text-align: center;
-    }
-
-    .solution-card {
-        padding: 1rem;
-    }
-
-    .solution-content {
-        font-size: 0.9rem;
-    }
-
-    .solution-actions {
-        flex-direction: column;
-        align-items: stretch;
-    }
-
-    .btn-like, .btn-comment {
-        justify-content: center;
-    }
-
-    .comment {
-        padding: 0.8rem;
-    }
-
-    .comment-header strong {
-        font-size: 0.9rem;
-    }
-
-    .comment-text {
+    .page-link {
+        padding: 0.4rem 0.8rem;
         font-size: 0.9rem;
     }
 }

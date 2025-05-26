@@ -1,9 +1,10 @@
-from flask import Blueprint, render_template, redirect, request, url_for, flash
+from flask import Blueprint, render_template, redirect, request, url_for, flash, jsonify
 from flask_login import login_required, current_user
 from app import db
 from app.forms.forms import EditProfileForm, ChangePasswordForm
 from app.models.user import User
 from app.services.email_service import send_confirmation_email
+from werkzeug.security import generate_password_hash
 
 bp = Blueprint("users", __name__)
 
@@ -61,3 +62,59 @@ def change_password():
         else:
             flash("Неверный текущий пароль", "error")
     return render_template("change_password.html", form=form)
+
+
+@bp.route("/api/users", methods=["POST"])
+def create_user():
+    data = request.get_json()
+
+    # Handle both single object and list of objects
+    if not isinstance(data, list):
+        data = [data]
+
+    results = []
+    for item in data:
+        if not item or "username" not in item or "email" not in item:
+            return jsonify({"error": "Invalid request format"}), 400
+
+        # Check if username or email already exists
+        if User.query.filter_by(username=item["username"]).first():
+            return jsonify({"error": f"Username {item['username']} already exists"}), 400
+        if User.query.filter_by(email=item["email"].lower()).first():
+            return jsonify({"error": f"Email {item['email']} already exists"}), 400
+
+        # Create new user
+        new_user = User(
+            username=item["username"].strip(),
+            email=item["email"].lower().strip(),
+            email_confirmed=False  # Default to False
+        )
+
+        # Handle both password and password_hash
+        is_real_user = False
+        if "password" in item:
+            new_user.set_password(item["password"])
+            is_real_user = True
+        elif "password_hash" in item:
+            new_user.password_hash = item["password_hash"]
+            new_user.email_confirmed = True  # Auto-confirm for seeded users
+        else:
+            return jsonify({"error": "Either password or password_hash is required"}), 400
+
+        db.session.add(new_user)
+        db.session.flush()  # This will assign an ID without committing
+
+        results.append({
+            "id": new_user.id,
+            "username": new_user.username,
+            "email": new_user.email,
+            "email_confirmed": new_user.email_confirmed,
+            "created_at": new_user.created_at.isoformat() if new_user.created_at else None
+        })
+
+        # Only send confirmation email for real users
+        if is_real_user:
+            send_confirmation_email(new_user)
+
+    db.session.commit()
+    return jsonify(results), 201
