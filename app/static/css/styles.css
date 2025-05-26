@@ -75,11 +75,9 @@ body {
 }
 
 .logo-icon {
-    font-size: 2.5rem;
-    color: var(--primary);
-    filter: none;
-    animation: none;
+    width: 2.5rem;
 }
+
 .logo-link {
   display: flex;
   align-items: center;
