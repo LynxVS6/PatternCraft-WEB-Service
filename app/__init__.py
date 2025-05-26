@@ -1,6 +1,14 @@
 from flask import Flask
 from .settings import settings
-from .extensions import db, migrate, mail, login_manager
+from .extensions import (
+    db,
+    migrate,
+    mail,
+    login_manager,
+    babel,
+    get_timezone,
+    get_locale,
+)
 from .views import auth, main, users, solved_problems, tasks
 
 
@@ -9,6 +17,7 @@ def create_app():
     app.config.from_object(settings)
 
     db.init_app(app)
+    babel.init_app(app, locale_selector=get_locale, timezone_selector=get_timezone)
     migrate.init_app(app, db)
     mail.init_app(app)
     login_manager.init_app(app)

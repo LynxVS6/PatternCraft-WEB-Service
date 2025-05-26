@@ -608,3 +608,122 @@ h3 {
     }
 }
 
+:root {
+  --text-primary: #FFFFFF;
+  --text-secondary: #b8b3d1;
+  --alert-success: rgba(40, 167, 69, 0.85);
+  --alert-error: rgba(217, 48, 37, 0.85);
+  --alert-info: rgba(23, 162, 184, 0.85);
+  --alert-bg: rgba(28, 23, 46, 0.7);
+  --alert-border: rgba(255, 255, 255, 0.2);
+}
+
+/* Стили для уведомлений */
+.alert {
+  position: relative;
+  max-width: 480px;
+  width: 100%;
+  margin: 20px auto;
+  padding: 15px 50px 15px 50px;
+  border-radius: 12px;
+  color: var(--text-primary);
+  font-size: 1rem;
+  font-weight: 500;
+  font-family: 'Roboto', sans-serif;
+  background: var(--alert-bg);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--alert-border);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  animation: slideIn 0.5s ease-out, fadeOut 0.5s ease-in 7s forwards;
+  z-index: 1000; /* Убедимся, что уведомления поверх других элементов */
+}
+
+.alert-success {
+  border-left: 4px solid var(--alert-success);
+}
+
+.alert-success::before {
+  content: '\f058';
+  font-family: 'Font Awesome 5 Free';
+  font-weight: 900;
+  font-size: 1.2rem;
+  margin-right: 10px;
+  color: var(--alert-success);
+}
+
+.alert-error {
+  border-left: 4px solid var(--alert-error);
+}
+
+.alert-error::before {
+  content: '\f06a';
+  font-family: 'Font Awesome 5 Free';
+  font-weight: 900;
+  font-size: 1.2rem;
+  margin-right: 10px;
+  color: var(--alert-error);
+}
+
+.alert-info {
+  border-left: 4px solid var(--alert-info);
+}
+
+.alert-info::before {
+  content: '\f05a';
+  font-family: 'Font Awesome 5 Free';
+  font-weight: 900;
+  font-size: 1.2rem;
+  margin-right: 10px;
+  color: var(--alert-info);
+}
+
+.alert-message {
+  flex-grow: 1;
+}
+
+.alert-close {
+  position: absolute;
+  top: 50%;
+  right: 15px;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--text-primary);
+  font-size: 1.1rem;
+  cursor: pointer;
+  padding: 5px;
+  transition: color 0.3s;
+}
+
+.alert-close:hover {
+  color: var(--text-secondary);
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeOut {
+  to {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+}
+
+/* Адаптивность */
+@media (max-width: 520px) {
+  .alert {
+    max-width: 100%;
+    padding-left: 15px;
+    padding-right: 40px;
+  }
+}

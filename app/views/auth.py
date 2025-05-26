@@ -11,7 +11,6 @@ from flask_login import current_user, login_required, login_user, logout_user
 
 bp = Blueprint("auth", __name__)
 
-
 def is_safe_url(target: str) -> bool:
     ref_url = urlparse(request.host_url)
     test_url = urlparse(urljoin(request.host_url, target))
@@ -19,7 +18,6 @@ def is_safe_url(target: str) -> bool:
         test_url.scheme in ("http", "https")
         and ref_url.netloc == test_url.netloc
     )
-
 
 @bp.route("/register", methods=["GET", "POST"])
 def register():
@@ -51,7 +49,6 @@ def register():
                            login_form=login_form,
                            register_form=register_form)
 
-
 @bp.route("/confirm-email/<token>")
 def confirm_email(token):
     if current_user.is_authenticated and current_user.email_confirmed and not current_user.new_email:
@@ -81,7 +78,6 @@ def confirm_email(token):
     login_user(user, remember=True)
     return redirect(url_for("main.index"))
 
-
 @bp.route("/login", methods=["GET", "POST"])
 def login():
     if current_user.is_authenticated:
@@ -104,7 +100,7 @@ def login():
                 login_user(user, remember=login_form.remember_me.data)
                 user.last_login = datetime.utcnow()
                 db.session.commit()
-
+                flash("Успешный вход в аккаунт!", "success")  # Добавлено уведомление
                 next_page = request.args.get("next")
                 return redirect(next_page) if next_page and is_safe_url(next_page) \
                     else redirect(url_for("main.index"))
@@ -114,7 +110,6 @@ def login():
     return render_template("auth.html",
                            login_form=login_form,
                            register_form=register_form)
-
 
 @bp.route("/logout")
 @login_required

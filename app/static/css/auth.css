@@ -135,13 +135,13 @@ body {
   font-size: 1rem;
   transition: all 0.3s;
   box-sizing: border-box;
-  box-shadow: none; /* убираем тени */
+  box-shadow: none;
 }
 
 .form-group input:focus {
   outline: none;
   border-color: var(--primary);
-  box-shadow: none; /* убираем тень при фокусе */
+  box-shadow: none;
 }
 
 /* Контейнер для поля пароля с кнопкой */
@@ -245,11 +245,10 @@ body {
   border-radius: 4px;
   margin-top: 5px;
   overflow: hidden;
-  border: none; /* убираем границу */
-  box-shadow: none; /* убираем тень */
+  border: none;
+  box-shadow: none;
 }
 
-/* Убираем белую линию (границу и тень) под блоком пароля */
 #reg-password-container {
   border-bottom: none !important;
   box-shadow: none !important;
@@ -312,6 +311,8 @@ body {
   font-size: 0.8rem;
   transition: color 0.3s;
 }
+
+ස
 
 .rule-item.valid {
   color: var(--primary);
