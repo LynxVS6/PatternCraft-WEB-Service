@@ -5,7 +5,7 @@ from app.models.problem import Problem
 from app.models.solution import Solution
 from app.models.comment import Comment
 from app.models.discourse import (
-    DiscourseComment, DiscourseReply, DiscourseVote, DiscourseReplyVote
+    DiscourseComment, DiscourseVote
 )
 from app.models.problem_vote import ProblemVote
 from app.extensions import db
@@ -18,11 +18,10 @@ bp = Blueprint("problems", __name__)
 
 
 def handle_vote(vote_model, user_id, target_id, vote_type):
-    """Generic vote handling function for both comments and replies."""
+    """Generic vote handling function for comments only."""
     existing_vote = vote_model.query.filter_by(
         user_id=user_id,
-        comment_id=target_id if vote_model == DiscourseVote else None,
-        reply_id=target_id if vote_model == DiscourseReplyVote else None
+        comment_id=target_id
     ).first()
 
     if existing_vote:
@@ -33,14 +32,13 @@ def handle_vote(vote_model, user_id, target_id, vote_type):
     else:
         new_vote = vote_model(
             user_id=user_id,
-            comment_id=target_id if vote_model == DiscourseVote else None,
-            reply_id=target_id if vote_model == DiscourseReplyVote else None,
+            comment_id=target_id,
             vote_type=vote_type
         )
         db.session.add(new_vote)
 
     db.session.commit()
-    return jsonify({"vote_count": existing_vote.parent.vote_count})
+    return jsonify({"vote_count": existing_vote.comment.vote_count if existing_vote else 0})
 
 
 @bp.route("/problem/<int:problem_id>")
@@ -253,85 +251,6 @@ def delete_discourse_comment(comment_id):
     return jsonify({"message": "Comment deleted successfully"})
 
 
-@bp.route("/api/problems/discourse/comments/<int:comment_id>/reply", methods=["POST"])
-@login_required
-def add_discourse_reply(comment_id):
-    try:
-        data = request.get_json()
-        if not data:
-            return jsonify({"error": "No data provided"}), 400
-
-        reply_text = data.get("comment")
-        if not reply_text or not isinstance(reply_text, str):
-            return jsonify({"error": "Valid reply text is required"}), 400
-
-        parent_comment = DiscourseComment.query.get_or_404(comment_id)
-        if not isinstance(parent_comment, DiscourseComment):
-            return jsonify({"error": "Invalid parent comment"}), 400
-        
-        new_reply = DiscourseReply(
-            user_id=current_user.id,
-            comment_id=parent_comment.id,
-            comment=reply_text.strip()
-        )
-
-        parent_comment.replies.append(new_reply)
-        
-        db.session.add(new_reply)
-        db.session.commit()
-
-        return jsonify({
-            "success": True,
-            "id": new_reply.id,
-            "comment": new_reply.comment,
-            "username": current_user.username,
-            "vote_count": 0
-        })
-    except SQLAlchemyError as e:
-        db.session.rollback()
-        return jsonify({"error": f"Database error: {str(e)}"}), 500
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-
-@bp.route("/api/problems/discourse/replies/<int:reply_id>", methods=["PUT"])
-@login_required
-def edit_discourse_reply(reply_id):
-    reply = DiscourseReply.query.get_or_404(reply_id)
-
-    if reply.user_id != current_user.id:
-        return jsonify({"error": "Unauthorized"}), 403
-
-    data = request.get_json()
-    new_reply_text = data.get("comment")
-
-    if not new_reply_text:
-        return jsonify({"error": "Reply is required"}), 400
-
-    reply.comment = new_reply_text
-    db.session.commit()
-
-    return jsonify({
-        "id": reply.id,
-        "comment": reply.comment,
-        "username": reply.user.username,
-    })
-
-
-@bp.route("/api/problems/discourse/replies/<int:reply_id>", methods=["DELETE"])
-@login_required
-def delete_discourse_reply(reply_id):
-    reply = DiscourseReply.query.get_or_404(reply_id)
-
-    if reply.user_id != current_user.id:
-        return jsonify({"error": "Unauthorized"}), 403
-
-    db.session.delete(reply)
-    db.session.commit()
-
-    return jsonify({"message": "Reply deleted successfully"})
-
-
 @bp.route("/api/problems/discourse/comments/<int:comment_id>/vote", methods=["POST"])
 @login_required
 def vote_discourse_comment(comment_id):
@@ -343,19 +262,6 @@ def vote_discourse_comment(comment_id):
 
     DiscourseComment.query.get_or_404(comment_id)
     return handle_vote(DiscourseVote, current_user.id, comment_id, vote_type)
-
-
-@bp.route("/api/problems/discourse/replies/<int:reply_id>/vote", methods=["POST"])
-@login_required
-def vote_discourse_reply(reply_id):
-    data = request.get_json()
-    vote_type = data.get("vote_type")
-
-    if vote_type not in ["up", "down"]:
-        return jsonify({"error": "Invalid vote type"}), 400
-
-    DiscourseReply.query.get_or_404(reply_id)
-    return handle_vote(DiscourseReplyVote, current_user.id, reply_id, vote_type)
 
 
 @bp.route("/api/problems/<int:problem_id>/bookmark", methods=["POST"])

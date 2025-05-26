@@ -9,9 +9,7 @@ from app.models import (
     Bookmark,
     ProblemVote,
     DiscourseComment,
-    DiscourseReply,
     DiscourseVote,
-    DiscourseReplyVote,
 )
 
 
@@ -24,9 +22,7 @@ def cleanup_database():
 
         # Delete all related data first
         print("Deleting discourse data...")
-        DiscourseReplyVote.query.delete()
         DiscourseVote.query.delete()
-        DiscourseReply.query.delete()
         DiscourseComment.query.delete()
 
         print("Deleting problem-related data...")

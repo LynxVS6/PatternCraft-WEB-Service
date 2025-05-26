@@ -6,9 +6,7 @@ from .like import Like
 from .bookmark import Bookmark
 from .problem_vote import ProblemVote
 from .discourse import DiscourseComment
-from .discourse import DiscourseReply
 from .discourse import DiscourseVote
-from .discourse import DiscourseReplyVote
 
 __all__ = [
     'User',
@@ -16,10 +14,8 @@ __all__ = [
     'Solution',
     'Comment',
     'Like',
-    'Bookmark'
-    'ProblemVote'
-    'DiscourseComment'
-    'DiscourseReply'
+    'Bookmark',
+    'ProblemVote',
+    'DiscourseComment',
     'DiscourseVote'
-    'DiscourseReplyVote'
 ]
