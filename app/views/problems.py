@@ -3,7 +3,7 @@ from flask_login import login_required, current_user
 from app.models.bookmark import Bookmark
 from app.models.problem import Problem
 from app.models.solution import Solution
-from app.models.comment import Comment
+from app.models.comment import Comment, CommentVote
 from app.models.discourse import (
     DiscourseComment, DiscourseVote
 )
@@ -24,6 +24,11 @@ def handle_vote(vote_model, user_id, target_id, vote_type):
         comment_id=target_id
     ).first()
 
+    # Check both comment types
+    comment = DiscourseComment.query.get(target_id) or Comment.query.get(target_id)
+    if not comment:
+        return jsonify({"error": "Comment not found"}), 404
+
     if existing_vote:
         if existing_vote.vote_type == vote_type:
             db.session.delete(existing_vote)
@@ -38,7 +43,7 @@ def handle_vote(vote_model, user_id, target_id, vote_type):
         db.session.add(new_vote)
 
     db.session.commit()
-    return jsonify({"vote_count": existing_vote.comment.vote_count if existing_vote else 0})
+    return jsonify({"vote_count": comment.vote_count})
 
 
 @bp.route("/problem/<int:problem_id>")
@@ -50,6 +55,7 @@ def problem_card(problem_id):
         .first_or_404()
     )
     solutions = Solution.query.filter_by(problem_id=problem_id).all()
+    discourse_comments = DiscourseComment.query.filter_by(problem_id=problem_id).all()
 
     # Get the author's username
     author = User.query.get(problem.author_id)
@@ -73,7 +79,8 @@ def problem_card(problem_id):
     return render_template(
         "problem_card.html",
         problem=problem_data,
-        solutions=solutions
+        solutions=solutions,
+        discourse_comments=discourse_comments
     )
 
 
@@ -117,30 +124,29 @@ def toggle_solution_like(solution_id):
 
 @bp.route("/api/solutions/<int:solution_id>/comments", methods=["POST"])
 @login_required
-def add_comment(solution_id):
+def add_solution_comment(solution_id):
     data = request.get_json()
     comment_text = data.get("comment")
 
     if not comment_text:
         return jsonify({"error": "Comment is required"}), 400
 
-    Solution.query.get_or_404(solution_id)  # Verify solution exists
+    solution = Solution.query.get_or_404(solution_id)
     comment = Comment(
+        comment=comment_text,
         user_id=current_user.id,
         solution_id=solution_id,
-        comment=comment_text
     )
 
     db.session.add(comment)
     db.session.commit()
 
-    return jsonify(
-        {
-            "id": comment.id,
-            "comment": comment.comment,
-            "username": current_user.username,
-        }
-    )
+    return jsonify({
+        "id": comment.id,
+        "comment": comment.comment,
+        "username": current_user.username,
+        "user_id": current_user.id
+    })
 
 
 @bp.route("/api/comments/<int:comment_id>", methods=["PUT"])
@@ -172,22 +178,33 @@ def edit_comment(comment_id):
 @bp.route("/api/comments/<int:comment_id>", methods=["DELETE"])
 @login_required
 def delete_comment(comment_id):
-    comment = Comment.query.get_or_404(comment_id)
+    try:
+        comment = Comment.query.get_or_404(comment_id)
 
-    if comment.user_id != current_user.id:
-        return jsonify({"error": "Unauthorized"}), 403
+        if comment.user_id != current_user.id:
+            return jsonify({"error": "Unauthorized"}), 403
 
-    db.session.delete(comment)
-    db.session.commit()
+        # Delete associated votes first
+        CommentVote.query.filter_by(comment_id=comment_id).delete()
+        
+        # Then delete the comment
+        db.session.delete(comment)
+        db.session.commit()
 
-    return jsonify({"message": "Comment deleted successfully"})
+        return jsonify({"message": "Comment deleted successfully"})
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error deleting comment: {str(e)}")  # For debugging
+        return jsonify({"error": "Failed to delete comment"}), 500
 
 
 @bp.route("/api/problems/<int:problem_id>/discourse/comments", methods=["POST"])
 @login_required
 def add_discourse_comment(problem_id):
+    print(f"Adding discourse comment for problem {problem_id}")
     data = request.get_json()
     comment_text = data.get("comment")
+    print(f"Comment text: {comment_text}")
 
     if not comment_text:
         return jsonify({"error": "Comment is required"}), 400
@@ -201,14 +218,17 @@ def add_discourse_comment(problem_id):
 
     db.session.add(comment)
     db.session.commit()
+    print(f"Created comment with ID: {comment.id}")
 
-    return jsonify(
-        {
-            "id": comment.id,
-            "comment": comment.comment,
-            "username": current_user.username,
-        }
-    )
+    response_data = {
+        "id": comment.id,
+        "comment": comment.comment,
+        "username": current_user.username,
+        "user_id": current_user.id,
+        "vote_count": comment.vote_count
+    }
+    print(f"Sending response: {response_data}")
+    return jsonify(response_data)
 
 
 @bp.route("/api/problems/discourse/comments/<int:comment_id>", methods=["PUT"])
@@ -240,28 +260,43 @@ def edit_discourse_comment(comment_id):
 @bp.route("/api/problems/discourse/comments/<int:comment_id>", methods=["DELETE"])
 @login_required
 def delete_discourse_comment(comment_id):
-    comment = DiscourseComment.query.get_or_404(comment_id)
+    try:
+        comment = DiscourseComment.query.get_or_404(comment_id)
 
-    if comment.user_id != current_user.id:
-        return jsonify({"error": "Unauthorized"}), 403
+        if comment.user_id != current_user.id:
+            return jsonify({"error": "Unauthorized"}), 403
 
-    db.session.delete(comment)
-    db.session.commit()
+        # Delete associated votes first
+        DiscourseVote.query.filter_by(comment_id=comment_id).delete()
+        
+        # Then delete the comment
+        db.session.delete(comment)
+        db.session.commit()
 
-    return jsonify({"message": "Comment deleted successfully"})
+        return jsonify({"message": "Comment deleted successfully"})
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error deleting discourse comment: {str(e)}")  # For debugging
+        return jsonify({"error": "Failed to delete comment"}), 500
 
 
 @bp.route("/api/problems/discourse/comments/<int:comment_id>/vote", methods=["POST"])
 @login_required
 def vote_discourse_comment(comment_id):
+    print(f"Voting on discourse comment {comment_id}")
     data = request.get_json()
     vote_type = data.get("vote_type")
+    print(f"Vote type: {vote_type}")
 
     if vote_type not in ["up", "down"]:
         return jsonify({"error": "Invalid vote type"}), 400
 
-    DiscourseComment.query.get_or_404(comment_id)
-    return handle_vote(DiscourseVote, current_user.id, comment_id, vote_type)
+    comment = DiscourseComment.query.get_or_404(comment_id)
+    print(f"Found comment: {comment.id} by user {comment.user_id}")
+    
+    result = handle_vote(DiscourseVote, current_user.id, comment_id, vote_type)
+    print(f"Vote result: {result}")
+    return result
 
 
 @bp.route("/api/problems/<int:problem_id>/bookmark", methods=["POST"])
@@ -366,3 +401,16 @@ def vote_problem(problem_id):
     except Exception as e:
         print(f"Unexpected error: {str(e)}")  # For debugging
         return jsonify({"error": str(e)}), 500
+
+
+@bp.route("/api/comments/<int:comment_id>/vote", methods=["POST"])
+@login_required
+def vote_solution_comment(comment_id):
+    data = request.get_json()
+    vote_type = data.get("vote_type")
+
+    if vote_type not in ["up", "down"]:
+        return jsonify({"error": "Invalid vote type"}), 400
+
+    comment = Comment.query.get_or_404(comment_id)
+    return handle_vote(CommentVote, current_user.id, comment_id, vote_type)

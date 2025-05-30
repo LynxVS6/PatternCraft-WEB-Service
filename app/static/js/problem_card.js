@@ -21,16 +21,65 @@ document.addEventListener('DOMContentLoaded', () => {
         Prism.highlightAll();
     }
 
+    // Get problem ID from the card
+    const problemCard = document.querySelector('.problem-card');
+    const problemId = problemCard?.dataset.id;
+
+    if (problemId) {
+        // Restore bookmark state
+        const bookmarkBtn = document.querySelector(`.btn-bookmark[data-problem-id="${problemId}"]`);
+        if (bookmarkBtn) {
+            const icon = bookmarkBtn.querySelector('i');
+            const isBookmarked = icon.classList.contains('fas');
+            bookmarkBtn.classList.toggle('active', isBookmarked);
+        }
+
+        // Restore bookmark count
+        const bookmarkCount = sessionStorage.getItem(`bookmark_count_${problemId}`);
+        if (bookmarkCount !== null) {
+            const bookmarkCountElement = document.querySelector(`.bookmark-count[data-problem-id="${problemId}"]`);
+            if (bookmarkCountElement) {
+                bookmarkCountElement.textContent = bookmarkCount;
+            }
+        }
+
+        // Restore vote state
+        const storedVoteType = sessionStorage.getItem(`vote_${problemId}`);
+        const satisfactionPercent = sessionStorage.getItem(`satisfaction_${problemId}`);
+        const totalVotes = sessionStorage.getItem(`total_votes_${problemId}`);
+
+        if (storedVoteType) {
+            const voteButtons = document.querySelectorAll(`.btn-vote-problem[data-problem-id="${problemId}"]`);
+            voteButtons.forEach(button => {
+                const icon = button.querySelector('i');
+                if (button.dataset.voteType === storedVoteType) {
+                    button.classList.add('active');
+                    icon.classList.remove('far');
+                    icon.classList.add('fas');
+                } else {
+                    button.classList.remove('active');
+                    icon.classList.remove('fas');
+                    icon.classList.add('far');
+                }
+            });
+        }
+
+        if (satisfactionPercent !== null && totalVotes !== null) {
+            const statItem = document.querySelector('.stat-item:nth-child(2)');
+            if (statItem) {
+                const voteText = statItem.querySelector('span');
+                if (voteText) {
+                    voteText.textContent = `${satisfactionPercent}% ${ _('stats.votes') } ${totalVotes}`;
+                }
+            }
+        }
+    }
+
     // Initialize bookmark buttons
     const bookmarkButtons = document.querySelectorAll('.btn-bookmark');
     bookmarkButtons.forEach(button => {
         const problemId = button.dataset.problemId;
         if (problemId) {
-            // Set initial state based on the icon class
-            const icon = button.querySelector('i');
-            if (icon.classList.contains('fas')) {
-                button.classList.add('active');
-            }
             button.addEventListener('click', () => toggleBookmark(problemId));
         }
     });
@@ -52,33 +101,62 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById(`${view}-section`).style.display = 'block';
         });
     });
+});
 
-    // Restore vote states
-    const voteButtons = document.querySelectorAll('.btn-vote-problem');
-    voteButtons.forEach(button => {
-        const problemId = button.dataset.problemId;
-        const voteType = button.dataset.voteType;
-        const storedVoteType = sessionStorage.getItem(`vote_${problemId}`);
-        
-        if (storedVoteType === voteType) {
-            button.classList.add('active');
-            const icon = button.querySelector('i');
-            icon.classList.remove('far');
-            icon.classList.add('fas');
-        }
-    });
+// Add page show event listener to handle back/forward navigation
+window.addEventListener('pageshow', (event) => {
+    // Check if the page is being shown from the back/forward cache
+    if (event.persisted) {
+        const problemCard = document.querySelector('.problem-card');
+        const problemId = problemCard?.dataset.id;
 
-    // Restore satisfaction and total votes
-    const statItem = document.querySelector('.stat-item:nth-child(2)');
-    if (statItem) {
-        const problemId = document.querySelector('.problem-card').dataset.id;
-        const storedSatisfaction = sessionStorage.getItem(`satisfaction_${problemId}`);
-        const storedTotalVotes = sessionStorage.getItem(`total_votes_${problemId}`);
-        
-        if (storedSatisfaction && storedTotalVotes) {
-            const voteText = statItem.querySelector('span');
-            if (voteText) {
-                voteText.textContent = `${storedSatisfaction}% votes ${storedTotalVotes}`;
+        if (problemId) {
+            // Restore bookmark state
+            const bookmarkBtn = document.querySelector(`.btn-bookmark[data-problem-id="${problemId}"]`);
+            if (bookmarkBtn) {
+                const icon = bookmarkBtn.querySelector('i');
+                const isBookmarked = icon.classList.contains('fas');
+                bookmarkBtn.classList.toggle('active', isBookmarked);
+            }
+
+            // Restore bookmark count
+            const bookmarkCount = sessionStorage.getItem(`bookmark_count_${problemId}`);
+            if (bookmarkCount !== null) {
+                const bookmarkCountElement = document.querySelector(`.bookmark-count[data-problem-id="${problemId}"]`);
+                if (bookmarkCountElement) {
+                    bookmarkCountElement.textContent = bookmarkCount;
+                }
+            }
+
+            // Restore vote state
+            const storedVoteType = sessionStorage.getItem(`vote_${problemId}`);
+            const satisfactionPercent = sessionStorage.getItem(`satisfaction_${problemId}`);
+            const totalVotes = sessionStorage.getItem(`total_votes_${problemId}`);
+
+            if (storedVoteType) {
+                const voteButtons = document.querySelectorAll(`.btn-vote-problem[data-problem-id="${problemId}"]`);
+                voteButtons.forEach(button => {
+                    const icon = button.querySelector('i');
+                    if (button.dataset.voteType === storedVoteType) {
+                        button.classList.add('active');
+                        icon.classList.remove('far');
+                        icon.classList.add('fas');
+                    } else {
+                        button.classList.remove('active');
+                        icon.classList.remove('fas');
+                        icon.classList.add('far');
+                    }
+                });
+            }
+
+            if (satisfactionPercent !== null && totalVotes !== null) {
+                const statItem = document.querySelector('.stat-item:nth-child(2)');
+                if (statItem) {
+                    const voteText = statItem.querySelector('span');
+                    if (voteText) {
+                        voteText.textContent = `${satisfactionPercent}% ${ _('stats.votes') } ${totalVotes}`;
+                    }
+                }
             }
         }
     }
@@ -114,7 +192,11 @@ const showComments = (solutionId) => {
 };
 
 // Shared comment handling functions
-const createCommentElement = (data, type) => {
+const createCommentElement = (data, type, parentId) => {
+    console.log('Creating comment element with data:', data);
+    console.log('Type:', type);
+    console.log('Parent ID:', parentId);
+    
     const commentDiv = document.createElement('div');
     commentDiv.className = 'comment';
     commentDiv.id = `${type}-comment-${data.id}`;
@@ -122,11 +204,21 @@ const createCommentElement = (data, type) => {
     const isDiscourse = type === 'discourse';
     const editFunction = isDiscourse ? 'startEditDiscourseComment' : 'startEditComment';
     const deleteFunction = isDiscourse ? 'deleteDiscourseComment' : 'deleteComment';
-    const voteFunction = isDiscourse ? 'voteComment' : 'voteSolutionComment';
+    const saveFunction = isDiscourse ? 'saveEditDiscourseComment' : 'saveEditComment';
+    const cancelFunction = isDiscourse ? 'cancelEditDiscourseComment' : 'cancelEditComment';
+    const voteFunction = 'voteComment';
+    
+    // Get current user ID from the page
+    const currentUserId = document.querySelector('meta[name="user-id"]')?.content;
+    console.log('Current user ID:', currentUserId);
+    console.log('Comment user ID:', data.user_id);
+    const isCurrentUser = currentUserId && data.user_id && parseInt(currentUserId) === data.user_id;
+    console.log('Is current user:', isCurrentUser);
     
     commentDiv.innerHTML = `
         <div class="comment-header">
             <strong>${data.username}</strong>
+            ${isCurrentUser ? `
             <div class="comment-actions">
                 <button class="btn btn-sm btn-edit" onclick="${editFunction}(${data.id})">
                     <i class="fas fa-edit"></i>
@@ -135,15 +227,21 @@ const createCommentElement = (data, type) => {
                     <i class="fas fa-trash"></i>
                 </button>
             </div>
+            ` : ''}
         </div>
         <p class="comment-text">${data.comment}</p>
+        <div class="comment-edit-form" style="display: none;">
+            <textarea class="form-control">${data.comment}</textarea>
+            <div class="mt-2">
+                <button class="btn btn-sm btn-primary" onclick="${saveFunction}(${data.id})">Save</button>
+                <button class="btn btn-sm btn-secondary" onclick="${cancelFunction}(${data.id})">Cancel</button>
+            </div>
+        </div>
         <div class="comment-actions">
-            ${isDiscourse ? `
-                <button class="btn btn-sm btn-reply" onclick="mentionUser('${data.username}')">
-                    <i class="fas fa-reply"></i>
-                    Reply
-                </button>
-            ` : ''}
+            <button class="btn btn-sm btn-reply" onclick="mentionUser('${data.username}', '${type}', ${parentId})">
+                <i class="fas fa-reply"></i>
+                Reply
+            </button>
             <div class="vote-buttons">
                 <button class="btn btn-sm btn-vote" onclick="${voteFunction}(${data.id}, 'up')">
                     <i class="fas fa-arrow-up"></i>
@@ -154,18 +252,13 @@ const createCommentElement = (data, type) => {
                 </button>
             </div>
         </div>
-        <div class="comment-edit-form" style="display: none;">
-            <textarea class="form-control">${data.comment}</textarea>
-            <div class="mt-2">
-                <button class="btn btn-sm btn-primary" onclick="saveEdit${type.charAt(0).toUpperCase() + type.slice(1)}Comment(${data.id})">Save</button>
-                <button class="btn btn-sm btn-secondary" onclick="cancelEdit${type.charAt(0).toUpperCase() + type.slice(1)}Comment(${data.id})">Cancel</button>
-            </div>
-        </div>
     `;
+    console.log('Created comment element:', commentDiv);
     return commentDiv;
 };
 
 const handleCommentSubmit = async (event, id, type) => {
+    console.log('Handling comment submit:', { event, id, type });
     event.preventDefault();
     const form = event.target;
     const textarea = form.querySelector('textarea');
@@ -176,31 +269,43 @@ const handleCommentSubmit = async (event, id, type) => {
             ? `/api/problems/${id}/discourse/comments`
             : `/api/solutions/${id}/comments`;
             
+        console.log('Sending request to:', endpoint);
+        console.log('Request data:', { comment });
+        
         const response = await fetch(endpoint, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ comment })
         });
         
+        console.log('Response status:', response.status);
+        console.log('Response ok:', response.ok);
+        
         if (!response.ok) {
+            const errorText = await response.text();
+            console.error('Error response:', errorText);
             throw new Error('Failed to submit comment');
         }
         
         const data = await response.json();
+        console.log('Response data:', data);
+        
         const commentsList = form.previousElementSibling;
-        const newComment = createCommentElement(data, type);
+        console.log('Comments list element:', commentsList);
+        
+        const newComment = createCommentElement(data, type, id);
         commentsList.appendChild(newComment);
         textarea.value = '';
         
-        // Update comment count if needed
-        if (type !== 'discourse') {
-            document.querySelectorAll(`.btn-comment[onclick*="${id}"]`).forEach(button => {
-                const countSpan = button.querySelector('.comments-count');
-                countSpan.textContent = parseInt(countSpan.textContent) + 1;
-            });
+        // Update comment count
+        const commentButton = document.querySelector(`.btn-comment[onclick*="${id}"]`);
+        if (commentButton) {
+            const countSpan = commentButton.querySelector('.comments-count');
+            countSpan.textContent = parseInt(countSpan.textContent) + 1;
         }
     } catch (error) {
         console.error(`Error submitting ${type} comment:`, error);
+        console.error('Error stack:', error.stack);
         alert('Failed to submit comment. Please try again.');
     }
 };
@@ -212,9 +317,24 @@ const submitDiscourseComment = (event, problemId) => handleCommentSubmit(event, 
 // Shared edit/delete functionality
 const handleEdit = (commentId, type) => {
     const commentDiv = document.getElementById(`${type}-comment-${commentId}`);
+    if (!commentDiv) {
+        console.error(`Comment element not found: ${type}-comment-${commentId}`);
+        return;
+    }
+
     const commentText = commentDiv.querySelector('.comment-text');
     const editForm = commentDiv.querySelector('.comment-edit-form');
+    
+    if (!commentText || !editForm) {
+        console.error('Required elements not found in comment');
+        return;
+    }
+
     const textarea = editForm.querySelector('textarea');
+    if (!textarea) {
+        console.error('Textarea not found in edit form');
+        return;
+    }
     
     commentText.style.display = 'none';
     editForm.style.display = 'block';
@@ -224,8 +344,18 @@ const handleEdit = (commentId, type) => {
 
 const handleCancelEdit = (commentId, type) => {
     const commentDiv = document.getElementById(`${type}-comment-${commentId}`);
+    if (!commentDiv) {
+        console.error(`Comment element not found: ${type}-comment-${commentId}`);
+        return;
+    }
+
     const commentText = commentDiv.querySelector('.comment-text');
     const editForm = commentDiv.querySelector('.comment-edit-form');
+    
+    if (!commentText || !editForm) {
+        console.error('Required elements not found in comment');
+        return;
+    }
     
     commentText.style.display = 'block';
     editForm.style.display = 'none';
@@ -233,15 +363,26 @@ const handleCancelEdit = (commentId, type) => {
 
 const handleSaveEdit = async (commentId, type) => {
     const commentDiv = document.getElementById(`${type}-comment-${commentId}`);
+    if (!commentDiv) {
+        console.error(`Comment element not found: ${type}-comment-${commentId}`);
+        return;
+    }
+
     const commentText = commentDiv.querySelector('.comment-text');
     const editForm = commentDiv.querySelector('.comment-edit-form');
-    const textarea = editForm.querySelector('textarea');
+    const textarea = editForm?.querySelector('textarea');
+    
+    if (!commentText || !editForm || !textarea) {
+        console.error('Required elements not found in comment');
+        return;
+    }
     
     try {
-        const endpoint = type === 'discourse' 
+        const isDiscourse = type === 'discourse';
+        const endpoint = isDiscourse 
             ? `/api/problems/discourse/comments/${commentId}`
             : `/api/comments/${commentId}`;
-            
+
         const response = await fetch(endpoint, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
@@ -266,10 +407,11 @@ const handleDelete = async (commentId, type) => {
     if (!confirm('Are you sure you want to delete this comment?')) return;
     
     try {
-        const endpoint = type === 'discourse' 
+        const isDiscourse = type === 'discourse';
+        const endpoint = isDiscourse 
             ? `/api/problems/discourse/comments/${commentId}`
             : `/api/comments/${commentId}`;
-            
+
         const response = await fetch(endpoint, {
             method: 'DELETE',
             headers: { 'Content-Type': 'application/json' }
@@ -280,19 +422,27 @@ const handleDelete = async (commentId, type) => {
         }
         
         const commentDiv = document.getElementById(`${type}-comment-${commentId}`);
-        commentDiv.remove();
-        
-        // Update comment count if needed
-        if (type !== 'discourse') {
-            const solutionId = commentDiv.closest('.solution-card')
-                .querySelector('.btn-comment')
-                .getAttribute('onclick')
-                .match(/\d+/)[0];
-            
-            document.querySelectorAll(`.btn-comment[onclick*="${solutionId}"]`).forEach(button => {
-                const countSpan = button.querySelector('.comments-count');
-                countSpan.textContent = parseInt(countSpan.textContent) - 1;
-            });
+        if (commentDiv) {
+            // Update the comment count
+            const solutionCard = commentDiv.closest('.solution-card');
+            if (solutionCard) {
+                const commentButton = solutionCard.querySelector('.btn-comment');
+                if (commentButton) {
+                    const solutionId = commentButton.getAttribute('onclick')?.match(/\d+/)?.[0];
+                    if (solutionId) {
+                        document.querySelectorAll(`.btn-comment[onclick*="${solutionId}"]`).forEach(button => {
+                            const countSpan = button.querySelector('.comments-count');
+                            if (countSpan) {
+                                const currentCount = parseInt(countSpan.textContent);
+                                if (!isNaN(currentCount)) {
+                                    countSpan.textContent = currentCount - 1;
+                                }
+                            }
+                        });
+                    }
+                }
+            }
+            commentDiv.remove();
         }
     } catch (error) {
         console.error(`Error deleting ${type} comment:`, error);
@@ -313,9 +463,19 @@ const saveEditDiscourseComment = (commentId) => handleSaveEdit(commentId, 'disco
 const deleteComment = (commentId) => handleDelete(commentId, 'solution');
 const deleteDiscourseComment = (commentId) => handleDelete(commentId, 'discourse');
 
-// Remove all reply-related functions and add new mention function
-const mentionUser = (username) => {
-    const textarea = document.getElementById('discourse-comment-textarea');
+// Updated mention function to handle both solution and discourse comments
+const mentionUser = (username, type, id) => {
+    if (!type || !id) {
+        console.error('Missing required parameters:', { type, id });
+        return;
+    }
+
+    const textarea = document.getElementById(`${type}-${id}-comment-textarea`);
+    if (!textarea) {
+        console.error(`Textarea not found for target: ${type}-${id}`);
+        return;
+    }
+    
     const mention = `@${username} `;
     
     // If there's already text, add a newline before the mention
@@ -333,48 +493,66 @@ const mentionUser = (username) => {
     textarea.scrollIntoView({ behavior: 'smooth', block: 'center' });
 };
 
-// Shared voting functionality
-const handleVote = async (id, voteType, type) => {
-    console.log('handleVote called with id:', id, 'voteType:', voteType, 'type:', type); // Test log
+// Unified voting functionality
+async function voteComment(commentId, voteType) {
+    console.log("Voting on comment:", { commentId, voteType });
+    
+    // First determine if this is a discourse comment by checking the comment div
+    const discourseCommentDiv = document.getElementById(`discourse-comment-${commentId}`);
+    const solutionCommentDiv = document.getElementById(`solution-comment-${commentId}`);
+    
+    const commentDiv = discourseCommentDiv || solutionCommentDiv;
+    if (!commentDiv) {
+        console.error("Comment div not found");
+        return;
+    }
+
+    const isDiscourseComment = !!discourseCommentDiv;
+    console.log("Is discourse comment:", isDiscourseComment);
+
+    const endpoint = isDiscourseComment
+        ? `/api/problems/discourse/comments/${commentId}/vote`
+        : `/api/comments/${commentId}/vote`;
+
+    console.log("Sending request to:", endpoint);
+    console.log("Request data:", { vote_type: voteType });
+
     try {
-        const endpoint = type === 'discourse' 
-            ? `/api/problems/discourse/comments/${id}/vote`
-            : `/api/solutions/comments/${id}/vote`;
-            
         const response = await fetch(endpoint, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ vote_type: voteType })
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ vote_type: voteType }),
         });
-        
+
+        console.log("Response status:", response.status);
+        console.log("Response ok:", response.ok);
+
         if (!response.ok) {
-            throw new Error('Failed to submit vote');
+            const errorText = await response.text();
+            console.error("Error response:", errorText);
+            throw new Error("Failed to vote on comment");
         }
-        
+
         const data = await response.json();
-        const commentDiv = document.getElementById(`${type}-comment-${id}`);
-        if (commentDiv) {
-            const voteCount = commentDiv.querySelector('.vote-count');
-            voteCount.textContent = data.vote_count;
-            
-            // Add animation
-            voteCount.style.transform = 'scale(1.2)';
-            voteCount.style.color = voteType === 'up' ? '#4CAF50' : '#f44336';
+        console.log("Response data:", data);
+
+        const voteCountElement = commentDiv.querySelector(".vote-count");
+        if (voteCountElement) {
+            console.log("Found vote count element:", voteCountElement);
+            voteCountElement.textContent = data.vote_count;
+            voteCountElement.style.transform = "scale(1.2)";
+            voteCountElement.style.color = voteType === "up" ? "#4CAF50" : "#f44336";
             setTimeout(() => {
-                voteCount.style.transform = 'scale(1)';
-                voteCount.style.color = '';
-            }, 300);
+                voteCountElement.style.transform = "scale(1)";
+            }, 200);
         }
     } catch (error) {
-        console.log('Test message111');
-        console.error(`Error voting on ${type} comment:`, error);
-        alert('Failed to submit vote. Please try again.');
+        console.error("Error voting on comment:", error);
+        console.error("Error stack:", error.stack);
     }
-};
-
-// Update existing vote functions to use shared functionality
-const voteComment = (commentId, voteType) => handleVote(commentId, voteType, 'discourse');
-const voteSolutionComment = (commentId, voteType) => handleVote(commentId, voteType, 'solution');
+}
 
 // Bookmark functionality
 async function toggleBookmark(problemId) {
@@ -517,50 +695,18 @@ async function startTraining(problemId) {
 // Problem voting functionality
 async function voteProblem(problemId, voteType) {
     console.log('voteProblem called with problemId:', problemId, 'voteType:', voteType);
-    
-    // Get all vote buttons for this problem
+
     const voteButtons = document.querySelectorAll(`.btn-vote-problem[data-problem-id="${problemId}"]`);
     const clickedButton = document.querySelector(`.btn-vote-problem[data-problem-id="${problemId}"][data-vote-type="${voteType}"]`);
-    
-    if (!clickedButton) {
-        console.error('Vote button not found');
+
+    if (!clickedButton || clickedButton.disabled) {
         return;
     }
 
     // Disable all vote buttons temporarily
-    if (clickedButton.disabled) {
-        console.log('Button is disabled, returning');
-        return;
-    }
     voteButtons.forEach(btn => btn.disabled = true);
 
     try {
-        // Optimistically update UI
-        voteButtons.forEach(btn => {
-            const icon = btn.querySelector('i');
-            const btnVoteType = btn.dataset.voteType;
-            
-            if (btnVoteType === voteType) {
-                if (btn.classList.contains('active')) {
-                    // If already active, remove vote
-                    btn.classList.remove('active');
-                    icon.classList.remove('fas');
-                    icon.classList.add('far');
-                } else {
-                    // If not active, add vote
-                    btn.classList.add('active');
-                    icon.classList.remove('far');
-                    icon.classList.add('fas');
-                }
-            } else {
-                // Remove vote from other buttons
-                btn.classList.remove('active');
-                icon.classList.remove('fas');
-                icon.classList.add('far');
-            }
-        });
-
-        console.log('Sending request to /api/problems/${problemId}/vote');
         const response = await fetch(`/api/problems/${problemId}/vote`, {
             method: 'POST',
             headers: {
@@ -569,9 +715,6 @@ async function voteProblem(problemId, voteType) {
             credentials: 'same-origin',
             body: JSON.stringify({ vote_type: voteType })
         });
-
-        console.log('Response status:', response.status);
-        console.log('Response ok:', response.ok);
 
         if (!response.ok) {
             throw new Error('Failed to update vote');
@@ -601,7 +744,7 @@ async function voteProblem(problemId, voteType) {
         if (statItem) {
             const voteText = statItem.querySelector('span');
             if (voteText) {
-                voteText.textContent = `${data.satisfaction_percent}% votes ${data.total_votes}`;
+                voteText.textContent = `${data.satisfaction_percent}% ${_('stats.votes')} ${data.total_votes}`;
             }
         }
 
@@ -617,7 +760,7 @@ async function voteProblem(problemId, voteType) {
             voteButtons.forEach(btn => btn.disabled = false);
         }, 200);
 
-        // Dispatch custom event
+        // Dispatch custom event for vote updates
         document.dispatchEvent(new CustomEvent('voteUpdated', {
             detail: {
                 problemId: problemId,
@@ -629,39 +772,7 @@ async function voteProblem(problemId, voteType) {
 
     } catch (error) {
         console.error('Error in voteProblem:', error);
-        console.error('Error stack:', error.stack);
-        
-        // Revert optimistic UI update
-        voteButtons.forEach(btn => {
-            const icon = btn.querySelector('i');
-            const btnVoteType = btn.dataset.voteType;
-            const storedVoteType = sessionStorage.getItem(`vote_${problemId}`);
-            
-            if (btnVoteType === storedVoteType) {
-                btn.classList.add('active');
-                icon.classList.remove('far');
-                icon.classList.add('fas');
-            } else {
-                btn.classList.remove('active');
-                icon.classList.remove('fas');
-                icon.classList.add('far');
-            }
-        });
-
-        // Revert satisfaction and total votes
-        const statItem = document.querySelector('.stat-item:nth-child(2)');
-        if (statItem) {
-            const voteText = statItem.querySelector('span');
-            if (voteText) {
-                const storedSatisfaction = sessionStorage.getItem(`satisfaction_${problemId}`);
-                const storedTotalVotes = sessionStorage.getItem(`total_votes_${problemId}`);
-                if (storedSatisfaction && storedTotalVotes) {
-                    voteText.textContent = `${storedSatisfaction}% votes ${storedTotalVotes}`;
-                }
-            }
-        }
-        
-        alert('Failed to submit vote. Please try again.');
+        alert('Failed to update vote. Please try again.');
         voteButtons.forEach(btn => btn.disabled = false);
     }
 }

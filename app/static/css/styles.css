@@ -90,6 +90,11 @@ body {
   color: inherit;
 }
 
+.logo-link:focus-visible {
+    outline: none;
+    outline-offset: 0px;
+}
+
 
 @keyframes logoGlow {
     0% {
@@ -622,7 +627,6 @@ h3 {
 .alert {
   position: relative;
   max-width: 480px;
-  width: 100%;
   margin: 20px auto;
   padding: 15px 50px 15px 50px;
   border-radius: 12px;
@@ -636,8 +640,15 @@ h3 {
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
   display: flex;
   align-items: center;
-  animation: slideIn 0.5s ease-out, fadeOut 0.5s ease-in 7s forwards;
-  z-index: 1000; /* Убедимся, что уведомления поверх других элементов */
+  z-index: 1000;
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+}
+
+.alert.hiding {
+  opacity: 0;
+  transform: translateY(-30px);
 }
 
 .alert-success {
@@ -699,24 +710,6 @@ h3 {
 
 .alert-close:hover {
   color: var(--text-secondary);
-}
-
-@keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateY(-30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes fadeOut {
-  to {
-    opacity: 0;
-    transform: translateY(-30px);
-  }
 }
 
 /* Адаптивность */

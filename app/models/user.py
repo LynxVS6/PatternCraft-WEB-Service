@@ -22,6 +22,7 @@ class User(UserMixin, db.Model):
     likes = db.relationship('Like', back_populates='user')
     discourse_comments = db.relationship('DiscourseComment', back_populates='user')
     discourse_votes = db.relationship('DiscourseVote', back_populates='user')
+    comment_votes = db.relationship('CommentVote', back_populates='user')
     bookmarks = db.relationship('Bookmark', back_populates='user')
     problem_votes = db.relationship('ProblemVote', back_populates='user')
     authored_problems = db.relationship('Problem', back_populates='author')

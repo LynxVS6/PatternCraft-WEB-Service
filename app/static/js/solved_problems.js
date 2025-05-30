@@ -388,12 +388,27 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeCustomSelects();
     initializeSearch();
     
-    // Initialize bookmark counts from sessionStorage
-    document.querySelectorAll('.bookmark-count').forEach(countElement => {
-        const problemId = countElement.dataset.problemId;
-        const storedCount = sessionStorage.getItem(`bookmark_count_${problemId}`);
-        if (storedCount !== null) {
-            countElement.textContent = storedCount;
+    // Initialize all states from sessionStorage
+    document.querySelectorAll('.problem-card').forEach(card => {
+        const problemId = card.dataset.id;
+        
+        // Restore bookmark count
+        const bookmarkCount = sessionStorage.getItem(`bookmark_count_${problemId}`);
+        if (bookmarkCount !== null) {
+            const bookmarkCountElement = card.querySelector(`.bookmark-count[data-problem-id="${problemId}"]`);
+            if (bookmarkCountElement) {
+                bookmarkCountElement.textContent = bookmarkCount;
+            }
+        }
+        
+        // Restore vote state
+        const satisfactionPercent = sessionStorage.getItem(`satisfaction_${problemId}`);
+        const totalVotes = sessionStorage.getItem(`total_votes_${problemId}`);
+        if (satisfactionPercent !== null && totalVotes !== null) {
+            const voteElement = card.querySelector('.stat-item:nth-child(2) span');
+            if (voteElement) {
+                voteElement.textContent = `${satisfactionPercent}% votes ${totalVotes}`;
+            }
         }
     });
     
@@ -416,6 +431,36 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
+// Add page show event listener to handle back/forward navigation
+window.addEventListener('pageshow', (event) => {
+    // Check if the page is being shown from the back/forward cache
+    if (event.persisted) {
+        // Re-initialize all states from sessionStorage
+        document.querySelectorAll('.problem-card').forEach(card => {
+            const problemId = card.dataset.id;
+            
+            // Restore bookmark count
+            const bookmarkCount = sessionStorage.getItem(`bookmark_count_${problemId}`);
+            if (bookmarkCount !== null) {
+                const bookmarkCountElement = card.querySelector(`.bookmark-count[data-problem-id="${problemId}"]`);
+                if (bookmarkCountElement) {
+                    bookmarkCountElement.textContent = bookmarkCount;
+                }
+            }
+            
+            // Restore vote state
+            const satisfactionPercent = sessionStorage.getItem(`satisfaction_${problemId}`);
+            const totalVotes = sessionStorage.getItem(`total_votes_${problemId}`);
+            if (satisfactionPercent !== null && totalVotes !== null) {
+                const voteElement = card.querySelector('.stat-item:nth-child(2) span');
+                if (voteElement) {
+                    voteElement.textContent = `${satisfactionPercent}% votes ${totalVotes}`;
+                }
+            }
+        });
+    }
+});
+
 // Listen for bookmark updates from problem card
 document.addEventListener('bookmarkUpdated', (event) => {
     const { problemId, bookmarkCount } = event.detail;
@@ -423,21 +468,40 @@ document.addEventListener('bookmarkUpdated', (event) => {
     // Store the updated count in sessionStorage
     sessionStorage.setItem(`bookmark_count_${problemId}`, bookmarkCount);
     
-    // Find the problem card in solved problems view
-    const problemCard = document.querySelector(`.problem-card[data-id="${problemId}"]`);
-    if (problemCard) {
-        // Update the bookmark count
-        const bookmarkCountElement = problemCard.querySelector('.stat-item i.fa-star').nextElementSibling;
-        if (bookmarkCountElement) {
-            bookmarkCountElement.textContent = bookmarkCount;
-            
-            // Add a subtle animation
-            bookmarkCountElement.style.transform = 'scale(1.2)';
-            bookmarkCountElement.style.color = '#6a34c7';
-            setTimeout(() => {
-                bookmarkCountElement.style.transform = 'scale(1)';
-                bookmarkCountElement.style.color = '';
-            }, 300);
-        }
-    }
+    // Find all bookmark count elements for this problem
+    document.querySelectorAll(`.bookmark-count[data-problem-id="${problemId}"]`).forEach(countElement => {
+        // Update the count
+        countElement.textContent = bookmarkCount;
+        
+        // Add animation
+        countElement.style.transform = 'scale(1.2)';
+        countElement.style.color = '#6a34c7';
+        setTimeout(() => {
+            countElement.style.transform = 'scale(1)';
+            countElement.style.color = '';
+        }, 300);
+    });
+});
+
+// Listen for vote updates
+document.addEventListener('voteUpdated', (event) => {
+    const { problemId, satisfactionPercent, totalVotes } = event.detail;
+    
+    // Store the updated values in sessionStorage
+    sessionStorage.setItem(`satisfaction_${problemId}`, satisfactionPercent);
+    sessionStorage.setItem(`total_votes_${problemId}`, totalVotes);
+    
+    // Find all vote count elements for this problem
+    document.querySelectorAll(`.problem-card[data-id="${problemId}"] .stat-item:nth-child(2) span`).forEach(voteElement => {
+        // Update the vote count using the translation key
+        voteElement.textContent = `${satisfactionPercent}% ${_('solved_problems_votes')} ${totalVotes}`;
+        
+        // Add animation
+        voteElement.style.transform = 'scale(1.2)';
+        voteElement.style.color = '#6a34c7';
+        setTimeout(() => {
+            voteElement.style.transform = 'scale(1)';
+            voteElement.style.color = '';
+        }, 300);
+    });
 }); 

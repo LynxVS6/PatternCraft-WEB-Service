@@ -61,12 +61,23 @@
 
     {{ render_pagination(pagination, 'solved_problems.solved_problems', max, min) }}
 </div>
+
+<script>
+    // Define translations
+    const translations = {
+        'stats.votes': '{{ _("stats.votes") }}',
+        'solved_problems_votes': '{{ _("solved_problems_votes") }}'
+    };
+    
+    // Define translation function
+    function _(key) {
+        return translations[key] || key;
+    }
+</script>
+
+<script src="{{ url_for('static', filename='js/solved_problems.js') }}"></script>
 {% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/solved_problems.css') }}">
-{% endblock %}
-
-{% block scripts %}
-<script src="{{ url_for('static', filename='js/solved_problems.js') }}"></script>
 {% endblock %}

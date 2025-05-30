@@ -11,13 +11,12 @@ from flask_login import current_user, login_required, login_user, logout_user
 
 bp = Blueprint("auth", __name__)
 
+
 def is_safe_url(target: str) -> bool:
     ref_url = urlparse(request.host_url)
     test_url = urlparse(urljoin(request.host_url, target))
-    return (
-        test_url.scheme in ("http", "https")
-        and ref_url.netloc == test_url.netloc
-    )
+    return test_url.scheme in ("http", "https") and ref_url.netloc == test_url.netloc
+
 
 @bp.route("/register", methods=["GET", "POST"])
 def register():
@@ -35,7 +34,7 @@ def register():
         else:
             user = User(
                 username=register_form.username.data.strip(),
-                email=register_form.email.data.lower().strip()
+                email=register_form.email.data.lower().strip(),
             )
             user.set_password(register_form.password.data)
             db.session.add(user)
@@ -45,13 +44,18 @@ def register():
             flash("Проверьте почту и подтвердите регистрацию", "info")
             return redirect(url_for("auth.login"))
 
-    return render_template("auth.html",
-                           login_form=login_form,
-                           register_form=register_form)
+    return render_template(
+        "auth.html", login_form=login_form, register_form=register_form
+    )
+
 
 @bp.route("/confirm-email/<token>")
 def confirm_email(token):
-    if current_user.is_authenticated and current_user.email_confirmed and not current_user.new_email:
+    if (
+        current_user.is_authenticated
+        and current_user.email_confirmed
+        and not current_user.new_email
+    ):
         return redirect(url_for("main.index"))
 
     email = confirm_token(token)
@@ -78,6 +82,7 @@ def confirm_email(token):
     login_user(user, remember=True)
     return redirect(url_for("main.index"))
 
+
 @bp.route("/login", methods=["GET", "POST"])
 def login():
     if current_user.is_authenticated:
@@ -88,8 +93,10 @@ def login():
 
     if request.method == "POST" and login_form.validate_on_submit():
         user = User.query.filter(
-            or_(User.username == login_form.identity.data,
-                User.email == login_form.identity.data.lower())
+            or_(
+                User.username == login_form.identity.data,
+                User.email == login_form.identity.data.lower(),
+            )
         ).first()
 
         if user and user.check_password(login_form.password.data):
@@ -102,14 +109,18 @@ def login():
                 db.session.commit()
                 flash("Успешный вход в аккаунт!", "success")  # Добавлено уведомление
                 next_page = request.args.get("next")
-                return redirect(next_page) if next_page and is_safe_url(next_page) \
+                return (
+                    redirect(next_page)
+                    if next_page and is_safe_url(next_page)
                     else redirect(url_for("main.index"))
+                )
         else:
             flash("Неверный логин/email или пароль", "error")
 
-    return render_template("auth.html",
-                           login_form=login_form,
-                           register_form=register_form)
+    return render_template(
+        "auth.html", login_form=login_form, register_form=register_form
+    )
+
 
 @bp.route("/logout")
 @login_required

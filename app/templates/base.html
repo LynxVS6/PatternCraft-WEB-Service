@@ -42,7 +42,7 @@
     {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
         {% for category, message in messages %}
-          <div class="alert alert-{{ category }}">
+          <div class="alert alert-{{ category }} auto-hide">
             <span class="alert-message">{{ message }}</span>
             <button class="alert-close" aria-label="Закрыть уведомление">
               <i class="fas fa-times"></i>
@@ -51,7 +51,6 @@
         {% endfor %}
       {% endif %}
     {% endwith %}
-    
     {% block content %}{% endblock %}
   </main>
 
@@ -90,6 +89,7 @@
 
   {% block scripts %}
   <script>
+    // Mobile menu code
     document.querySelector('.mobile-menu-btn').addEventListener('click', function() {
       document.querySelector('.main-nav').classList.toggle('active');
       document.body.classList.toggle('nav-open');
@@ -102,12 +102,23 @@
       });
     });
 
-    // Закрытие уведомлений
-    document.querySelectorAll('.alert-close').forEach(button => {
-      button.addEventListener('click', () => {
-        const alert = button.closest('.alert');
-        alert.style.animation = 'fadeOut 0.5s ease-in forwards';
-        setTimeout(() => alert.remove(), 500);
+    // Alert system
+    document.addEventListener('DOMContentLoaded', () => {
+      // Handle close button clicks
+      document.querySelectorAll('.alert-close').forEach(button => {
+        button.addEventListener('click', () => {
+          const alert = button.closest('.alert');
+          alert.classList.add('hiding');
+          setTimeout(() => alert.remove(), 500);
+        });
+      });
+
+      // Auto-hide alerts
+      document.querySelectorAll('.alert.auto-hide').forEach(alert => {
+        setTimeout(() => {
+          alert.classList.add('hiding');
+          setTimeout(() => alert.remove(), 500);
+        }, 7000);
       });
     });
   </script>

@@ -28,3 +28,5 @@ babel = Babel()
 login_manager = LoginManager()
 login_manager.login_view = "auth.login"
 login_manager.login_message = "Пожалуйста, войдите для доступа к этой странице."
+login_manager.login_message_category = "info"
+

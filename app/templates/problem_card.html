@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
+<meta name="user-id" content="{{ current_user.id }}">
 <div class="problem-card" data-id="{{ problem.id }}">
     <div class="problem-header">
         <div class="problem-title-container">
@@ -79,15 +80,15 @@
         <div class="view-navigation">
             <button class="nav-btn active" data-view="details">
                 <i class="fas fa-info-circle"></i>
-                {{ _('nav.details') }}  <!-- Details -->
+                {{ _('nav.details') }}
             </button>
             <button class="nav-btn" data-view="solutions">
                 <i class="fas fa-code"></i>
-                {{ _('nav.solutions') }}  <!-- Solutions -->
+                {{ _('nav.solutions') }}
             </button>
             <button class="nav-btn" data-view="discourse">
                 <i class="fas fa-comments"></i>
-                {{ _('nav.discourse') }}  <!-- Discourse -->
+                {{ _('nav.discourse') }}
             </button>
         </div>
     </div>
@@ -100,7 +101,7 @@
         </div>
         
         <div class="content-section" id="solutions-section" style="display: none;">
-            <h2>{{ _('sections.solutions') }}  <!-- Solutions --></h2>
+            <h2>{{ _('sections.solutions') }}</h2>
             {% for solution in solutions %}
             <div class="solution-card">
                 <pre><code class="solution-content language-python">{{ solution.solution }}</code></pre>
@@ -118,7 +119,7 @@
                 <div class="comments-section" id="comments-{{ solution.id }}" style="display: none;">
                     <div class="comments-list">
                         {% for comment in solution.comments %}
-                        <div class="comment" id="comment-{{ comment.id }}">
+                        <div class="comment" id="solution-comment-{{ comment.id }}">
                             <div class="comment-header">
                                 <strong>{{ comment.user.username }}</strong>
                                 {% if comment.user_id == current_user.id %}
@@ -136,47 +137,14 @@
                             <div class="comment-edit-form" style="display: none;">
                                 <textarea class="form-control">{{ comment.comment }}</textarea>
                                 <div class="mt-2">
-                                    <button class="btn btn-sm btn-primary" onclick="saveEditComment({{ comment.id }})">{{ _('actions.save') }}  <!-- Save --></button>
-                                    <button class="btn btn-sm btn-secondary" onclick="cancelEditComment({{ comment.id }})">{{ _('actions.cancel') }}  <!-- Cancel --></button>
+                                    <button class="btn btn-sm btn-primary" onclick="saveEditComment({{ comment.id }})">{{ _('actions.save') }}</button>
+                                    <button class="btn btn-sm btn-secondary" onclick="cancelEditComment({{ comment.id }})">{{ _('actions.cancel') }}</button>
                                 </div>
                             </div>
-                        </div>
-                        {% endfor %}
-                    </div>
-                    <form class="comment-form" onsubmit="submitComment(event, {{ solution.id }})">
-                        <textarea class="form-control" placeholder="{{ _('placeholders.write_comment') }}  <!-- Write a comment... -->"></textarea>
-                        <button type="submit" class="btn btn-primary mt-2">{{ _('actions.send') }}  <!-- Send --></button>
-                    </form>
-                </div>
-            </div>
-            {% endfor %}
-        </div>
-
-        <div class="content-section" id="discourse-section" style="display: none;">
-            <h2>{{ _('sections.discourse') }}  <!-- Discourse --></h2>
-            <div class="discourse-card">  
-                <div class="discourse-comments">
-                    <div class="comments-list">
-                        {% for comment in problem.discourse_comments %}
-                        <div class="comment" id="discourse-comment-{{ comment.id }}">
-                            <div class="comment-header">
-                                <strong>{{ comment.user.username }}</strong>
-                                {% if comment.user_id == current_user.id %}
-                                <div class="comment-actions">
-                                    <button class="btn btn-sm btn-edit" onclick="startEditDiscourseComment({{ comment.id }})">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-delete" onclick="deleteDiscourseComment({{ comment.id }})">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </div>
-                                {% endif %}
-                            </div>
-                            <p class="comment-text">{{ comment.comment }}</p>
                             <div class="comment-actions">
-                                <button class="btn btn-sm btn-reply" onclick="mentionUser('{{ comment.user.username }}')">
+                                <button class="btn btn-sm btn-reply" onclick="mentionUser('{{ comment.user.username }}', 'solution', {{ solution.id }})">
                                     <i class="fas fa-reply"></i>
-                                    {{ _('actions.reply') }}  <!-- Reply -->
+                                    {{ _('actions.reply') }}
                                 </button>
                                 <div class="vote-buttons">
                                     <button class="btn btn-sm btn-vote" onclick="voteComment({{ comment.id }}, 'up')">
@@ -188,25 +156,88 @@
                                     </button>
                                 </div>
                             </div>
-                            <div class="comment-edit-form" style="display: none;">
-                                <textarea class="form-control">{{ comment.comment }}</textarea>
-                                <div class="mt-2">
-                                    <button class="btn btn-sm btn-primary" onclick="saveEditDiscourseComment({{ comment.id }})">{{ _('actions.save') }}  <!-- Save --></button>
-                                    <button class="btn btn-sm btn-secondary" onclick="cancelEditDiscourseComment({{ comment.id }})">{{ _('actions.cancel') }}  <!-- Cancel --></button>
-                                </div>
-                            </div>
                         </div>
                         {% endfor %}
                     </div>
+                    <form class="comment-form" onsubmit="submitComment(event, {{ solution.id }})">
+                        <textarea class="form-control" id="solution-{{ solution.id }}-comment-textarea" placeholder="{{ _('placeholders.write_comment') }}"></textarea>
+                        <button type="submit" class="btn btn-primary mt-2">{{ _('actions.send') }}</button>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="content-section" id="discourse-section" style="display: none;">
+            <h2>{{ _('sections.discourse') }}</h2>
+            <div class="discourse-card">  
+                <div class="discourse-comments">
+                    <div class="comments-list">
+                        {% for comment in discourse_comments %}
+                            <div class="comment" id="discourse-comment-{{ comment.id }}">
+                                <div class="comment-header">
+                                    <strong>{{ comment.user.username }}</strong>
+                                    {% if comment.user_id == current_user.id %}
+                                    <div class="comment-actions">
+                                        <button class="btn btn-sm btn-edit" onclick="startEditDiscourseComment({{ comment.id }})">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-delete" onclick="deleteDiscourseComment({{ comment.id }})">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                <p class="comment-text">{{ comment.comment }}</p>
+                                <div class="comment-edit-form" style="display: none;">
+                                    <textarea class="form-control">{{ comment.comment }}</textarea>
+                                    <div class="mt-2">
+                                        <button class="btn btn-sm btn-primary" onclick="saveEditDiscourseComment({{ comment.id }})">{{ _('actions.save') }}  <!-- Save --></button>
+                                        <button class="btn btn-sm btn-secondary" onclick="cancelEditDiscourseComment({{ comment.id }})">{{ _('actions.cancel') }}  <!-- Cancel --></button>
+                                    </div>
+                                </div>
+                                <div class="comment-actions">
+                                    <button class="btn btn-sm btn-reply" onclick="mentionUser('{{ comment.user.username }}', 'discourse', {{ problem.id }})">
+                                        <i class="fas fa-reply"></i>
+                                        {{ _('actions.reply') }}
+                                    </button>
+                                    <div class="vote-buttons">
+                                        <button class="btn btn-sm btn-vote" onclick="voteComment({{ comment.id }}, 'up')">
+                                            <i class="fas fa-arrow-up"></i>
+                                        </button>
+                                        <span class="vote-count">{{ comment.vote_count }}</span>
+                                        <button class="btn btn-sm btn-vote" onclick="voteComment({{ comment.id }}, 'down')">
+                                            <i class="fas fa-arrow-down"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
                     <form class="comment-form" onsubmit="submitDiscourseComment(event, {{ problem.id }})">
-                        <textarea class="form-control" id="discourse-comment-textarea" placeholder="{{ _('placeholders.write_comment') }}  <!-- Write a comment... -->"></textarea>
-                        <button type="submit" class="btn btn-primary mt-2">{{ _('actions.send') }}  <!-- Send --></button>
+                        <textarea class="form-control" id="discourse-{{ problem.id }}-comment-textarea" placeholder="{{ _('placeholders.write_comment') }}"></textarea>
+                        <button type="submit" class="btn btn-primary mt-2">{{ _('actions.send') }}</button>
                     </form>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+    // Define translations
+    const translations = {
+        'stats.votes': '{{ _("stats.votes") }}',
+        'solved_problems_votes': '{{ _("solved_problems_votes") }}'
+    };
+    
+    // Define translation function
+    function _(key) {
+        return translations[key] || key;
+    }
+</script>
+
+<script src="{{ url_for('static', filename='js/problem_card.js') }}"></script>
 {% endblock %}
 
 {% block extra_css %}
