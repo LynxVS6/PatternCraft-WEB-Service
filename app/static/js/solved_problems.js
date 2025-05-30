@@ -405,9 +405,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const satisfactionPercent = sessionStorage.getItem(`satisfaction_${problemId}`);
         const totalVotes = sessionStorage.getItem(`total_votes_${problemId}`);
         if (satisfactionPercent !== null && totalVotes !== null) {
-            const voteElement = card.querySelector('.stat-item:nth-child(2) span');
+            const voteElement = card.querySelector('.vote-text');
             if (voteElement) {
-                voteElement.textContent = `${satisfactionPercent}% votes ${totalVotes}`;
+                updateVoteText(voteElement, satisfactionPercent, totalVotes);
             }
         }
     });
@@ -452,9 +452,9 @@ window.addEventListener('pageshow', (event) => {
             const satisfactionPercent = sessionStorage.getItem(`satisfaction_${problemId}`);
             const totalVotes = sessionStorage.getItem(`total_votes_${problemId}`);
             if (satisfactionPercent !== null && totalVotes !== null) {
-                const voteElement = card.querySelector('.stat-item:nth-child(2) span');
+                const voteElement = card.querySelector('.vote-text');
                 if (voteElement) {
-                    voteElement.textContent = `${satisfactionPercent}% votes ${totalVotes}`;
+                    updateVoteText(voteElement, satisfactionPercent, totalVotes);
                 }
             }
         });
@@ -492,9 +492,9 @@ document.addEventListener('voteUpdated', (event) => {
     sessionStorage.setItem(`total_votes_${problemId}`, totalVotes);
     
     // Find all vote count elements for this problem
-    document.querySelectorAll(`.problem-card[data-id="${problemId}"] .stat-item:nth-child(2) span`).forEach(voteElement => {
+    document.querySelectorAll(`.problem-card[data-id="${problemId}"] .vote-text`).forEach(voteElement => {
         // Update the vote count using the translation key
-        voteElement.textContent = `${satisfactionPercent}% ${_('solved_problems_votes')} ${totalVotes}`;
+        updateVoteText(voteElement, satisfactionPercent, totalVotes);
         
         // Add animation
         voteElement.style.transform = 'scale(1.2)';

@@ -33,7 +33,9 @@
                             </span>
                             <span class="stat-item">
                                 <i class="fas fa-chart-line" aria-hidden="true"></i>
-                                <span>{{ problem.satisfaction_percent }}% {{ _('solved_problems_votes') }} {{ problem.total_votes }}</span>
+                                <span class="vote-text" data-translation-key="solved_problems_votes">
+                                    {{ problem.satisfaction_percent }}% {{ _('solved_problems_votes') }} {{ problem.total_votes }}
+                                </span>
                             </span>
                             <span class="stat-item">
                                 <i class="fas fa-bullseye" aria-hidden="true"></i>
@@ -72,6 +74,12 @@
     // Define translation function
     function _(key) {
         return translations[key] || key;
+    }
+
+    // Function to update vote text
+    function updateVoteText(element, satisfactionPercent, totalVotes) {
+        const translationKey = element.dataset.translationKey;
+        element.textContent = `${satisfactionPercent}% ${_(translationKey)} ${totalVotes}`;
     }
 </script>
 
