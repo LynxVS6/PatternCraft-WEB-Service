@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request
 from app.models import Problem, Solution, User
 from app.extensions import db
-from flask_login import current_user
+from flask_login import current_user, login_required
 from sqlalchemy import select, cast, String
 import json
 
@@ -11,6 +11,8 @@ bp = Blueprint("tasks", __name__)
 @bp.route("/api/filter-tasks", methods=["POST"])
 def filter_tasks():
     data = request.get_json()
+    if not current_user.is_authenticated:
+        return jsonify({"error": "User must be authenticated"}), 401
 
     if not data or "lab_ids" not in data or "tags_json" not in data:
         return jsonify({"error": "Invalid request format"}), 400
@@ -62,15 +64,14 @@ def filter_tasks():
 
 @bp.route("/api/create-task", methods=["POST"])
 def create_task():
+    if not current_user.is_authenticated:
+        return jsonify({"error": "User must be authenticated"}), 401
+
     data = request.get_json()
 
     # Handle both single object and list of objects
     if not isinstance(data, list):
         data = [data]
-
-    # Get all users to map seeded author_ids to actual user IDs
-    users = User.query.all()
-    user_map = {user.username: user.id for user in users}
 
     results = []
     for item in data:
@@ -80,15 +81,13 @@ def create_task():
             or "description" not in item
             or "tags_json" not in item
             or "difficulty" not in item
-            or "author_id" not in item
             or "language" not in item
             or "status" not in item
         ):
             return jsonify({"error": "Invalid request format"}), 400
 
-        # Find the user by their seeded ID and get their actual ID
-        seeded_user = User.query.get(item["author_id"])
-        if not seeded_user:
+        user = User.query.get(current_user.id)
+        if not user:
             return jsonify({"error": f"Author with ID {item['author_id']} not found"}), 400
 
         new_problem = Problem(
@@ -98,7 +97,7 @@ def create_task():
             difficulty=item["difficulty"],
             language=item["language"],
             status=item["status"],
-            author_id=seeded_user.id,  # Use the actual user ID
+            author_id=user.id,  # Use the actual user ID
         )
 
         db.session.add(new_problem)
@@ -139,11 +138,7 @@ def submit_solution():
         if not item or "server_problem_id" not in item or "solution" not in item:
             return jsonify({"error": "Invalid request format"}), 400
 
-        # Check if this is seeded data
-        is_seeded_data = item.get(
-            "is_seeded", False) if isinstance(item, dict) else False
-        # Only require authentication for non-seeded data
-        if not is_seeded_data and not current_user.is_authenticated:
+        if not current_user.is_authenticated:
             return jsonify({"error": "User must be authenticated"}), 401
 
         problem_id = item["server_problem_id"]
@@ -153,8 +148,7 @@ def submit_solution():
         if not problem:
             return jsonify({"error": f"Problem {problem_id} not found"}), 404
 
-        # For seeded data, use the provided user_id, otherwise use current_user.id
-        user_id = item.get("user_id") if is_seeded_data else current_user.id
+        user_id = current_user.id
 
         new_solution = Solution(
             user_id=user_id,

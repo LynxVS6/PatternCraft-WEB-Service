@@ -90,16 +90,10 @@ def create_user():
             email_confirmed=False  # Default to False
         )
 
-        # Handle both password and password_hash
-        is_real_user = False
-        if "password" in item:
-            new_user.set_password(item["password"])
-            is_real_user = True
-        elif "password_hash" in item:
-            new_user.password_hash = item["password_hash"]
-            new_user.email_confirmed = True  # Auto-confirm for seeded users
-        else:
-            return jsonify({"error": "Either password or password_hash is required"}), 400
+        if "password" not in item:
+            return jsonify({"error": "Password is required"}), 400
+
+        new_user.set_password(item["password"])
 
         db.session.add(new_user)
         db.session.flush()  # This will assign an ID without committing
@@ -112,9 +106,7 @@ def create_user():
             "created_at": new_user.created_at.isoformat() if new_user.created_at else None
         })
 
-        # Only send confirmation email for real users
-        if is_real_user:
-            send_confirmation_email(new_user)
+        send_confirmation_email(new_user)
 
     db.session.commit()
     return jsonify(results), 201
