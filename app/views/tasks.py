@@ -102,6 +102,7 @@ def create_task():
         )
 
         db.session.add(new_problem)
+        db.session.flush()
         results.append(
             {
                 "id": new_problem.id,
@@ -111,7 +112,7 @@ def create_task():
                 "difficulty": new_problem.difficulty,
                 "language": new_problem.language,
                 "status": new_problem.status,
-                "author": new_problem.author,
+                "author_id": new_problem.author_id,
                 "bookmark_count": new_problem.bookmark_count,
                 "created_at": (
                     new_problem.created_at.isoformat()
@@ -139,7 +140,8 @@ def submit_solution():
             return jsonify({"error": "Invalid request format"}), 400
 
         # Check if this is seeded data
-        is_seeded_data = item.get("is_seeded", False) if isinstance(item, dict) else False
+        is_seeded_data = item.get(
+            "is_seeded", False) if isinstance(item, dict) else False
         # Only require authentication for non-seeded data
         if not is_seeded_data and not current_user.is_authenticated:
             return jsonify({"error": "User must be authenticated"}), 401
