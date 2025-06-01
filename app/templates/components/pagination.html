@@ -1,21 +1,23 @@
-{% macro render_pagination(pagination, endpoint, max_func, min_func) %}
+{% macro render_pagination(pagination, endpoint, max_page, min_page) %}
 {% if pagination.total_pages > 1 %}
 <div class="pagination">
     {% if pagination.page > 1 %}
-    <a href="{{ url_for(endpoint, page=pagination.page-1) }}" class="page-link">
+    <a href="{{ url_for(endpoint, **dict(request.args, page=pagination.page-1)) }}" class="page-link">
         <i class="fas fa-chevron-left"></i> {{ _('pagination.previous') }}
     </a>
     {% endif %}
 
-    {% for p in range(max_func(1, pagination.page-2), min_func(pagination.total_pages+1, pagination.page+3)) %}
-    <a href="{{ url_for(endpoint, page=p) }}" 
+    {% set start_page = [min_page, pagination.page-2]|max %}
+    {% set end_page = [max_page+1, pagination.page+3]|min %}
+    {% for p in range(start_page, end_page) %}
+    <a href="{{ url_for(endpoint, **dict(request.args, page=p)) }}" 
        class="page-link {% if p == pagination.page %}active{% endif %}">
         {{ p }}
     </a>
     {% endfor %}
 
     {% if pagination.page < pagination.total_pages %}
-    <a href="{{ url_for(endpoint, page=pagination.page+1) }}" class="page-link">
+    <a href="{{ url_for(endpoint, **dict(request.args, page=pagination.page+1)) }}" class="page-link">
         {{ _('pagination.next') }} <i class="fas fa-chevron-right"></i>
     </a>
     {% endif %}

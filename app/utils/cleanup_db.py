@@ -1,5 +1,4 @@
-from app import create_app
-from app.extensions import db
+from app import create_app, db
 from app.models import (
     User,
     Problem,
@@ -10,7 +9,9 @@ from app.models import (
     ProblemVote,
     DiscourseComment,
     DiscourseVote,
+    CommentVote,
 )
+from sqlalchemy import text
 
 
 def cleanup_database():
@@ -20,25 +21,33 @@ def cleanup_database():
     with app.app_context():
         print("Starting database cleanup...")
 
-        # Delete all related data first
-        print("Deleting discourse data...")
-        DiscourseVote.query.delete()
-        DiscourseComment.query.delete()
+        # Disable foreign key checks temporarily
+        db.session.execute(text("SET FOREIGN_KEY_CHECKS = 0"))
 
-        print("Deleting problem-related data...")
-        ProblemVote.query.delete()
-        Bookmark.query.delete()
-        Like.query.delete()
-        Comment.query.delete()
+        # Delete data from all tables in reverse order of dependencies
+        tables = [
+            CommentVote,
+            Comment,
+            Like,
+            Solution,
+            DiscourseVote,
+            DiscourseComment,
+            ProblemVote,
+            Bookmark,
+            Problem,
+            User,
+        ]
 
-        print("Deleting solutions...")
-        Solution.query.delete()
+        for table in tables:
+            db.session.execute(text(f"TRUNCATE TABLE {table.__tablename__}"))
+            # Reset auto-increment to 1
+            db.session.execute(
+                text(f"ALTER TABLE {table.__tablename__} AUTO_INCREMENT = 1")
+            )
+            print(f"Cleaned {table.__tablename__}")
 
-        print("Deleting problems...")
-        Problem.query.delete()
-
-        print("Deleting users...")
-        User.query.delete()
+        # Re-enable foreign key checks
+        db.session.execute(text("SET FOREIGN_KEY_CHECKS = 1"))
 
         # Commit the changes
         db.session.commit()
