@@ -43,7 +43,7 @@ def filter_tasks():
             "difficulty": problem.difficulty,
             "language": problem.language,
             "status": problem.status,
-            "author": problem.author,
+            "author_id": problem.author_id,
             "bookmark_count": problem.bookmark_count,
             "positive_vote": problem.positive_vote,
             "negative_vote": problem.negative_vote,
