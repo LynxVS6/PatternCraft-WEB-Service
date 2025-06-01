@@ -213,6 +213,8 @@ const deleteComment = async (commentId) => {
 // Custom select functionality
 const initializeCustomSelects = () => {
     const selects = document.querySelectorAll('.filter-select');
+    const urlParams = new URLSearchParams(window.location.search);
+    
     selects.forEach(select => {
         const container = select.closest('.select-container');
         const label = container.querySelector('label');
@@ -222,11 +224,33 @@ const initializeCustomSelects = () => {
         const customSelect = document.createElement('div');
         customSelect.className = 'custom-select';
         
-        // Get selected items
-        const selectedItems = Array.from(select.selectedOptions).map(option => ({
-            value: option.value,
-            text: option.text
-        }));
+        // Get selected items based on URL parameters
+        let selectedItems = [];
+        if (isMultiple) {
+            const paramName = select.name;
+            const values = urlParams.getAll(paramName);
+            selectedItems = Array.from(select.options)
+                .filter(option => values.includes(option.value))
+                .map(option => ({
+                    value: option.value,
+                    text: option.text
+                }));
+        } else {
+            const paramName = select.name;
+            const value = urlParams.get(paramName);
+            const selectedOption = Array.from(select.options).find(option => option.value === value);
+            if (selectedOption) {
+                selectedItems = [{
+                    value: selectedOption.value,
+                    text: selectedOption.text
+                }];
+            } else if (select.options.length > 0) {
+                selectedItems = [{
+                    value: select.options[0].value,
+                    text: select.options[0].text
+                }];
+            }
+        }
         
         // Create custom select HTML
         customSelect.innerHTML = `
@@ -250,7 +274,7 @@ const initializeCustomSelects = () => {
             </div>
             <div class="select-items select-hide">
                 ${Array.from(select.options).map(option => `
-                    <div class="select-item ${option.selected ? 'selected' : ''}" data-value="${option.value}">
+                    <div class="select-item ${selectedItems.some(item => item.value === option.value) ? 'selected' : ''}" data-value="${option.value}">
                         ${option.text}
                     </div>
                 `).join('')}
@@ -350,35 +374,82 @@ const removeTag = (value) => {
     const item = customSelect.querySelector(`.select-item[data-value="${value}"]`);
     if (item) item.classList.remove('selected');
     
-    // Trigger change event
-    select.dispatchEvent(new Event('change'));
+    // If this is the tags filter and no tags are selected, trigger search to show all problems
+    if (select.name === 'tags' && !select.querySelector('option:checked')) {
+        performSearch();
+    } else {
+        // Trigger change event
+        select.dispatchEvent(new Event('change'));
+    }
 };
 
 // Custom search functionality
 const initializeSearch = () => {
+    const searchForm = document.getElementById('search_form');
     const searchInput = document.getElementById('search_input');
     const searchButton = document.getElementById('search');
-    let searchTimeout;
     
     const performSearch = () => {
-        const query = searchInput.value.trim();
-        if (query) {
-            // Add your search logic here
-            console.log('Searching for:', query);
+        const formData = new FormData(searchForm);
+        const params = new URLSearchParams();
+        
+        // Add all form data to params
+        for (const [key, value] of formData.entries()) {
+            if (value) {
+                if (key === 'tags') {
+                    // Handle multiple select values - use Set to remove duplicates
+                    const values = new Set(formData.getAll(key));
+                    // Only add if not empty
+                    if (values.size > 0) {
+                        values.forEach(v => params.append(key, v));
+                    }
+                } else {
+                    // Only add if not the default "all" value
+                    if (value !== 'all') {
+                        params.append(key, value);
+                    }
+                }
+            }
         }
+        
+        // Update URL with search parameters
+        const newUrl = `${window.location.pathname}?${params.toString()}`;
+        window.history.pushState({}, '', newUrl);
+        
+        // Reload the page with new parameters
+        window.location.reload();
     };
     
-    searchInput.addEventListener('input', () => {
-        clearTimeout(searchTimeout);
-        searchTimeout = setTimeout(performSearch, 300);
+    // Handle search button click
+    searchButton.addEventListener('click', (e) => {
+        e.preventDefault();
+        performSearch();
     });
     
-    searchButton.addEventListener('click', performSearch);
+    // Handle form submission
+    searchForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        performSearch();
+    });
     
-    searchInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            performSearch();
+    // Initialize form with URL parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    searchInput.value = urlParams.get('q') || '';
+    
+    // Set initial values for selects
+    document.querySelectorAll('.filter-select').forEach(select => {
+        const paramName = select.name;
+        if (paramName === 'tags' || paramName === 'r') {
+            // Handle multiple select values
+            const values = urlParams.getAll(paramName);
+            Array.from(select.options).forEach(option => {
+                option.selected = values.includes(option.value);
+            });
+        } else {
+            const value = urlParams.get(paramName);
+            if (value) {
+                select.value = value;
+            }
         }
     });
 };

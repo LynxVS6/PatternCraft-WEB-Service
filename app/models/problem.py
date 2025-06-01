@@ -1,31 +1,37 @@
 from app.extensions import db
 from app.models.problem_vote import ProblemVote
+from app.models.solution import Solution
 from flask_login import current_user
 from datetime import datetime, timezone
+from sqlalchemy import exists
 
 
 class Problem(db.Model):
-    __tablename__ = 'problems'
+    __tablename__ = "problems"
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(200), nullable=False)
     description = db.Column(db.Text, nullable=False)
     tags_json = db.Column(db.JSON, nullable=True)
-    difficulty = db.Column(db.String(20), nullable=False, default='Легкое')
-    author_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    language = db.Column(db.String(50), nullable=False, default='python')
-    status = db.Column(db.String(20), nullable=False, default='active')  # checked, beta
+    difficulty = db.Column(db.String(20), nullable=False, default="Легкое")
+    author_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    language = db.Column(db.String(50), nullable=False, default="python")
+    status = db.Column(
+        db.String(20), nullable=False, default="active"
+    )  # verified, beta
     bookmark_count = db.Column(db.Integer, nullable=False, default=0)
     positive_vote = db.Column(db.Integer, default=0)
     negative_vote = db.Column(db.Integer, default=0)
     neutral_vote = db.Column(db.Integer, default=0)
-    created_at = db.Column(db.DateTime, nullable=False, default=datetime.now(timezone.utc))
+    created_at = db.Column(
+        db.DateTime, nullable=False, default=datetime.now(timezone.utc)
+    )
 
-    solutions = db.relationship('Solution', back_populates='problem')
-    discourse_comments = db.relationship('DiscourseComment', back_populates='problem')
-    bookmarks = db.relationship('Bookmark', back_populates='problem')
-    votes = db.relationship('ProblemVote', back_populates='problem')
-    author = db.relationship('User', back_populates='authored_problems')
+    solutions = db.relationship("Solution", back_populates="problem")
+    discourse_comments = db.relationship("DiscourseComment", back_populates="problem")
+    bookmarks = db.relationship("Bookmark", back_populates="problem")
+    votes = db.relationship("ProblemVote", back_populates="problem")
+    author = db.relationship("User", back_populates="authored_problems")
 
     @property
     def user_vote(self):
@@ -33,8 +39,7 @@ class Problem(db.Model):
         if not current_user.is_authenticated:
             return None
         vote = ProblemVote.query.filter_by(
-            problem_id=self.id,
-            user_id=current_user.id
+            problem_id=self.id, user_id=current_user.id
         ).first()
         return vote.vote_type if vote else None
 
@@ -51,6 +56,17 @@ class Problem(db.Model):
             return 0
         return round((self.positive_vote * 100.0) / total)
 
+    @property
+    def is_completed_by_current_user(self):
+        """Check if the current user has completed this problem"""
+        if not current_user.is_authenticated:
+            return False
+        return db.session.query(
+            exists().where(
+                Solution.problem_id == self.id, Solution.user_id == current_user.id
+            )
+        ).scalar()
+
     def update_vote_counts(self):
         """Update vote counts based on actual votes in the database"""
         # Reset all counts to 0
@@ -60,12 +76,12 @@ class Problem(db.Model):
 
         # Get all votes for this problem
         votes = ProblemVote.query.filter_by(problem_id=self.id).all()
-        
+
         # Count votes by type
         for vote in votes:
-            if vote.vote_type == 'positive':
+            if vote.vote_type == "positive":
                 self.positive_vote += 1
-            elif vote.vote_type == 'neutral':
+            elif vote.vote_type == "neutral":
                 self.neutral_vote += 1
-            elif vote.vote_type == 'negative':
+            elif vote.vote_type == "negative":
                 self.negative_vote += 1

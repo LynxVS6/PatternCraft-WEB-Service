@@ -19,7 +19,7 @@ if not os.path.exists("seed_data"):
 # Sample data for generating random problems
 difficulties = ["Easy", "Medium", "Hard"]
 languages = ["Python", "JavaScript", "Java", "C++", "Ruby"]
-statuses = ["Checked", "Beta"]
+statuses = ["Verified", "Beta"]
 
 # Problem descriptions
 descriptions = [

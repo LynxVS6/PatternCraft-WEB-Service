@@ -4,9 +4,7 @@ from app.models.bookmark import Bookmark
 from app.models.problem import Problem
 from app.models.solution import Solution
 from app.models.comment import Comment, CommentVote
-from app.models.discourse import (
-    DiscourseComment, DiscourseVote
-)
+from app.models.discourse import DiscourseComment, DiscourseVote
 from app.models.problem_vote import ProblemVote
 from app.extensions import db
 from app.services.like_service import LikeService
@@ -20,8 +18,7 @@ bp = Blueprint("problems", __name__)
 def handle_vote(vote_model, user_id, target_id, vote_type):
     """Generic vote handling function for comments only."""
     existing_vote = vote_model.query.filter_by(
-        user_id=user_id,
-        comment_id=target_id
+        user_id=user_id, comment_id=target_id
     ).first()
 
     # Check both comment types
@@ -36,9 +33,7 @@ def handle_vote(vote_model, user_id, target_id, vote_type):
             existing_vote.vote_type = vote_type
     else:
         new_vote = vote_model(
-            user_id=user_id,
-            comment_id=target_id,
-            vote_type=vote_type
+            user_id=user_id, comment_id=target_id, vote_type=vote_type
         )
         db.session.add(new_vote)
 
@@ -49,11 +44,7 @@ def handle_vote(vote_model, user_id, target_id, vote_type):
 @bp.route("/problem/<int:problem_id>")
 @login_required
 def problem_card(problem_id):
-    problem = (
-        get_problem_query()
-        .filter(Problem.id == problem_id)
-        .first_or_404()
-    )
+    problem = get_problem_query().filter(Problem.id == problem_id).first_or_404()
     solutions = Solution.query.filter_by(problem_id=problem_id).all()
     discourse_comments = DiscourseComment.query.filter_by(problem_id=problem_id).all()
 
@@ -73,14 +64,18 @@ def problem_card(problem_id):
         "satisfaction_percent": round(problem.satisfaction_percent or 0),
         "total_votes": problem.total_votes or 0,
         "bookmark_count": problem.bookmark_count or 0,
-        "created_at": problem.created_at.strftime('%Y-%m-%d %H:%M') if problem.created_at else None,
+        "created_at": (
+            problem.created_at.strftime("%Y-%m-%d %H:%M")
+            if problem.created_at
+            else None
+        ),
     }
 
     return render_template(
         "problem_card.html",
         problem=problem_data,
         solutions=solutions,
-        discourse_comments=discourse_comments
+        discourse_comments=discourse_comments,
     )
 
 
@@ -89,10 +84,7 @@ def problem_card(problem_id):
 def get_more_solutions(problem_id):
     offset = request.args.get("offset", default=3, type=int)
     solutions = (
-        Solution.query.filter_by(problem_id=problem_id)
-        .offset(offset)
-        .limit(3)
-        .all()
+        Solution.query.filter_by(problem_id=problem_id).offset(offset).limit(3).all()
     )
 
     return jsonify(
@@ -112,9 +104,7 @@ def get_more_solutions(problem_id):
 @login_required
 def toggle_solution_like(solution_id):
     try:
-        likes_count, liked = LikeService.toggle_like(
-            current_user.id, solution_id
-        )
+        likes_count, liked = LikeService.toggle_like(current_user.id, solution_id)
         return jsonify({"likes": likes_count, "liked": liked})
     except ValueError as e:
         return jsonify({"error": str(e)}), 404
@@ -141,12 +131,14 @@ def add_solution_comment(solution_id):
     db.session.add(comment)
     db.session.commit()
 
-    return jsonify({
-        "id": comment.id,
-        "comment": comment.comment,
-        "username": current_user.username,
-        "user_id": current_user.id
-    })
+    return jsonify(
+        {
+            "id": comment.id,
+            "comment": comment.comment,
+            "username": current_user.username,
+            "user_id": current_user.id,
+        }
+    )
 
 
 @bp.route("/api/comments/<int:comment_id>", methods=["PUT"])
@@ -186,7 +178,7 @@ def delete_comment(comment_id):
 
         # Delete associated votes first
         CommentVote.query.filter_by(comment_id=comment_id).delete()
-        
+
         # Then delete the comment
         db.session.delete(comment)
         db.session.commit()
@@ -211,9 +203,7 @@ def add_discourse_comment(problem_id):
 
     Problem.query.get_or_404(problem_id)  # Verify problem exists
     comment = DiscourseComment(
-        user_id=current_user.id,
-        problem_id=problem_id,
-        comment=comment_text
+        user_id=current_user.id, problem_id=problem_id, comment=comment_text
     )
 
     db.session.add(comment)
@@ -225,7 +215,7 @@ def add_discourse_comment(problem_id):
         "comment": comment.comment,
         "username": current_user.username,
         "user_id": current_user.id,
-        "vote_count": comment.vote_count
+        "vote_count": comment.vote_count,
     }
     print(f"Sending response: {response_data}")
     return jsonify(response_data)
@@ -268,7 +258,7 @@ def delete_discourse_comment(comment_id):
 
         # Delete associated votes first
         DiscourseVote.query.filter_by(comment_id=comment_id).delete()
-        
+
         # Then delete the comment
         db.session.delete(comment)
         db.session.commit()
@@ -293,7 +283,7 @@ def vote_discourse_comment(comment_id):
 
     comment = DiscourseComment.query.get_or_404(comment_id)
     print(f"Found comment: {comment.id} by user {comment.user_id}")
-    
+
     result = handle_vote(DiscourseVote, current_user.id, comment_id, vote_type)
     print(f"Vote result: {result}")
     return result
@@ -305,16 +295,17 @@ def toggle_bookmark(problem_id):
     try:
         # Verify the problem exists
         problem = Problem.query.get_or_404(problem_id)
-        
+
         # Check for existing bookmark
         bookmark = Bookmark.query.filter_by(
-            user_id=current_user.id, 
-            problem_id=problem_id
+            user_id=current_user.id, problem_id=problem_id
         ).first()
 
         if bookmark:
             db.session.delete(bookmark)
-            problem.bookmark_count = max(0, problem.bookmark_count - 1)  # Prevent negative count
+            problem.bookmark_count = max(
+                0, problem.bookmark_count - 1
+            )  # Prevent negative count
             bookmarked = False
         else:
             bookmark = Bookmark(user_id=current_user.id, problem_id=problem_id)
@@ -324,10 +315,9 @@ def toggle_bookmark(problem_id):
 
         db.session.commit()
 
-        return jsonify({
-            "bookmarked": bookmarked,
-            "bookmark_count": problem.bookmark_count
-        })
+        return jsonify(
+            {"bookmarked": bookmarked, "bookmark_count": problem.bookmark_count}
+        )
 
     except Exception as e:
         db.session.rollback()
@@ -349,8 +339,7 @@ def vote_problem(problem_id):
 
         problem = Problem.query.get_or_404(problem_id)
         existing_vote = ProblemVote.query.filter_by(
-            user_id=current_user.id,
-            problem_id=problem_id
+            user_id=current_user.id, problem_id=problem_id
         ).first()
 
         # If there's an existing vote, remove it first
@@ -365,15 +354,13 @@ def vote_problem(problem_id):
         else:
             # Create new vote
             new_vote = ProblemVote(
-                user_id=current_user.id,
-                problem_id=problem_id,
-                vote_type=vote_type
+                user_id=current_user.id, problem_id=problem_id, vote_type=vote_type
             )
             db.session.add(new_vote)
 
         # Update vote counts
         problem.update_vote_counts()
-        
+
         # Commit the transaction
         db.session.commit()
 
@@ -382,17 +369,18 @@ def vote_problem(problem_id):
 
         # Get the updated vote type after the transaction
         current_vote = ProblemVote.query.filter_by(
-            user_id=current_user.id,
-            problem_id=problem_id
+            user_id=current_user.id, problem_id=problem_id
         ).first()
-        
+
         vote_type = current_vote.vote_type if current_vote else None
 
-        return jsonify({
-            "vote_type": vote_type,
-            "satisfaction_percent": round(problem.satisfaction_percent or 0),
-            "total_votes": problem.total_votes or 0
-        })
+        return jsonify(
+            {
+                "vote_type": vote_type,
+                "satisfaction_percent": round(problem.satisfaction_percent or 0),
+                "total_votes": problem.total_votes or 0,
+            }
+        )
 
     except SQLAlchemyError as e:
         db.session.rollback()

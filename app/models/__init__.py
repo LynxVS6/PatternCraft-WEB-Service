@@ -2,6 +2,7 @@ from .user import User
 from .problem import Problem
 from .solution import Solution
 from .comment import Comment
+from .comment import CommentVote
 from .like import Like
 from .bookmark import Bookmark
 from .problem_vote import ProblemVote
@@ -13,6 +14,7 @@ __all__ = [
     'Problem',
     'Solution',
     'Comment',
+    'CommentVote',
     'Like',
     'Bookmark',
     'ProblemVote',
