@@ -11,6 +11,7 @@ from app.services.like_service import LikeService
 from sqlalchemy.exc import SQLAlchemyError
 from .solved_problems import get_problem_query, process_language_for_devicon
 from app.models.user import User
+from app.utils.validators import validate_comment_data, validate_vote_type
 
 bp = Blueprint("problems", __name__)
 
@@ -116,12 +117,11 @@ def toggle_solution_like(solution_id):
 @login_required
 def add_solution_comment(solution_id):
     data = request.get_json()
+    is_valid, error = validate_comment_data(data)
+    if not is_valid:
+        return jsonify({"error": error}), 400
     comment_text = data.get("comment")
 
-    if not comment_text:
-        return jsonify({"error": "Comment is required"}), 400
-
-    solution = Solution.query.get_or_404(solution_id)
     comment = Comment(
         comment=comment_text,
         user_id=current_user.id,
@@ -150,10 +150,10 @@ def edit_comment(comment_id):
         return jsonify({"error": "Unauthorized"}), 403
 
     data = request.get_json()
+    is_valid, error = validate_comment_data(data)
+    if not is_valid:
+        return jsonify({"error": error}), 400
     new_comment_text = data.get("comment")
-
-    if not new_comment_text:
-        return jsonify({"error": "Comment is required"}), 400
 
     comment.comment = new_comment_text
     db.session.commit()
@@ -195,6 +195,9 @@ def delete_comment(comment_id):
 def add_discourse_comment(problem_id):
     print(f"Adding discourse comment for problem {problem_id}")
     data = request.get_json()
+    is_valid, error = validate_comment_data(data)
+    if not is_valid:
+        return jsonify({"error": error}), 400
     comment_text = data.get("comment")
     print(f"Comment text: {comment_text}")
 
@@ -230,6 +233,9 @@ def edit_discourse_comment(comment_id):
         return jsonify({"error": "Unauthorized"}), 403
 
     data = request.get_json()
+    is_valid, error = validate_comment_data(data)
+    if not is_valid:
+        return jsonify({"error": error}), 400
     new_comment_text = data.get("comment")
 
     if not new_comment_text:
@@ -275,11 +281,11 @@ def delete_discourse_comment(comment_id):
 def vote_discourse_comment(comment_id):
     print(f"Voting on discourse comment {comment_id}")
     data = request.get_json()
+    is_valid, error = validate_vote_type(data, ["up", "down"])
+    if not is_valid:
+        return jsonify({"error": error}), 400
     vote_type = data.get("vote_type")
     print(f"Vote type: {vote_type}")
-
-    if vote_type not in ["up", "down"]:
-        return jsonify({"error": "Invalid vote type"}), 400
 
     comment = DiscourseComment.query.get_or_404(comment_id)
     print(f"Found comment: {comment.id} by user {comment.user_id}")
@@ -332,10 +338,10 @@ def vote_problem(problem_id):
         data = request.get_json()
         if not data:
             return jsonify({"error": "No data provided"}), 400
-
+        is_valid, error = validate_vote_type(data, ["positive", "neutral", "negative"])
+        if not is_valid:
+            return jsonify({"error": error}), 400
         vote_type = data.get("vote_type")
-        if not vote_type or vote_type not in ["positive", "neutral", "negative"]:
-            return jsonify({"error": "Invalid vote type"}), 400
 
         problem = Problem.query.get_or_404(problem_id)
         existing_vote = ProblemVote.query.filter_by(
@@ -395,10 +401,9 @@ def vote_problem(problem_id):
 @login_required
 def vote_solution_comment(comment_id):
     data = request.get_json()
+    is_valid, error = validate_vote_type(data, ["up", "down"])
+    if not is_valid:
+        return jsonify({"error": error}), 400
     vote_type = data.get("vote_type")
 
-    if vote_type not in ["up", "down"]:
-        return jsonify({"error": "Invalid vote type"}), 400
-
-    comment = Comment.query.get_or_404(comment_id)
     return handle_vote(CommentVote, current_user.id, comment_id, vote_type)

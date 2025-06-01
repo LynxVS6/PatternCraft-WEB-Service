@@ -1,9 +1,10 @@
 from flask import Blueprint, jsonify, request
 from app.models import Problem, Solution, User
 from app.extensions import db
-from flask_login import current_user, login_required
+from flask_login import current_user
 from sqlalchemy import select, cast, String
 import json
+from app.utils.validators import validate_filter_tasks_data, validate_task_data, validate_solution_data
 
 bp = Blueprint("tasks", __name__)
 
@@ -13,6 +14,9 @@ def filter_tasks():
     data = request.get_json()
     if not current_user.is_authenticated:
         return jsonify({"error": "User must be authenticated"}), 401
+    is_valid, error = validate_filter_tasks_data(data)
+    if not is_valid:
+        return jsonify({"error": error}), 400
 
     if not data or "lab_ids" not in data or "tags_json" not in data:
         return jsonify({"error": "Invalid request format"}), 400
@@ -66,25 +70,14 @@ def filter_tasks():
 def create_task():
     if not current_user.is_authenticated:
         return jsonify({"error": "User must be authenticated"}), 401
-
     data = request.get_json()
-
-    # Handle both single object and list of objects
     if not isinstance(data, list):
         data = [data]
-
     results = []
     for item in data:
-        if (
-            not item
-            or "name" not in item
-            or "description" not in item
-            or "tags_json" not in item
-            or "difficulty" not in item
-            or "language" not in item
-            or "status" not in item
-        ):
-            return jsonify({"error": "Invalid request format"}), 400
+        is_valid, error = validate_task_data(item)
+        if not is_valid:
+            return jsonify({"error": error}), 400
 
         user = User.query.get(current_user.id)
         if not user:
@@ -97,7 +90,7 @@ def create_task():
             difficulty=item["difficulty"],
             language=item["language"],
             status=item["status"],
-            author_id=user.id,  # Use the actual user ID
+            author_id=user.id,
         )
 
         db.session.add(new_problem)
@@ -128,15 +121,13 @@ def create_task():
 @bp.route("/api/submit-solution", methods=["POST"])
 def submit_solution():
     data = request.get_json()
-
-    # Handle both single object and list of objects
     if not isinstance(data, list):
         data = [data]
-
     results = []
     for item in data:
-        if not item or "server_problem_id" not in item or "solution" not in item:
-            return jsonify({"error": "Invalid request format"}), 400
+        is_valid, error = validate_solution_data(item)
+        if not is_valid:
+            return jsonify({"error": error}), 400
 
         if not current_user.is_authenticated:
             return jsonify({"error": "User must be authenticated"}), 401

@@ -4,7 +4,7 @@ from app import db
 from app.forms.forms import EditProfileForm, ChangePasswordForm
 from app.models.user import User
 from app.services.email_service import send_confirmation_email
-from werkzeug.security import generate_password_hash
+from app.utils.validators import validate_user_data
 
 bp = Blueprint("users", __name__)
 
@@ -74,6 +74,9 @@ def create_user():
 
     results = []
     for item in data:
+        is_valid, error = validate_user_data(item)
+        if not is_valid:
+            return jsonify({"error": error}), 400
         if not item or "username" not in item or "email" not in item:
             return jsonify({"error": "Invalid request format"}), 400
 

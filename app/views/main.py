@@ -10,14 +10,14 @@ def index():
 
 @bp.route("/creational")
 def creational():
-    return render_template("creational.html")
+    return render_template("main.html")
 
 
 @bp.route("/structural")
 def structural():
-    return render_template("structural.html")
+    return render_template("main.html")
 
 
 @bp.route("/behavioral")
 def behavioral():
-    return render_template("behavioral.html")
+    return render_template("main.html")
