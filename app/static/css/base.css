@@ -12,6 +12,11 @@
     --footer-bg: #241e3a;
     --footer-text: #b2aec9;
     --neon: none;
+    --alert-success: rgba(40, 167, 69, 0.85);
+    --alert-error: rgba(217, 48, 37, 0.85);
+    --alert-info: rgba(23, 162, 184, 0.85);
+    --alert-bg: rgba(28, 23, 46, 0.7);
+    --alert-border: rgba(255, 255, 255, 0.2);
 }
 
 body {
@@ -611,16 +616,6 @@ h3 {
     .footer-column {
         align-items: center;
     }
-}
-
-:root {
-  --text-primary: #FFFFFF;
-  --text-secondary: #b8b3d1;
-  --alert-success: rgba(40, 167, 69, 0.85);
-  --alert-error: rgba(217, 48, 37, 0.85);
-  --alert-info: rgba(23, 162, 184, 0.85);
-  --alert-bg: rgba(28, 23, 46, 0.7);
-  --alert-border: rgba(255, 255, 255, 0.2);
 }
 
 /* Стили для уведомлений */

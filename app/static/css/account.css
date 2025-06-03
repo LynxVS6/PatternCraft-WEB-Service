@@ -1,20 +1,3 @@
-:root {
-    --bg-dark: linear-gradient(to bottom, #222244, #000000);
-    --bg-card: #151515;
-    --bg-hover: #252238;
-    --primary: #ae9dfc;
-    --primary-variant: #ae9dfc;
-    --secondary: #ae9dfc;
-    --accent: #ae9dfc;
-    --text-primary: #e0e0e0;
-    --text-secondary: #a8a4c1;
-    --divider: #3a364f;
-    --footer-bg: #1e192f;
-    --footer-text: #9d99b5;
-    --neon: none;
-}
-
-
 body {
     min-height: 100vh;
     font-family: 'Roboto', 'Fira Code', monospace, sans-serif;

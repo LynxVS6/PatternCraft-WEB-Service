@@ -1,12 +1,4 @@
 :root {
-  --bg-dark: linear-gradient(to bottom, #222244, #000000);
-  --bg-card: rgba(28, 23, 46, 0.92);
-  --primary: #ae9dfc;
-  --secondary: #ae9dfc;
-  --accent: #ae9dfc;
-  --text-primary: #FFFFFF;
-  --text-secondary: #b8b3d1;
-  --divider: #453f5f;
   --password-weak: #d93025;
   --password-medium: #fbbc04;
   --password-strong: #28a745;

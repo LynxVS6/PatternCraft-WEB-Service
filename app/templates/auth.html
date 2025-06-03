@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}{{ _('auth_title') }}{% endblock %}<!-- Авторизация | PatternCraft Lab -->
+{% block title %}{{ _('auth_title') }}{% endblock %}
 
 {% block extra_css %}
     <link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}">
@@ -13,18 +13,17 @@
     <div class="auth-container">
         <div class="auth-box">
             <div class="tabs">
-                <button class="tab-button active" data-tab="login">{{ _('auth_tab_login') }}</button><!-- Вход -->
-                <button class="tab-button" data-tab="register">{{ _('auth_tab_register') }}</button><!-- Регистрация -->
+                <button class="tab-button active" data-tab="login">{{ _('auth_tab_login') }}</button>
+                <button class="tab-button" data-tab="register">{{ _('auth_tab_register') }}</button>
             </div>
 
-            <!-- Форма входа -->
             <form id="login" class="auth-form active" method="POST" action="{{ url_for('auth.login') }}">
-                <h2>{{ _('auth_login_heading') }}</h2><!-- Вход -->
+                <h2>{{ _('auth_login_heading') }}</h2>
                 {{ login_form.hidden_tag() }}
 
                 <div class="form-group">
-                    <label for="login-identity">{{ _('auth_login_identity_label') }}</label><!-- Логин или Email -->
-                    {{ login_form.identity(id="login-identity", placeholder=_('auth_login_identity_placeholder')) }} {# Логин или Email #}
+                    <label for="login-identity">{{ _('auth_login_identity_label') }}</label>
+                    {{ login_form.identity(id="login-identity", placeholder=_('auth_login_identity_placeholder')) }}
                     {% if login_form.identity.errors %}
                         <ul class="errors">
                             {% for error in login_form.identity.errors %}
@@ -35,9 +34,9 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="login-password">{{ _('auth_login_password_label') }}</label><!-- Пароль -->
+                    <label for="login-password">{{ _('auth_login_password_label') }}</label>
                     <div class="password-field-container">
-                        {{ login_form.password(id="login-password", placeholder=_('auth_login_password_placeholder')) }} {# Пароль #}
+                        {{ login_form.password(id="login-password", placeholder=_('auth_login_password_placeholder')) }}
                         <button type="button" class="password-toggle" data-target="login-password">
                             <i class="fas fa-eye"></i>
                         </button>
@@ -51,19 +50,18 @@
                     {% endif %}
                 </div>
 
-                <button type="submit" class="btn">{{ _('auth_login_button') }}</button><!-- Войти -->
+                <button type="submit" class="btn">{{ _('auth_login_button') }}</button>
                 <p class="switch-text">{{ _('auth_no_account_text') }} <a href="#" class="switch-tab" data-tab="register">{{ _('auth_register_link') }}</a>
-                </p><!-- Нет аккаунта? --><!-- Зарегистрироваться -->
+                </p>
             </form>
 
-            <!-- Форма регистрации -->
             <form id="register" class="auth-form" method="POST" action="{{ url_for('auth.register') }}">
-                <h2>{{ _('auth_register_heading') }}</h2><!-- Регистрация -->
+                <h2>{{ _('auth_register_heading') }}</h2>
                 {{ register_form.hidden_tag() }}
 
                 <div class="form-group">
-                    <label for="reg-username">{{ _('auth_register_username_label') }}</label><!-- Имя пользователя -->
-                    {{ register_form.username(id="reg-username", placeholder=_('auth_register_username_placeholder')) }} {# Имя пользователя #}
+                    <label for="reg-username">{{ _('auth_register_username_label') }}</label>
+                    {{ register_form.username(id="reg-username", placeholder=_('auth_register_username_placeholder')) }}
                     {% if register_form.username.errors %}
                         <ul class="errors">
                             {% for error in register_form.username.errors %}
@@ -74,8 +72,8 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="reg-email">{{ _('auth_register_email_label') }}</label><!-- Email -->
-                    {{ register_form.email(id="reg-email", placeholder=_('auth_register_email_placeholder')) }} {# Email #}
+                    <label for="reg-email">{{ _('auth_register_email_label') }}</label>
+                    {{ register_form.email(id="reg-email", placeholder=_('auth_register_email_placeholder')) }}
                     {% if register_form.email.errors %}
                         <ul class="errors">
                             {% for error in register_form.email.errors %}
@@ -86,9 +84,9 @@
                 </div>
 
                 <div class="form-group" id="reg-password-container">
-                    <label for="reg-password">{{ _('auth_register_password_label') }}</label><!-- Пароль -->
+                    <label for="reg-password">{{ _('auth_register_password_label') }}</label>
                     <div class="password-field-container">
-                        {{ register_form.password(id="reg-password", placeholder=_('auth_register_password_placeholder'), oninput="checkPasswordStrength(this.value, 'reg')") }} {# Пароль #}
+                        {{ register_form.password(id="reg-password", placeholder=_('auth_register_password_placeholder'), oninput="checkPasswordStrength(this.value, 'reg')") }}
                         <button type="button" class="password-toggle" data-target="reg-password">
                             <i class="fas fa-eye"></i>
                         </button>
@@ -100,24 +98,24 @@
                     <div class="password-rules-card">
                         <div class="rules-header">
                             <i class="fas fa-shield-alt"></i>
-                            <h4>{{ _('auth_password_requirements_heading') }}</h4><!-- Требования к паролю -->
+                            <h4>{{ _('auth_password_requirements_heading') }}</h4>
                         </div>
                         <ul class="rules-list">
                             <li class="rule-item" data-rule="length">
                                 <span class="rule-icon"><i class="fas fa-circle"></i></span>
-                                <span class="rule-text">{{ _('auth_password_rule_length') }}</span><!-- Минимум 6 символов -->
+                                <span class="rule-text">{{ _('auth_password_rule_length') }}</span>
                             </li>
                             <li class="rule-item" data-rule="uppercase">
                                 <span class="rule-icon"><i class="fas fa-circle"></i></span>
-                                <span class="rule-text">{{ _('auth_password_rule_uppercase') }}</span><!-- Хотя бы одна заглавная буква -->
+                                <span class="rule-text">{{ _('auth_password_rule_uppercase') }}</span>
                             </li>
                             <li class="rule-item" data-rule="number">
                                 <span class="rule-icon"><i class="fas fa-circle"></i></span>
-                                <span class="rule-text">{{ _('auth_password_rule_number') }}</span><!-- Хотя бы одна цифра -->
+                                <span class="rule-text">{{ _('auth_password_rule_number') }}</span>
                             </li>
                             <li class="rule-item" data-rule="special">
                                 <span class="rule-icon"><i class="fas fa-circle"></i></span>
-                                <span class="rule-text">{{ _('auth_password_rule_special') }}</span><!-- Хотя бы один спецсимвол -->
+                                <span class="rule-text">{{ _('auth_password_rule_special') }}</span>
                             </li>
                         </ul>
                     </div>
@@ -131,9 +129,9 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="reg-password-confirm">{{ _('auth_register_password_confirm_label') }}</label><!-- Подтвердите пароль -->
+                    <label for="reg-password-confirm">{{ _('auth_register_password_confirm_label') }}</label>
                     <div class="password-field-container">
-                        {{ register_form.password_confirm(id="reg-password-confirm", placeholder=_('auth_register_password_confirm_placeholder')) }} {# Подтвердите пароль #}
+                        {{ register_form.password_confirm(id="reg-password-confirm", placeholder=_('auth_register_password_confirm_placeholder')) }}
                         <button type="button" class="password-toggle" data-target="reg-password-confirm">
                             <i class="fas fa-eye"></i>
                         </button>
@@ -147,8 +145,8 @@
                     {% endif %}
                 </div>
 
-                <button type="submit" class="btn">{{ _('auth_register_button') }}</button><!-- Зарегистрироваться -->
-                <p class="switch-text">{{ _('auth_has_account_text') }} <a href="#" class="switch-tab" data-tab="login">{{ _('auth_login_link') }}</a></p><!-- Уже есть аккаунт? --><!-- Войти -->
+                <button type="submit" class="btn">{{ _('auth_register_button') }}</button>
+                <p class="switch-text">{{ _('auth_has_account_text') }} <a href="#" class="switch-tab" data-tab="login">{{ _('auth_login_link') }}</a></p>
             </form>
         </div>
     </div>
