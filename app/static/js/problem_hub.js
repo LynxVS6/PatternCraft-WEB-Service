@@ -172,41 +172,42 @@ const removeTag = (value) => {
 };
 
 // Custom search functionality
+const performSearch = () => {
+    const searchForm = document.getElementById('search_form');
+    const formData = new FormData(searchForm);
+    const params = new URLSearchParams();
+    
+    // Add all form data to params
+    for (const [key, value] of formData.entries()) {
+        if (value) {
+            if (key === 'tags') {
+                // Handle multiple select values - use Set to remove duplicates
+                const values = new Set(formData.getAll(key));
+                // Only add if not empty
+                if (values.size > 0) {
+                    values.forEach(v => params.append(key, v));
+                }
+            } else {
+                // Only add if not the default "all" value
+                if (value !== 'all') {
+                    params.append(key, value);
+                }
+            }
+        }
+    }
+    
+    // Update URL with search parameters
+    const newUrl = `${window.location.pathname}?${params.toString()}`;
+    window.history.pushState({}, '', newUrl);
+    
+    // Reload the page with new parameters
+    window.location.reload();
+};
+
 const initializeSearch = () => {
     const searchForm = document.getElementById('search_form');
     const searchInput = document.getElementById('search_input');
     const searchButton = document.getElementById('search');
-    
-    const performSearch = () => {
-        const formData = new FormData(searchForm);
-        const params = new URLSearchParams();
-        
-        // Add all form data to params
-        for (const [key, value] of formData.entries()) {
-            if (value) {
-                if (key === 'tags') {
-                    // Handle multiple select values - use Set to remove duplicates
-                    const values = new Set(formData.getAll(key));
-                    // Only add if not empty
-                    if (values.size > 0) {
-                        values.forEach(v => params.append(key, v));
-                    }
-                } else {
-                    // Only add if not the default "all" value
-                    if (value !== 'all') {
-                        params.append(key, value);
-                    }
-                }
-            }
-        }
-        
-        // Update URL with search parameters
-        const newUrl = `${window.location.pathname}?${params.toString()}`;
-        window.history.pushState({}, '', newUrl);
-        
-        // Reload the page with new parameters
-        window.location.reload();
-    };
     
     // Handle search button click
     searchButton.addEventListener('click', (e) => {
