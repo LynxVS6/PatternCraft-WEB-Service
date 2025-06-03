@@ -305,5 +305,5 @@ def problem_hub():
         tags=tags,
         current_filters=current_filters,
         max_page=total_pages,
-        min_page=1,
+        min_page=1
     )
