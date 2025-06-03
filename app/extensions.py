@@ -7,16 +7,16 @@ from flask import g, request
 
 
 def get_locale():
-    user = getattr(g, 'user', None)
+    user = getattr(g, "user", None)
     if user is not None:
         return user.locale
 
-    language = request.accept_languages.best_match(["ru", "en", "ja", "kk", "tt", "ce"])
+    language = request.accept_languages.best_match(["ru", "en"])
     return language
 
 
 def get_timezone():
-    user = getattr(g, 'user', None)
+    user = getattr(g, "user", None)
     if user is not None:
         return user.timezone
 
@@ -29,4 +29,3 @@ login_manager = LoginManager()
 login_manager.login_view = "auth.login"
 login_manager.login_message = "Пожалуйста, войдите для доступа к этой странице."
 login_manager.login_message_category = "info"
-

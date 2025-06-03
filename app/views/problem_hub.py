@@ -134,7 +134,7 @@ def problem_hub():
             # Use MySQL's JSON_CONTAINS function to check if the tag exists in the array
             condition = func.json_contains(Problem.tags_json, f'"{tag}"')
             tag_conditions.append(condition)
-        
+
         # Combine all tag conditions with AND (all selected tags must be present)
         query = query.filter(and_(*tag_conditions))
 
@@ -201,7 +201,7 @@ def problem_hub():
     elif order_by == "popularity desc":
         query = query.order_by(
             desc(func.count(Solution.id)),  # Primary sort by completed_count
-            desc(Problem.bookmark_count)    # Secondary sort by bookmark_count
+            desc(Problem.bookmark_count),  # Secondary sort by bookmark_count
         )
     elif order_by == "satisfaction_percent desc,total_completed desc":
         query = query.order_by(
@@ -219,7 +219,7 @@ def problem_hub():
                     )
                 )
             ),
-            desc(func.count(Solution.id))
+            desc(func.count(Solution.id)),
         )
     elif order_by == "satisfaction_percent asc":
         query = query.order_by(
@@ -237,7 +237,7 @@ def problem_hub():
                     )
                 )
             ),
-            desc(func.count(Solution.id))
+            desc(func.count(Solution.id)),
         )
     elif order_by == "name asc":
         query = query.order_by(asc(Problem.name))
@@ -305,5 +305,5 @@ def problem_hub():
         tags=tags,
         current_filters=current_filters,
         max_page=total_pages,
-        min_page=1
+        min_page=1,
     )
