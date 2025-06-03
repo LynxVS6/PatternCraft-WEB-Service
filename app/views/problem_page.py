@@ -61,6 +61,7 @@ def problem_page(problem_id):
         "language": problem.language,
         "language_icon": process_language_for_devicon(problem.language),
         "author": author.username if author else None,
+        "author_id": problem.author_id,
         "completed_count": problem.completed_count or 0,
         "satisfaction_percent": round(problem.satisfaction_percent or 0),
         "total_votes": problem.total_votes or 0,
@@ -407,3 +408,49 @@ def vote_solution_comment(comment_id):
     vote_type = data.get("vote_type")
 
     return handle_vote(CommentVote, current_user.id, comment_id, vote_type)
+
+
+@bp.route("/api/problems/<int:problem_id>/description", methods=["PUT"])
+@login_required
+def update_problem_description(problem_id):
+    try:
+        # Get the problem
+        problem = Problem.query.get_or_404(problem_id)
+        
+        # Check if user is the author
+        if problem.author_id != current_user.id:
+            return jsonify({"error": "Only the author can update the description"}), 403
+            
+        # Get the new description from request
+        data = request.get_json()
+        if not data or "description" not in data:
+            return jsonify({"error": "Description is required"}), 400
+            
+        # Update the description
+        problem.description = data["description"]
+        db.session.commit()
+        
+        return jsonify({"message": "Description updated successfully"})
+        
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error updating description: {str(e)}")
+        return jsonify({"error": "Failed to update description"}), 500
+
+
+@bp.route("/api/problems/<int:problem_id>/description", methods=["GET"])
+@login_required
+def check_description_edit_auth(problem_id):
+    try:
+        # Get the problem
+        problem = Problem.query.get_or_404(problem_id)
+        
+        # Check if user is the author
+        if problem.author_id != current_user.id:
+            return jsonify({"error": "Only the author can edit the description"}), 403
+            
+        return jsonify({"message": "Authorized to edit description"})
+        
+    except Exception as e:
+        print(f"Error checking description edit authorization: {str(e)}")
+        return jsonify({"error": "Failed to check authorization"}), 500

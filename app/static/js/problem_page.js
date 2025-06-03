@@ -21,9 +21,196 @@ document.addEventListener('DOMContentLoaded', () => {
         Prism.highlightAll();
     }
 
+    // Initialize EasyMDE for problem description if user is the author
+    const problemDescription = document.getElementById('problem-description');
+
     // Get problem ID from the card
     const problemCard = document.querySelector('.problem-card');
     const problemId = problemCard?.dataset.id;
+
+    // Function to handle description click
+    function handleDescriptionClick(event) {
+        const problemDescription = event.currentTarget;
+        initializeEditor(problemDescription);
+    }
+
+    // Function to clean up the editor
+    function cleanupEditor(editor, problemDescription) {
+        if (editor) {
+            editor.cleanup();
+            const editorContainer = editor.codemirror.getWrapperElement().parentElement;
+            if (editorContainer) {
+                editorContainer.remove();
+            }
+        }
+        if (problemDescription) {
+            problemDescription.style.display = 'block';
+        }
+    }
+
+    // Add click handler to problem description
+    if (problemDescription && problemId) {
+        // Check if user is authorized to edit
+        fetch(`/api/problems/${problemId}/description`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            credentials: 'same-origin'  // Add this to include cookies
+        }).then(response => {
+            if (response.ok) {
+                // If authorized, add hover effect and click handler
+                problemDescription.style.cursor = 'pointer';
+                problemDescription.addEventListener('mouseenter', () => {
+                    problemDescription.style.backgroundColor = 'rgba(106, 52, 199, 0.05)';
+                });
+                problemDescription.addEventListener('mouseleave', () => {
+                    problemDescription.style.backgroundColor = '';
+                });
+                problemDescription.addEventListener('click', handleDescriptionClick);
+            } else if (response.status === 403) {
+                // If not authorized, remove hover effect and click handler
+                problemDescription.style.cursor = 'default';
+                problemDescription.removeEventListener('click', handleDescriptionClick);
+                console.log('User is not authorized to edit this description');
+            } else {
+                console.error('Unexpected response:', response.status);
+            }
+        }).catch(error => {
+            console.error('Error checking authorization:', error);
+            // If error, assume not authorized
+            problemDescription.style.cursor = 'default';
+            problemDescription.removeEventListener('click', handleDescriptionClick);
+        });
+    }
+
+    // Function to initialize the editor
+    function initializeEditor(problemDescription) {
+        // Clean up any existing editors first
+        const existingEditors = problemDescription.parentNode.querySelectorAll('.EasyMDEContainer');
+        existingEditors.forEach(editor => {
+            const easyMDE = editor.EasyMDE;
+            if (easyMDE) {
+                easyMDE.cleanup();
+            }
+            editor.remove();
+        });
+
+        // Clean up any hidden textareas
+        const hiddenTextareas = problemDescription.parentNode.querySelectorAll('textarea[style*="display: none"]');
+        hiddenTextareas.forEach(textarea => textarea.remove());
+
+        let editor = null;
+        // Get the original markdown content from the data attribute
+        const originalContent = problemDescription.dataset.markdown;
+
+        // Create a hidden textarea for EasyMDE
+        const textarea = document.createElement('textarea');
+        textarea.style.display = 'none';
+        textarea.value = originalContent;
+        problemDescription.parentNode.insertBefore(textarea, problemDescription);
+
+        try {
+            // Initialize EasyMDE
+            editor = new EasyMDE({
+                element: textarea,
+                spellChecker: false,
+                status: false,
+                toolbar: [
+                    'bold', 'italic', 'heading', '|',
+                    'quote', 'unordered-list', 'ordered-list', '|',
+                    'link', 'image', 'code', '|',
+                    'preview', 'side-by-side', 'fullscreen', '|',
+                    {
+                        name: "save",
+                        action: async function(editor) {
+                            console.log('Save button clicked');
+                            const newContent = editor.value();
+                            console.log('New content:', newContent);
+                            console.log('Original content:', originalContent);
+                            if (newContent !== originalContent) {
+                                await saveChanges(editor, newContent, originalContent, problemDescription);
+                            }
+                            // Always close the editor after clicking save
+                            cleanupEditor(editor, problemDescription);
+                        },
+                        className: "fa fa-save",
+                        title: "Save Changes",
+                    },
+                    'guide'
+                ],
+                theme: 'easymde',
+                autofocus: false,
+                hideIcons: ['side-by-side'],
+                showIcons: ['code', 'table'],
+                placeholder: 'Write your problem description here...',
+                maxHeight: '500px',
+                minHeight: '200px',
+                autoDownloadFontAwesome: true,
+                previewRender: (text) => {
+                    return marked.parse(text);
+                }
+            });
+
+            // Show editor
+            problemDescription.style.display = 'none';
+            editor.codemirror.getWrapperElement().style.display = 'block';
+            editor.codemirror.refresh();
+            editor.codemirror.focus();
+
+            // Handle editor blur
+            editor.codemirror.on('blur', async (cm, event) => {
+                // Don't hide if clicking on toolbar
+                if (event.relatedTarget && event.relatedTarget.closest('.editor-toolbar')) {
+                    return;
+                }
+
+                const newContent = editor.value();
+                if (newContent !== originalContent) {
+                    await saveChanges(editor, newContent, originalContent, problemDescription);
+                }
+            });
+        } catch (error) {
+            console.error('Error initializing EasyMDE:', error);
+        }
+    }
+
+    // Function to save changes
+    async function saveChanges(editor, newContent, originalContent, problemDescription) {
+        try {
+            console.log('Saving changes to server');
+            const response = await fetch(`/api/problems/${problemId}/description`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ description: newContent })
+            });
+
+            if (!response.ok) {
+                if (response.status === 403) {
+                    // If user is not authorized, remove hover effect and click handler
+                    problemDescription.style.cursor = 'default';
+                    problemDescription.removeEventListener('click', handleDescriptionClick);
+                    throw new Error('You are not authorized to edit this description');
+                }
+                throw new Error('Failed to update description');
+            }
+
+            // Update the rendered content with parsed markdown
+            problemDescription.innerHTML = marked.parse(newContent);
+            // Store the markdown content in the data attribute
+            problemDescription.dataset.markdown = newContent;
+            // Re-initialize Prism for code highlighting
+            Prism.highlightAll();
+            originalContent = newContent;
+        } catch (error) {
+            console.error('Error updating description:', error);
+            alert(error.message || 'Failed to update description. Please try again.');
+            // Restore original content
+            editor.value(originalContent);
+        }
+    }
 
     if (problemId) {
         // Restore bookmark state

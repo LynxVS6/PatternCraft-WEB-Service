@@ -95,7 +95,7 @@
     
     <div class="problem-content">
         <div class="content-section" id="details-section">
-            <div class="problem-description markdown-content">{{ problem.description }}</div>
+            <div class="problem-description markdown-content" id="problem-description" data-is-author="{{ current_user.id|int == problem.author_id|int }}" data-markdown="{{ problem.description }}">{{ problem.description }}</div>
         </div>
         
         <div class="content-section" id="solutions-section" style="display: none;">
@@ -240,11 +240,13 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/problem-hub.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/problem-page.css') }}">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.css">
 {% endblock %}
 
 {% block scripts %}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.js"></script>
 <script src="{{ url_for('static', filename='js/problem_page.js') }}"></script>
 {% endblock %}
