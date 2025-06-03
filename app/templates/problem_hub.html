@@ -61,7 +61,7 @@
         {% endfor %}
     </div>
 
-    {{ render_pagination(pagination, 'solved_problems.solved_problems', max_page, min_page) }}
+    {{ render_pagination(pagination, 'problem_hub.problem_hub', max_page, min_page) }}
 </div>
 
 <script>
@@ -83,9 +83,9 @@
     }
 </script>
 
-<script src="{{ url_for('static', filename='js/solved_problems.js') }}"></script>
+<script src="{{ url_for('static', filename='js/problem_hub.js') }}"></script>
 {% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/solved_problems.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/problem-hub.css') }}">
 {% endblock %}

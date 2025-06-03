@@ -9,7 +9,7 @@ from .extensions import (
     get_timezone,
     get_locale,
 )
-from .views import auth, main, users, solved_problems, tasks, problems
+from .views import auth, main, problem_hub, problem_page, users, tasks
 
 
 def create_app():
@@ -25,8 +25,8 @@ def create_app():
     app.register_blueprint(auth.bp)
     app.register_blueprint(main.bp)
     app.register_blueprint(users.bp)
-    app.register_blueprint(solved_problems.bp)
+    app.register_blueprint(problem_hub.bp)
     app.register_blueprint(tasks.bp)
-    app.register_blueprint(problems.bp)
+    app.register_blueprint(problem_page.bp)
 
     return app

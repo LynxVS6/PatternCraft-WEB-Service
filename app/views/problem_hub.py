@@ -6,7 +6,7 @@ from sqlalchemy import func, desc, asc, or_, and_
 from app.models.user import User
 from flask_sqlalchemy import SQLAlchemy
 
-bp = Blueprint("solved_problems", __name__)
+bp = Blueprint("problem_hub", __name__)
 db = SQLAlchemy()
 
 
@@ -81,9 +81,9 @@ def get_problem_query():
     )
 
 
-@bp.route("/solved-problems")
+@bp.route("/problem-hub")
 @login_required
-def solved_problems():
+def problem_hub():
     page = request.args.get("page", 1, type=int)
     per_page = 10
 
@@ -298,7 +298,7 @@ def solved_problems():
     }
 
     return render_template(
-        "solved_problems.html",
+        "problem_hub.html",
         problems=processed_problems,
         pagination=pagination,
         languages=languages,

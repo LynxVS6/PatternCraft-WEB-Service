@@ -9,7 +9,7 @@ from app.models.problem_vote import ProblemVote
 from app.extensions import db
 from app.services.like_service import LikeService
 from sqlalchemy.exc import SQLAlchemyError
-from .solved_problems import get_problem_query, process_language_for_devicon
+from .problem_hub import get_problem_query, process_language_for_devicon
 from app.models.user import User
 from app.utils.validators import validate_comment_data, validate_vote_type
 
@@ -44,7 +44,7 @@ def handle_vote(vote_model, user_id, target_id, vote_type):
 
 @bp.route("/problem/<int:problem_id>")
 @login_required
-def problem_card(problem_id):
+def problem_page(problem_id):
     problem = get_problem_query().filter(Problem.id == problem_id).first_or_404()
     solutions = Solution.query.filter_by(problem_id=problem_id).all()
     discourse_comments = DiscourseComment.query.filter_by(problem_id=problem_id).all()
@@ -73,7 +73,7 @@ def problem_card(problem_id):
     }
 
     return render_template(
-        "problem_card.html",
+        "problem_page.html",
         problem=problem_data,
         solutions=solutions,
         discourse_comments=discourse_comments,

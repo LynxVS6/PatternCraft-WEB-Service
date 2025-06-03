@@ -34,10 +34,10 @@ def filter_tasks():
         query = query.filter(~Problem.id.in_(lab_ids))
 
     if current_user.is_authenticated:
-        solved_problems = select(Solution.problem_id).where(
+        problem_hub = select(Solution.problem_id).where(
             Solution.user_id == current_user.id
         )
-        query = query.filter(~Problem.id.in_(solved_problems))
+        query = query.filter(~Problem.id.in_(problem_hub))
 
     problems = query.all()
     result = [
