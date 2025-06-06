@@ -12,6 +12,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from .problem_hub import get_problem_query, process_language_for_devicon
 from app.models.user import User
 from app.utils.validators import validate_comment_data, validate_vote_type
+from app.forms.forms import CommentForm
 
 bp = Blueprint("problems", __name__)
 
@@ -49,6 +50,8 @@ def problem_page(problem_id):
     solutions = Solution.query.filter_by(problem_id=problem_id).all()
     discourse_comments = DiscourseComment.query.filter_by(problem_id=problem_id).all()
 
+    comment_form = CommentForm()
+
     # Get the author's username
     author = User.query.get(problem.author_id)
 
@@ -78,6 +81,7 @@ def problem_page(problem_id):
         problem=problem_data,
         solutions=solutions,
         discourse_comments=discourse_comments,
+        comment_form=comment_form
     )
 
 

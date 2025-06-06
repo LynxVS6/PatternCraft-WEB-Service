@@ -55,8 +55,9 @@ document.addEventListener('DOMContentLoaded', () => {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
+                'X-CSRFToken': getCsrfToken()
             },
-            credentials: 'same-origin'  // Add this to include cookies
+            credentials: 'same-origin'
         }).then(response => {
             if (response.ok) {
                 // If authorized, add hover effect and click handler
@@ -69,15 +70,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
                 problemDescription.addEventListener('click', handleDescriptionClick);
             } else if (response.status === 403) {
-                // If not authorized, remove hover effect and click handler
+                // If not authorized, just set default cursor without logging
                 problemDescription.style.cursor = 'default';
                 problemDescription.removeEventListener('click', handleDescriptionClick);
-                console.log('User is not authorized to edit this description');
             } else {
                 console.error('Unexpected response:', response.status);
             }
         }).catch(error => {
-            console.error('Error checking authorization:', error);
+            // Only log unexpected errors, not 403s
+            if (error.name !== 'ForbiddenError') {
+                console.error('Error checking authorization:', error);
+            }
             // If error, assume not authorized
             problemDescription.style.cursor = 'default';
             problemDescription.removeEventListener('click', handleDescriptionClick);
@@ -183,6 +186,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
+                    'X-CSRFToken': getCsrfToken()
                 },
                 body: JSON.stringify({ description: newContent })
             });
@@ -354,7 +358,11 @@ const toggleLike = async (solutionId) => {
     try {
         const response = await fetch(`/api/solutions/${solutionId}/like`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' }
+            headers: { 
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCsrfToken()
+            },
+            credentials: 'same-origin'
         });
         const data = await response.json();
         
@@ -444,6 +452,11 @@ const createCommentElement = (data, type, parentId) => {
     return commentDiv;
 };
 
+// Get CSRF token from meta tag
+const getCsrfToken = () => {
+    return document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+};
+
 const handleCommentSubmit = async (event, id, type) => {
     console.log('Handling comment submit:', { event, id, type });
     event.preventDefault();
@@ -461,7 +474,10 @@ const handleCommentSubmit = async (event, id, type) => {
         
         const response = await fetch(endpoint, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCsrfToken()
+            },
             body: JSON.stringify({ comment })
         });
         
@@ -572,7 +588,10 @@ const handleSaveEdit = async (commentId, type) => {
 
         const response = await fetch(endpoint, {
             method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCsrfToken()
+            },
             body: JSON.stringify({ comment: textarea.value })
         });
         
@@ -601,7 +620,10 @@ const handleDelete = async (commentId, type) => {
 
         const response = await fetch(endpoint, {
             method: 'DELETE',
-            headers: { 'Content-Type': 'application/json' }
+            headers: { 
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCsrfToken()
+            }
         });
         
         if (!response.ok) {
@@ -709,6 +731,7 @@ async function voteComment(commentId, voteType) {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
+                "X-CSRFToken": getCsrfToken()
             },
             body: JSON.stringify({ vote_type: voteType }),
         });
@@ -761,6 +784,7 @@ async function toggleBookmark(problemId) {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                "X-CSRFToken": getCsrfToken()
             },
             credentials: 'same-origin'
         });
@@ -844,7 +868,9 @@ async function startTraining(problemId) {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'X-CSRFToken': getCsrfToken()
             },
+            credentials: 'same-origin',
             body: JSON.stringify({
                 problem_id: problemId,
                 timestamp: new Date().toISOString(),
@@ -898,6 +924,7 @@ async function voteProblem(problemId, voteType) {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                "X-CSRFToken": getCsrfToken()
             },
             credentials: 'same-origin',
             body: JSON.stringify({ vote_type: voteType })

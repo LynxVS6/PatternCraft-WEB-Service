@@ -4,6 +4,7 @@ from flask_mail import Mail
 from flask_login import LoginManager
 from flask_babel import Babel
 from flask import g, request
+from flask_wtf.csrf import CSRFProtect
 
 
 def get_locale():
@@ -25,6 +26,7 @@ db = SQLAlchemy()
 migrate = Migrate()
 mail = Mail()
 babel = Babel()
+csrf = CSRFProtect()
 login_manager = LoginManager()
 login_manager.login_view = "auth.login"
 login_manager.login_message = "Пожалуйста, войдите для доступа к этой странице."

@@ -3,19 +3,16 @@
 {% block content %}
 <div class="filters-sidebar">
     <div class="filters-panel">
-        <form class="filters-form" id="search_form">
+        <form class="filters-form" id="search_form" method="GET">
+            {{ search_form.hidden_tag() }}
             <div class="search-input-container">
-                <input 
-                    type="text" 
-                    id="search_input" 
-                    name="q" 
-                    class="form-control search-input"
-                    placeholder="{{ _('solved_problems_search_placeholder') }}"
-                    aria-label="{{ _('solved_problems_search_label') }}"
-                    value="{{ current_filters.search if current_filters else '' }}"
-                >
+                {{ search_form.search_input(
+                    class="form-control search-input",
+                    placeholder=_('solved_problems_search_placeholder'),
+                    aria_label=_('solved_problems_search_label')
+                ) }}
                 <button 
-                    type="button" 
+                    type="submit" 
                     class="search-icon-btn" 
                     id="search"
                     aria-label="{{ _('solved_problems_search_button') }}"
@@ -25,104 +22,33 @@
             </div>
 
             <div class="select-container">
-                <label for="order_by">{{ _('solved_problems_sort_by') }}</label>
-                <select id="order_by" name="order_by" class="form-control filter-select">
-                    <option value="sort_date desc" {% if current_filters and current_filters.order_by == 'sort_date desc' %}selected{% endif %}>
-                        {{ _('solved_problems_sort_newest') }}
-                    </option>
-                    <option value="sort_date asc" {% if current_filters and current_filters.order_by == 'published_at asc' %}selected{% endif %}>
-                        {{ _('solved_problems_sort_oldest') }}
-                    </option>
-                    <option value="popularity desc" {% if current_filters and current_filters.order_by == 'popularity desc' %}selected{% endif %}>
-                        {{ _('solved_problems_sort_popular') }}
-                    </option>
-                    <option value="satisfaction_percent desc,total_completed desc" 
-                        {% if current_filters and current_filters.order_by == 'satisfaction_percent desc,total_completed desc' %}selected{% endif %}>
-                        {{ _('solved_problems_sort_high_rating') }}
-                    </option>
-                    <option value="satisfaction_percent asc" {% if current_filters and current_filters.order_by == 'satisfaction_percent asc' %}selected{% endif %}>
-                        {{ _('solved_problems_sort_low_rating') }}
-                    </option>
-                    <option value="name asc" {% if current_filters and current_filters.order_by == 'name asc' %}selected{% endif %}>
-                        {{ _('solved_problems_sort_name') }}
-                    </option>
-                </select>
+                <label>{{ search_form.order_by.label }}</label>
+                {{ search_form.order_by(class="form-control filter-select") }}
             </div>
 
             <div class="select-container">
-                <label for="language_filter">{{ _('solved_problems_languages') }}</label>
-                <select id="language_filter" name="language" class="form-control filter-select">
-                    <option value="all" {% if current_filters and (not current_filters.language or current_filters.language == 'all') %}selected{% endif %}>
-                        {{ _('solved_problems_all_languages') }}
-                    </option>
-                    <option value="my-languages" {% if current_filters and current_filters.language == 'my-languages' %}selected{% endif %}>
-                        {{ _('solved_problems_selected_languages') }}
-                    </option>
-                    {% for lang in languages %}
-                    <option value="{{ lang.code }}" {% if current_filters and current_filters.language == lang.code %}selected{% endif %}>
-                        {{ lang.name }}
-                    </option>
-                    {% endfor %}
-                </select>
+                <label>{{ search_form.language_filter.label }}</label>
+                {{ search_form.language_filter(class="form-control filter-select") }}
             </div>
 
             <div class="select-container">
-                <label for="status_filter">{{ _('solved_problems_status') }}</label>
-                <select id="status_filter" name="status" class="form-control filter-select">
-                    <option value="all" {% if current_filters and (not current_filters.status or current_filters.status == 'all') %}selected{% endif %}>
-                        {{ _('solved_problems_all') }}
-                    </option>
-                    <option value="verified" {% if current_filters and current_filters.status == 'verified' %}selected{% endif %}>
-                        {{ _('solved_problems_verified') }}
-                    </option>
-                    <option value="beta" {% if current_filters and current_filters.status == 'beta' %}selected{% endif %}>
-                        {{ _('solved_problems_beta') }}
-                    </option>
-                </select>
+                <label>{{ search_form.status_filter.label }}</label>
+                {{ search_form.status_filter(class="form-control filter-select") }}
             </div>
 
             <div class="select-container">
-                <label for="ids_filter">{{ _('solved_problems_progress') }}</label>
-                <select id="ids_filter" name="xids" class="form-control filter-select">
-                    <option value="all" {% if current_filters and (not current_filters.progress or current_filters.progress == 'all') %}selected{% endif %}>
-                        {{ _('solved_problems_all') }}
-                    </option>
-                    <option value="completed" {% if current_filters and current_filters.progress == 'completed' %}selected{% endif %}>
-                        {{ _('solved_problems_completed') }}
-                    </option>
-                    <option value="not_completed" {% if current_filters and current_filters.progress == 'not_completed' %}selected{% endif %}>
-                        {{ _('solved_problems_not_completed') }}
-                    </option>
-                </select>
+                <label>{{ search_form.ids_filter.label }}</label>
+                {{ search_form.ids_filter(class="form-control filter-select") }}
             </div>
 
             <div class="select-container">
-                <label for="ranks_filter">{{ _('solved_problems_difficulty') }}</label>
-                <select id="ranks_filter" name="r" class="form-control filter-select">
-                    <option value="all" {% if current_filters and (not current_filters.difficulties or current_filters.difficulties == ['all']) %}selected{% endif %}>
-                        {{ _('solved_problems_all') }}
-                    </option>
-                    <option value="easy" {% if current_filters and current_filters.difficulties == ['easy'] %}selected{% endif %}>
-                        {{ _('solved_problems_easy') }}
-                    </option>
-                    <option value="medium" {% if current_filters and current_filters.difficulties == ['middle'] %}selected{% endif %}>
-                        {{ _('solved_problems_medium') }}
-                    </option>
-                    <option value="hard" {% if current_filters and current_filters.difficulties == ['hard'] %}selected{% endif %}>
-                        {{ _('solved_problems_hard') }}
-                    </option>
-                </select>
+                <label>{{ search_form.ranks_filter.label }}</label>
+                {{ search_form.ranks_filter(class="form-control filter-select") }}
             </div>
 
             <div class="select-container">
-                <label for="tags_filter">{{ _('solved_problems_tags') }}</label>
-                <select id="tags_filter" name="tags" class="form-control filter-select" multiple>
-                    {% for tag in tags %}
-                    <option value="{{ tag.name }}" {% if tag.selected %}selected{% endif %}>
-                        {{ tag.name }} ({{ tag.count }})
-                    </option>
-                    {% endfor %}
-                </select>
+                <label>{{ search_form.tags_filter.label }}</label>
+                {{ search_form.tags_filter(class="form-control filter-select", multiple="multiple") }}
             </div>
         </form>
     </div>

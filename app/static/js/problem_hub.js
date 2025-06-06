@@ -17,8 +17,14 @@ const initializeCustomSelects = () => {
         if (isMultiple) {
             const paramName = select.name;
             const values = urlParams.getAll(paramName);
+            
+            // Update native select options to match URL parameters
+            Array.from(select.options).forEach(option => {
+                option.selected = values.includes(option.value);
+            });
+            
             selectedItems = Array.from(select.options)
-                .filter(option => values.includes(option.value))
+                .filter(option => option.selected)
                 .map(option => ({
                     value: option.value,
                     text: option.text
@@ -28,11 +34,13 @@ const initializeCustomSelects = () => {
             const value = urlParams.get(paramName);
             const selectedOption = Array.from(select.options).find(option => option.value === value);
             if (selectedOption) {
+                selectedOption.selected = true;
                 selectedItems = [{
                     value: selectedOption.value,
                     text: selectedOption.text
                 }];
             } else if (select.options.length > 0) {
+                select.options[0].selected = true;
                 selectedItems = [{
                     value: select.options[0].value,
                     text: select.options[0].text
@@ -150,11 +158,25 @@ const initializeCustomSelects = () => {
 const removeTag = (value) => {
     const select = document.querySelector(`.filter-select option[value="${value}"]`).parentElement;
     const option = select.querySelector(`option[value="${value}"]`);
+    
+    // Get all currently selected tags from the custom select UI first
+    const customSelect = select.nextElementSibling;
+    const selectedItems = customSelect.querySelector('.selected-items');
+    const selectedTags = Array.from(selectedItems.querySelectorAll('.selected-tag'))
+        .map(tag => tag.getAttribute('data-value'));
+    
+    // Sync the native select element with the custom UI state
+    Array.from(select.options).forEach(opt => {
+        opt.selected = selectedTags.includes(opt.value);
+    });
+    
+    // Log state before removal
+    console.log('Before removal - Current URL params:', new URLSearchParams(window.location.search).getAll('tags_filter'));
+    console.log('Before removal - Currently selected options:', selectedTags);
+    
     option.selected = false;
     
     // Update the custom select display
-    const customSelect = select.nextElementSibling;
-    const selectedItems = customSelect.querySelector('.selected-items');
     const tag = selectedItems.querySelector(`[data-value="${value}"]`);
     if (tag) tag.remove();
     
@@ -162,8 +184,21 @@ const removeTag = (value) => {
     const item = customSelect.querySelector(`.select-item[data-value="${value}"]`);
     if (item) item.classList.remove('selected');
     
+    // Get updated selected tags after removal
+    const updatedSelectedTags = Array.from(selectedItems.querySelectorAll('.selected-tag'))
+        .map(tag => tag.getAttribute('data-value'));
+    
+    // Sync the native select element with the updated custom UI state
+    Array.from(select.options).forEach(opt => {
+        opt.selected = updatedSelectedTags.includes(opt.value);
+    });
+    
+    // Log state after removal
+    console.log('After removal - Selected tags to be added:', updatedSelectedTags);
+    console.log('After removal - New URL params:', new URLSearchParams(window.location.search).getAll('tags_filter'));
+    
     // If this is the tags filter and no tags are selected, trigger search to show all problems
-    if (select.name === 'tags' && !select.querySelector('option:checked')) {
+    if (select.name === 'tags_filter' && updatedSelectedTags.length === 0) {
         performSearch();
     } else {
         // Trigger change event
@@ -174,18 +209,39 @@ const removeTag = (value) => {
 // Custom search functionality
 const performSearch = () => {
     const searchForm = document.getElementById('search_form');
+    
+    // Sync all custom selects with their native select elements before getting form data
+    document.querySelectorAll('.custom-select').forEach(customSelect => {
+        const select = customSelect.previousElementSibling;
+        if (select.hasAttribute('multiple')) {
+            const selectedTags = Array.from(customSelect.querySelectorAll('.selected-tag'))
+                .map(tag => tag.getAttribute('data-value'));
+            
+            // Update native select options
+            Array.from(select.options).forEach(option => {
+                option.selected = selectedTags.includes(option.value);
+            });
+        }
+    });
+    
     const formData = new FormData(searchForm);
     const params = new URLSearchParams();
     
     // Add all form data to params
     for (const [key, value] of formData.entries()) {
+        console.log(key, value);
         if (value) {
-            if (key === 'tags') {
-                // Handle multiple select values - use Set to remove duplicates
-                const values = new Set(formData.getAll(key));
+            if (key === 'tags_filter') {
+                // Get all selected tags and remove duplicates using Set
+                const selectedTags = new Set();
+                formData.getAll(key).forEach(tag => selectedTags.add(tag));
+                
                 // Only add if not empty
-                if (values.size > 0) {
-                    values.forEach(v => params.append(key, v));
+                if (selectedTags.size > 0) {
+                    // Clear any existing tags_filter parameters
+                    params.delete(key);
+                    // Add each unique tag once
+                    selectedTags.forEach(tag => params.append(key, tag));
                 }
             } else {
                 // Only add if not the default "all" value

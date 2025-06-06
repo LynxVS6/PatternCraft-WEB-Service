@@ -5,6 +5,7 @@ from flask_login import login_required, current_user
 from sqlalchemy import func, desc, asc, or_, and_
 from app.models.user import User
 from flask_sqlalchemy import SQLAlchemy
+from app.forms.forms import ProblemsSearchForm
 
 bp = Blueprint("problem_hub", __name__)
 db = SQLAlchemy()
@@ -81,20 +82,30 @@ def get_problem_query():
     )
 
 
-@bp.route("/problem-hub")
+@bp.route("/problem-hub", methods=['GET'])
 @login_required
 def problem_hub():
+    search_form = ProblemsSearchForm()
     page = request.args.get("page", 1, type=int)
     per_page = 10
 
-    # Get search parameters
-    search_query = request.args.get("q", "").strip()
+    # Get search parameters from form
+    search_query = request.args.get("search_input", "").strip()
     order_by = request.args.get("order_by", "sort_date desc")
-    language = request.args.get("language", "all")
-    status = request.args.get("status", "all")
-    progress = request.args.get("xids", "all")
-    difficulties = request.args.getlist("r")
-    selected_tags = request.args.getlist("tags")
+    language = request.args.get("language_filter", "all")
+    status = request.args.get("status_filter", "all")
+    progress = request.args.get("ids_filter", "all")
+    difficulties = request.args.getlist("ranks_filter")
+    selected_tags = request.args.getlist("tags_filter")
+
+    # Populate form with current values
+    search_form.search_input.data = search_query
+    search_form.order_by.data = order_by
+    search_form.language_filter.data = language
+    search_form.status_filter.data = status
+    search_form.ids_filter.data = progress
+    search_form.ranks_filter.data = difficulties[0] if difficulties else 'all'
+    search_form.tags_filter.data = selected_tags
 
     current_app.logger.info(
         f"Search parameters: query='{search_query}', order_by='{order_by}', "
@@ -120,6 +131,11 @@ def problem_hub():
             "selected": tag in selected_tags,
         }
         for tag in sorted(all_tags)
+    ]
+
+    # After creating the tags list with counts
+    search_form.tags_filter.choices = [
+        (tag["name"], f"{tag['name']} ({tag['count']})") for tag in tags
     ]
 
     # Start with base query
@@ -306,4 +322,5 @@ def problem_hub():
         current_filters=current_filters,
         max_page=total_pages,
         min_page=1,
+        search_form=search_form  # Add form to template context
     )

@@ -6,6 +6,7 @@ from .extensions import (
     mail,
     login_manager,
     babel,
+    csrf,
     get_timezone,
     get_locale,
 )
@@ -21,6 +22,7 @@ def create_app():
     migrate.init_app(app, db)
     mail.init_app(app)
     login_manager.init_app(app)
+    csrf.init_app(app)
 
     app.register_blueprint(auth.bp)
     app.register_blueprint(main.bp)
