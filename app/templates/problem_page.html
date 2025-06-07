@@ -105,8 +105,8 @@
                 <pre><code class="solution-content language-python">{{ solution.solution }}</code></pre>
                 <div class="solution-actions">
                     <button class="btn btn-like" onclick="toggleLike({{ solution.id }})">
-                        <i class="{% if solution.id in current_user.likes|map(attribute='solution_id')|list %}fas{% else %}far{% endif %} fa-heart"></i>
-                        <span class="likes-count">{{ solution.likes_count }}</span>
+                        <i class="{% if solution.id in current_user.solution_votes|map(attribute='target_id')|list %}fas{% else %}far{% endif %} fa-heart"></i>
+                        <span class="likes-count">{{ solution.votes_count }}</span>
                     </button>
                     <button class="btn btn-comment" onclick="showComments({{ solution.id }})">
                         <i class="far fa-comment"></i>

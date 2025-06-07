@@ -13,8 +13,25 @@ class Solution(db.Model):
     user = db.relationship('User', back_populates='solutions')
     problem = db.relationship('Problem', back_populates='solutions')
     comments = db.relationship('Comment', back_populates='solution')
-    likes = db.relationship('Like', back_populates='solution')
+    solution_votes = db.relationship('SolutionVote', back_populates='solution')
 
     @property
-    def likes_count(self):
-        return len(self.likes)
+    def votes_count(self):
+        return len(self.solution_votes)
+
+
+class SolutionVote(db.Model):
+    __tablename__ = 'solution_votes'
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    target_id = db.Column(db.Integer, db.ForeignKey('solutions.id'), nullable=False)
+    vote_type = db.Column(db.String(7), nullable=False)  # 'like' or 'dislike'
+    created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
+
+    user = db.relationship('User', back_populates='solution_votes')
+    solution = db.relationship('Solution', back_populates='solution_votes')
+
+    __table_args__ = (
+        db.UniqueConstraint('user_id', 'target_id', name='unique_user_solution_like'),
+    )

@@ -1,5 +1,4 @@
 from app.extensions import db
-from app.models.problem_vote import ProblemVote
 from app.models.solution import Solution
 from flask_login import current_user
 from datetime import datetime, timezone
@@ -39,7 +38,7 @@ class Problem(db.Model):
         if not current_user.is_authenticated:
             return None
         vote = ProblemVote.query.filter_by(
-            problem_id=self.id, user_id=current_user.id
+            target_id=self.id, user_id=current_user.id
         ).first()
         return vote.vote_type if vote else None
 
@@ -75,7 +74,7 @@ class Problem(db.Model):
         self.negative_vote = 0
 
         # Get all votes for this problem
-        votes = ProblemVote.query.filter_by(problem_id=self.id).all()
+        votes = ProblemVote.query.filter_by(target_id=self.id).all()
 
         # Count votes by type
         for vote in votes:
@@ -85,3 +84,29 @@ class Problem(db.Model):
                 self.neutral_vote += 1
             elif vote.vote_type == "negative":
                 self.negative_vote += 1
+        
+        # Commit the changes to the database
+        db.session.commit()
+
+
+class ProblemVote(db.Model):
+    __tablename__ = "problem_votes"
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    target_id = db.Column(db.Integer, db.ForeignKey("problems.id"), nullable=False)
+    vote_type = db.Column(
+        db.String(10), nullable=False
+    )  # 'positive', 'neutral', 'negative'
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(
+        db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow
+    )
+
+    # Relationships
+    user = db.relationship("User", back_populates="problem_votes")
+    problem = db.relationship("Problem", back_populates="votes")
+
+    __table_args__ = (
+        db.UniqueConstraint("user_id", "target_id", name="unique_user_problem_vote"),
+    )

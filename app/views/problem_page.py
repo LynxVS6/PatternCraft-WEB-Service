@@ -1,46 +1,44 @@
 from flask import Blueprint, jsonify, render_template, request
 from flask_login import login_required, current_user
 from app.models.bookmark import Bookmark
-from app.models.problem import Problem
-from app.models.solution import Solution
-from app.models.comment import Comment, CommentVote
-from app.models.discourse import DiscourseComment, DiscourseVote
-from app.models.problem_vote import ProblemVote
+from app.models import Problem, ProblemVote
+from app.models import Solution, SolutionVote
+from app.models.solution_comment import Comment, CommentVote
+from app.models.discourse_comment import DiscourseComment, DiscourseVote
 from app.extensions import db
-from app.services.like_service import LikeService
 from sqlalchemy.exc import SQLAlchemyError
 from .problem_hub import get_problem_query, process_language_for_devicon
 from app.models.user import User
 from app.utils.validators import validate_comment_data, validate_vote_type
 from app.forms.forms import CommentForm
+from app.services.vote_service import (
+    EmojiVoteService,
+    ArrowVoteService,
+    LikeVoteService,
+)
 
 bp = Blueprint("problems", __name__)
 
 
-def handle_vote(vote_model, user_id, target_id, vote_type):
-    """Generic vote handling function for comments only."""
-    existing_vote = vote_model.query.filter_by(
-        user_id=user_id, comment_id=target_id
-    ).first()
+def get_vote_type(allowed_types: list[str]):
+    data = request.get_json()
+    if not data:
+        return jsonify({"error": "No data provided"}), 400
 
-    # Check both comment types
-    comment = DiscourseComment.query.get(target_id) or Comment.query.get(target_id)
-    if not comment:
-        return jsonify({"error": "Comment not found"}), 404
+    is_valid, error = validate_vote_type(data, allowed_types)
+    if not is_valid:
+        return jsonify({"error": error}), 400
 
-    if existing_vote:
-        if existing_vote.vote_type == vote_type:
-            db.session.delete(existing_vote)
-        else:
-            existing_vote.vote_type = vote_type
-    else:
-        new_vote = vote_model(
-            user_id=user_id, comment_id=target_id, vote_type=vote_type
-        )
-        db.session.add(new_vote)
+    return data.get("vote_type"), 200
 
-    db.session.commit()
-    return jsonify({"vote_count": comment.vote_count})
+
+def handle_vote_service_response(result):
+    if not result.success:
+        if result.error_code == "NOT_FOUND":
+            return jsonify({"error": result.error}), 404
+        return jsonify({"error": result.error}), 400
+
+    return None, 200
 
 
 @bp.route("/problem/<int:problem_id>")
@@ -81,7 +79,7 @@ def problem_page(problem_id):
         problem=problem_data,
         solutions=solutions,
         discourse_comments=discourse_comments,
-        comment_form=comment_form
+        comment_form=comment_form,
     )
 
 
@@ -98,7 +96,7 @@ def get_more_solutions(problem_id):
             {
                 "id": solution.id,
                 "solution": solution.solution,
-                "likes": solution.likes,
+                "likes": solution.votes,
                 "username": solution.user.username,
             }
             for solution in solutions
@@ -109,9 +107,26 @@ def get_more_solutions(problem_id):
 @bp.route("/api/solutions/<int:solution_id>/like", methods=["POST"])
 @login_required
 def toggle_solution_like(solution_id):
+    print("getting request")
     try:
-        likes_count, liked = LikeService.toggle_like(current_user.id, solution_id)
-        return jsonify({"likes": likes_count, "liked": liked})
+        vote_type, response_code = get_vote_type(["like", "dislike"])
+        print("processing response_code")
+        if response_code != 200:
+            print("error")
+            return vote_type
+
+        result = LikeVoteService.submit_vote(
+            Solution, SolutionVote, current_user.id, solution_id, vote_type
+        )
+        print("3-"*30)
+        response, response_code = handle_vote_service_response(result)
+        if response_code != 200:
+            return response
+        print("4-"*30)
+        return jsonify({
+            "likes": result.data["likes"],
+            "liked": result.data["liked"]
+        })
     except ValueError as e:
         return jsonify({"error": str(e)}), 404
     except SQLAlchemyError:
@@ -284,20 +299,20 @@ def delete_discourse_comment(comment_id):
 @bp.route("/api/problems/discourse/comments/<int:comment_id>/vote", methods=["POST"])
 @login_required
 def vote_discourse_comment(comment_id):
-    print(f"Voting on discourse comment {comment_id}")
-    data = request.get_json()
-    is_valid, error = validate_vote_type(data, ["up", "down"])
-    if not is_valid:
-        return jsonify({"error": error}), 400
-    vote_type = data.get("vote_type")
-    print(f"Vote type: {vote_type}")
+    vote_type, response_code = get_vote_type(["up", "down"])
+    if response_code != 200:
+        return vote_type
 
-    comment = DiscourseComment.query.get_or_404(comment_id)
-    print(f"Found comment: {comment.id} by user {comment.user_id}")
+    result = ArrowVoteService.submit_vote(
+        DiscourseComment, DiscourseVote, current_user.id, comment_id, vote_type
+    )
 
-    result = handle_vote(DiscourseVote, current_user.id, comment_id, vote_type)
+    response, response_code = handle_vote_service_response(result)
+    if response_code != 200:
+        return response
+
     print(f"Vote result: {result}")
-    return result
+    return jsonify({"vote_count": result.data["vote_count"]})
 
 
 @bp.route("/api/problems/<int:problem_id>/bookmark", methods=["POST"])
@@ -340,59 +355,25 @@ def toggle_bookmark(problem_id):
 @login_required
 def vote_problem(problem_id):
     try:
-        data = request.get_json()
-        if not data:
-            return jsonify({"error": "No data provided"}), 400
-        is_valid, error = validate_vote_type(data, ["positive", "neutral", "negative"])
-        if not is_valid:
-            return jsonify({"error": error}), 400
-        vote_type = data.get("vote_type")
+        vote_type, response_code = get_vote_type(["positive", "neutral", "negative"])
+        if response_code != 200:
+            return vote_type
+        result = EmojiVoteService.submit_vote(
+            Problem, ProblemVote, current_user.id, problem_id, vote_type
+        )
 
-        problem = Problem.query.get_or_404(problem_id)
-        existing_vote = ProblemVote.query.filter_by(
-            user_id=current_user.id, problem_id=problem_id
-        ).first()
-
-        # If there's an existing vote, remove it first
-        if existing_vote:
-            if existing_vote.vote_type == vote_type:
-                # If clicking the same vote type, remove the vote
-                db.session.delete(existing_vote)
-                vote_type = None
-            else:
-                # Update the vote type
-                existing_vote.vote_type = vote_type
-        else:
-            # Create new vote
-            new_vote = ProblemVote(
-                user_id=current_user.id, problem_id=problem_id, vote_type=vote_type
-            )
-            db.session.add(new_vote)
-
-        # Update vote counts
-        problem.update_vote_counts()
-
-        # Commit the transaction
-        db.session.commit()
-
-        # Refresh the problem object to get updated counts
-        db.session.refresh(problem)
-
-        # Get the updated vote type after the transaction
-        current_vote = ProblemVote.query.filter_by(
-            user_id=current_user.id, problem_id=problem_id
-        ).first()
-
-        vote_type = current_vote.vote_type if current_vote else None
+        response, response_code = handle_vote_service_response(result)
+        if response_code != 200:
+            return response
 
         return jsonify(
             {
-                "vote_type": vote_type,
-                "satisfaction_percent": round(problem.satisfaction_percent or 0),
-                "total_votes": problem.total_votes or 0,
+                "vote_type": result.data["vote_type"],
+                "satisfaction_percent": result.data["satisfaction_percent"],
+                "total_votes": result.data["total_votes"],
+                "action": result.data["action"],
             }
         )
-
     except SQLAlchemyError as e:
         db.session.rollback()
         print(f"Database error: {str(e)}")  # For debugging
@@ -405,13 +386,19 @@ def vote_problem(problem_id):
 @bp.route("/api/comments/<int:comment_id>/vote", methods=["POST"])
 @login_required
 def vote_solution_comment(comment_id):
-    data = request.get_json()
-    is_valid, error = validate_vote_type(data, ["up", "down"])
-    if not is_valid:
-        return jsonify({"error": error}), 400
-    vote_type = data.get("vote_type")
+    vote_type, response_code = get_vote_type(["up", "down"])
+    if response_code != 200:
+        return vote_type
 
-    return handle_vote(CommentVote, current_user.id, comment_id, vote_type)
+    result = ArrowVoteService.submit_vote(
+        Comment, CommentVote, current_user.id, comment_id, vote_type
+    )
+
+    response, response_code = handle_vote_service_response(result)
+    if response_code != 200:
+        return response
+
+    return jsonify({"vote_count": result.data["vote_count"]})
 
 
 @bp.route("/api/problems/<int:problem_id>/description", methods=["PUT"])
@@ -420,22 +407,22 @@ def update_problem_description(problem_id):
     try:
         # Get the problem
         problem = Problem.query.get_or_404(problem_id)
-        
+
         # Check if user is the author
         if problem.author_id != current_user.id:
             return jsonify({"error": "Only the author can update the description"}), 403
-            
+
         # Get the new description from request
         data = request.get_json()
         if not data or "description" not in data:
             return jsonify({"error": "Description is required"}), 400
-            
+
         # Update the description
         problem.description = data["description"]
         db.session.commit()
-        
+
         return jsonify({"message": "Description updated successfully"})
-        
+
     except Exception as e:
         db.session.rollback()
         print(f"Error updating description: {str(e)}")
@@ -448,13 +435,13 @@ def check_description_edit_auth(problem_id):
     try:
         # Get the problem
         problem = Problem.query.get_or_404(problem_id)
-        
+
         # Check if user is the author
         if problem.author_id != current_user.id:
             return jsonify({"error": "Only the author can edit the description"}), 403
-            
+
         return jsonify({"message": "Authorized to edit description"})
-        
+
     except Exception as e:
         print(f"Error checking description edit authorization: {str(e)}")
         return jsonify({"error": "Failed to check authorization"}), 500

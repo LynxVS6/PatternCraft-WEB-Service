@@ -1,23 +1,19 @@
 from .user import User
-from .problem import Problem
-from .solution import Solution
-from .comment import Comment
-from .comment import CommentVote
-from .like import Like
+from .problem import Problem, ProblemVote
 from .bookmark import Bookmark
-from .problem_vote import ProblemVote
-from .discourse import DiscourseComment
-from .discourse import DiscourseVote
+from .solution import Solution, SolutionVote
+from .solution_comment import Comment, CommentVote
+from .discourse_comment import DiscourseComment, DiscourseVote
 
 __all__ = [
     'User',
     'Problem',
+    'ProblemVote'
     'Solution',
+    'SolutionVote',
     'Comment',
     'CommentVote',
-    'Like',
     'Bookmark',
-    'ProblemVote',
     'DiscourseComment',
-    'DiscourseVote'
+    'DiscourseVote',
 ]

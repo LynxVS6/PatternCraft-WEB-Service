@@ -28,7 +28,7 @@ class DiscourseVote(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    comment_id = db.Column(db.Integer, db.ForeignKey('discourse_comments.id'), nullable=False)
+    target_id = db.Column(db.Integer, db.ForeignKey('discourse_comments.id'), nullable=False)
     vote_type = db.Column(db.String(4), nullable=False)  # 'up' or 'down'
     created_at = db.Column(db.DateTime, server_default=db.func.now())
 

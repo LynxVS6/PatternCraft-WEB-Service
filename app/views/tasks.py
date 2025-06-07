@@ -158,7 +158,7 @@ def submit_solution():
                     "name": problem.name,
                     "difficulty": problem.difficulty,
                 },
-                "likes_count": new_solution.likes_count,
+                "likes_count": new_solution.votes_count,
                 "comments": [],
                 "created_at": (
                     new_solution.created_at.isoformat()

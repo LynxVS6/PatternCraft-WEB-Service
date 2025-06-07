@@ -362,7 +362,8 @@ const toggleLike = async (solutionId) => {
                 'Content-Type': 'application/json',
                 'X-CSRFToken': getCsrfToken()
             },
-            credentials: 'same-origin'
+            credentials: 'same-origin',
+            body: JSON.stringify({ vote_type: 'like' })
         });
         const data = await response.json();
         

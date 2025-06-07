@@ -19,7 +19,7 @@ class User(UserMixin, db.Model):
 
     solutions = db.relationship('Solution', back_populates='user')
     comments = db.relationship('Comment', back_populates='user')
-    likes = db.relationship('Like', back_populates='user')
+    solution_votes = db.relationship('SolutionVote', back_populates='user')
     discourse_comments = db.relationship('DiscourseComment', back_populates='user')
     discourse_votes = db.relationship('DiscourseVote', back_populates='user')
     comment_votes = db.relationship('CommentVote', back_populates='user')
