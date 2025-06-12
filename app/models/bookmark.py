@@ -7,7 +7,7 @@ class Bookmark(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
-    problem_id = db.Column(db.Integer, db.ForeignKey("problems.id"), nullable=False)
+    target_id = db.Column(db.Integer, db.ForeignKey("problems.id"), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     # Define relationships
@@ -17,6 +17,6 @@ class Bookmark(db.Model):
     # Add unique constraint to prevent duplicate bookmarks
     __table_args__ = (
         db.UniqueConstraint(
-            "user_id", "problem_id", name="unique_user_problem_bookmark"
+            "user_id", "target_id", name="unique_user_problem_bookmark"
         ),
     )

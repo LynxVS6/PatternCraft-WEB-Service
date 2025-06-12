@@ -6,11 +6,11 @@ from app.models import Solution, SolutionVote
 from app.models.solution_comment import Comment, CommentVote
 from app.models.discourse_comment import DiscourseComment, DiscourseVote
 from app.extensions import db
-from sqlalchemy.exc import SQLAlchemyError
 from .problem_hub import get_problem_query, process_language_for_devicon
 from app.models.user import User
 from app.utils.validators import validate_comment_data, validate_vote_type
 from app.forms.forms import CommentForm
+from app.services.comment_service import CommentService
 from app.services.vote_service import (
     EmojiVoteService,
     ArrowVoteService,
@@ -20,7 +20,7 @@ from app.services.vote_service import (
 bp = Blueprint("problems", __name__)
 
 
-def get_vote_type(allowed_types: list[str]):
+def parse_vote_request(allowed_types: list[str]):
     data = request.get_json()
     if not data:
         return jsonify({"error": "No data provided"}), 400
@@ -32,21 +32,12 @@ def get_vote_type(allowed_types: list[str]):
     return data.get("vote_type"), 200
 
 
-def handle_vote_service_response(result):
-    if not result.success:
-        if result.error_code == "NOT_FOUND":
-            return jsonify({"error": result.error}), 404
-        return jsonify({"error": result.error}), 400
-
-    return None, 200
-
-
 @bp.route("/problem/<int:problem_id>")
 @login_required
 def problem_page(problem_id):
     problem = get_problem_query().filter(Problem.id == problem_id).first_or_404()
     solutions = Solution.query.filter_by(problem_id=problem_id).all()
-    discourse_comments = DiscourseComment.query.filter_by(problem_id=problem_id).all()
+    discourse_comments = DiscourseComment.query.filter_by(target_id=problem_id).all()
 
     comment_form = CommentForm()
 
@@ -104,35 +95,6 @@ def get_more_solutions(problem_id):
     )
 
 
-@bp.route("/api/solutions/<int:solution_id>/like", methods=["POST"])
-@login_required
-def toggle_solution_like(solution_id):
-    print("getting request")
-    try:
-        vote_type, response_code = get_vote_type(["like", "dislike"])
-        print("processing response_code")
-        if response_code != 200:
-            print("error")
-            return vote_type
-
-        result = LikeVoteService.submit_vote(
-            Solution, SolutionVote, current_user.id, solution_id, vote_type
-        )
-        print("3-"*30)
-        response, response_code = handle_vote_service_response(result)
-        if response_code != 200:
-            return response
-        print("4-"*30)
-        return jsonify({
-            "likes": result.data["likes"],
-            "liked": result.data["liked"]
-        })
-    except ValueError as e:
-        return jsonify({"error": str(e)}), 404
-    except SQLAlchemyError:
-        return jsonify({"error": "Database error occurred"}), 500
-
-
 @bp.route("/api/solutions/<int:solution_id>/comments", methods=["POST"])
 @login_required
 def add_solution_comment(solution_id):
@@ -142,21 +104,18 @@ def add_solution_comment(solution_id):
         return jsonify({"error": error}), 400
     comment_text = data.get("comment")
 
-    comment = Comment(
-        comment=comment_text,
-        user_id=current_user.id,
-        solution_id=solution_id,
+    result = CommentService.submit_comment(
+        Solution, Comment, solution_id, current_user, comment_text
     )
-
-    db.session.add(comment)
-    db.session.commit()
+    if not result.success:
+        return jsonify({"error": result.error}), result.error_code
 
     return jsonify(
         {
-            "id": comment.id,
-            "comment": comment.comment,
-            "username": current_user.username,
-            "user_id": current_user.id,
+            "id": result.data["comment_id"],
+            "comment": result.data["comment"],
+            "username": result.data["username"],
+            "user_id": result.data["user_id"],
         }
     )
 
@@ -164,155 +123,97 @@ def add_solution_comment(solution_id):
 @bp.route("/api/comments/<int:comment_id>", methods=["PUT"])
 @login_required
 def edit_comment(comment_id):
-    comment = Comment.query.get_or_404(comment_id)
-
-    if comment.user_id != current_user.id:
-        return jsonify({"error": "Unauthorized"}), 403
-
     data = request.get_json()
     is_valid, error = validate_comment_data(data)
     if not is_valid:
         return jsonify({"error": error}), 400
     new_comment_text = data.get("comment")
 
-    comment.comment = new_comment_text
-    db.session.commit()
-
-    return jsonify(
-        {
-            "id": comment.id,
-            "comment": comment.comment,
-            "username": comment.user.username,
-        }
+    result = CommentService.edit_comment(
+        Comment, comment_id, current_user, new_comment_text
     )
+    if not result.success:
+        return jsonify({"error": result.error}), result.error_code
+
+    return jsonify({
+        "id": result.data["comment_id"],
+        "comment": result.data["comment"],
+        "username": result.data["username"],
+    })
 
 
 @bp.route("/api/comments/<int:comment_id>", methods=["DELETE"])
 @login_required
 def delete_comment(comment_id):
-    try:
-        comment = Comment.query.get_or_404(comment_id)
+    result = CommentService.delete_comment(
+        Comment, comment_id, current_user
+    )
+    if not result.success:
+        return jsonify({"error": result.error}), result.error_code
 
-        if comment.user_id != current_user.id:
-            return jsonify({"error": "Unauthorized"}), 403
+    return jsonify(
+        {"message": result.data["message"]}
+    )
 
-        # Delete associated votes first
-        CommentVote.query.filter_by(comment_id=comment_id).delete()
-
-        # Then delete the comment
-        db.session.delete(comment)
-        db.session.commit()
-
-        return jsonify({"message": "Comment deleted successfully"})
-    except Exception as e:
-        db.session.rollback()
-        print(f"Error deleting comment: {str(e)}")  # For debugging
-        return jsonify({"error": "Failed to delete comment"}), 500
 
 
 @bp.route("/api/problems/<int:problem_id>/discourse/comments", methods=["POST"])
 @login_required
 def add_discourse_comment(problem_id):
-    print(f"Adding discourse comment for problem {problem_id}")
     data = request.get_json()
     is_valid, error = validate_comment_data(data)
     if not is_valid:
         return jsonify({"error": error}), 400
     comment_text = data.get("comment")
-    print(f"Comment text: {comment_text}")
 
-    if not comment_text:
-        return jsonify({"error": "Comment is required"}), 400
-
-    Problem.query.get_or_404(problem_id)  # Verify problem exists
-    comment = DiscourseComment(
-        user_id=current_user.id, problem_id=problem_id, comment=comment_text
+    result = CommentService.submit_comment(
+        Problem, DiscourseComment, problem_id, current_user, comment_text
     )
+    if not result.success:
+        return jsonify({"error": result.error}), result.error_code
 
-    db.session.add(comment)
-    db.session.commit()
-    print(f"Created comment with ID: {comment.id}")
-
-    response_data = {
-        "id": comment.id,
-        "comment": comment.comment,
-        "username": current_user.username,
-        "user_id": current_user.id,
-        "vote_count": comment.vote_count,
-    }
-    print(f"Sending response: {response_data}")
-    return jsonify(response_data)
+    return jsonify({
+        "id": result.data["comment_id"],
+        "comment": result.data["comment"],
+        "username": result.data["username"],
+        "user_id": result.data["user_id"],
+    })
 
 
 @bp.route("/api/problems/discourse/comments/<int:comment_id>", methods=["PUT"])
 @login_required
 def edit_discourse_comment(comment_id):
-    comment = DiscourseComment.query.get_or_404(comment_id)
-
-    if comment.user_id != current_user.id:
-        return jsonify({"error": "Unauthorized"}), 403
-
     data = request.get_json()
     is_valid, error = validate_comment_data(data)
     if not is_valid:
         return jsonify({"error": error}), 400
     new_comment_text = data.get("comment")
 
-    if not new_comment_text:
-        return jsonify({"error": "Comment is required"}), 400
-
-    comment.comment = new_comment_text
-    db.session.commit()
-
-    return jsonify(
-        {
-            "id": comment.id,
-            "comment": comment.comment,
-            "username": comment.user.username,
-        }
+    result = CommentService.edit_comment(
+        DiscourseComment, comment_id, current_user, new_comment_text
     )
+    if not result.success:
+        return jsonify({"error": result.error}), result.error_code
+
+    return jsonify({
+        "id": result.data["comment_id"],
+        "comment": result.data["comment"],
+        "username": result.data["username"],
+    })
 
 
 @bp.route("/api/problems/discourse/comments/<int:comment_id>", methods=["DELETE"])
 @login_required
 def delete_discourse_comment(comment_id):
-    try:
-        comment = DiscourseComment.query.get_or_404(comment_id)
-
-        if comment.user_id != current_user.id:
-            return jsonify({"error": "Unauthorized"}), 403
-
-        # Delete associated votes first
-        DiscourseVote.query.filter_by(comment_id=comment_id).delete()
-
-        # Then delete the comment
-        db.session.delete(comment)
-        db.session.commit()
-
-        return jsonify({"message": "Comment deleted successfully"})
-    except Exception as e:
-        db.session.rollback()
-        print(f"Error deleting discourse comment: {str(e)}")  # For debugging
-        return jsonify({"error": "Failed to delete comment"}), 500
-
-
-@bp.route("/api/problems/discourse/comments/<int:comment_id>/vote", methods=["POST"])
-@login_required
-def vote_discourse_comment(comment_id):
-    vote_type, response_code = get_vote_type(["up", "down"])
-    if response_code != 200:
-        return vote_type
-
-    result = ArrowVoteService.submit_vote(
-        DiscourseComment, DiscourseVote, current_user.id, comment_id, vote_type
+    result = CommentService.delete_comment(
+        DiscourseComment, comment_id, current_user
     )
+    if not result.success:
+        return jsonify({"error": result.error}), result.error_code
 
-    response, response_code = handle_vote_service_response(result)
-    if response_code != 200:
-        return response
-
-    print(f"Vote result: {result}")
-    return jsonify({"vote_count": result.data["vote_count"]})
+    return jsonify(
+        {"message": result.data["message"]}
+    )
 
 
 @bp.route("/api/problems/<int:problem_id>/bookmark", methods=["POST"])
@@ -351,52 +252,74 @@ def toggle_bookmark(problem_id):
         return jsonify({"error": "Failed to update bookmark"}), 500
 
 
+@bp.route("/api/solutions/<int:solution_id>/like", methods=["POST"])
+@login_required
+def toggle_solution_like(solution_id):
+    vote_type, response_code = parse_vote_request(["like", "dislike"])
+
+    if response_code != 200:
+        return vote_type
+
+    result = LikeVoteService.submit_vote(
+        Solution, SolutionVote, current_user.id, solution_id, vote_type
+    )
+    if not result.success:
+        return jsonify({"error": result.error}), result.error_code
+
+    return jsonify({"likes": result.data["likes"], "liked": result.data["liked"]})
+
+
+@bp.route("/api/problems/discourse/comments/<int:comment_id>/vote", methods=["POST"])
+@login_required
+def vote_discourse_comment(comment_id):
+    vote_type, response_code = parse_vote_request(["up", "down"])
+    if response_code != 200:
+        return vote_type
+
+    result = ArrowVoteService.submit_vote(
+        DiscourseComment, DiscourseVote, current_user.id, comment_id, vote_type
+    )
+    if not result.success:
+        return jsonify({"error": result.error}), result.error_code
+
+    print(f"Vote result: {result}")
+    return jsonify({"vote_count": result.data["vote_count"]})
+
+
 @bp.route("/api/problems/<int:problem_id>/vote", methods=["POST"])
 @login_required
 def vote_problem(problem_id):
-    try:
-        vote_type, response_code = get_vote_type(["positive", "neutral", "negative"])
-        if response_code != 200:
-            return vote_type
-        result = EmojiVoteService.submit_vote(
-            Problem, ProblemVote, current_user.id, problem_id, vote_type
-        )
+    vote_type, response_code = parse_vote_request(["positive", "neutral", "negative"])
+    if response_code != 200:
+        return vote_type
+    result = EmojiVoteService.submit_vote(
+        Problem, ProblemVote, current_user.id, problem_id, vote_type
+    )
+    if not result.success:
+        return jsonify({"error": result.error}), result.error_code
 
-        response, response_code = handle_vote_service_response(result)
-        if response_code != 200:
-            return response
-
-        return jsonify(
-            {
-                "vote_type": result.data["vote_type"],
-                "satisfaction_percent": result.data["satisfaction_percent"],
-                "total_votes": result.data["total_votes"],
-                "action": result.data["action"],
-            }
-        )
-    except SQLAlchemyError as e:
-        db.session.rollback()
-        print(f"Database error: {str(e)}")  # For debugging
-        return jsonify({"error": "Database error occurred"}), 500
-    except Exception as e:
-        print(f"Unexpected error: {str(e)}")  # For debugging
-        return jsonify({"error": str(e)}), 500
+    return jsonify(
+        {
+            "vote_type": result.data["vote_type"],
+            "satisfaction_percent": result.data["satisfaction_percent"],
+            "total_votes": result.data["total_votes"],
+            "action": result.data["action"],
+        }
+    )
 
 
 @bp.route("/api/comments/<int:comment_id>/vote", methods=["POST"])
 @login_required
 def vote_solution_comment(comment_id):
-    vote_type, response_code = get_vote_type(["up", "down"])
+    vote_type, response_code = parse_vote_request(["up", "down"])
     if response_code != 200:
         return vote_type
 
     result = ArrowVoteService.submit_vote(
         Comment, CommentVote, current_user.id, comment_id, vote_type
     )
-
-    response, response_code = handle_vote_service_response(result)
-    if response_code != 200:
-        return response
+    if not result.success:
+        return jsonify({"error": result.error}), result.error_code
 
     return jsonify({"vote_count": result.data["vote_count"]})
 

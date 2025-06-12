@@ -442,7 +442,7 @@ const createCommentElement = (data, type, parentId) => {
                 <button class="btn btn-sm btn-vote" onclick="${voteFunction}(${data.id}, 'up')">
                     <i class="fas fa-arrow-up"></i>
                 </button>
-                <span class="vote-count">${data.vote_count || 0}</span>
+                <span class="vote-count">0</span>
                 <button class="btn btn-sm btn-vote" onclick="${voteFunction}(${data.id}, 'down')">
                     <i class="fas fa-arrow-down"></i>
                 </button>

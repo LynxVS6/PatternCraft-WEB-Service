@@ -1,85 +1,51 @@
 from app.extensions import db
-from sqlalchemy.exc import SQLAlchemyError, OperationalError
+from .base_service import BaseService, Result
 from abc import ABC, abstractmethod
-from typing import Optional, Dict, Any, TypeVar, Generic
-from dataclasses import dataclass
-
-T = TypeVar("T")
 
 
-@dataclass
-class Result(Generic[T]):
-    success: bool
-    data: Optional[Dict[str, Any]] = None
-    error: Optional[str] = None
-    error_code: Optional[str] = None
-
-
-class VoteService(ABC):
+class VoteService(BaseService):
     @staticmethod
+    @BaseService.handle_errors
     def _handle_vote_type(target_model, vote_model, user_id, target_id, vote_type) -> Result:
         """Generic vote handling function."""
-        try:
-            target = target_model.query.get(target_id)
-            if not target:
-                return Result(
-                    success=False,
-                    error=f"Target model with id {target_id} not found",
-                    error_code="NOT_FOUND",
-                )
+        target = target_model.query.get(target_id)
+        if not target:
+            return Result(
+                success=False,
+                error=f"Target model with id {target_id} not found",
+                error_code=400,
+            )
 
-            existing_vote = vote_model.query.filter_by(
-                user_id=user_id, target_id=target_id
-            ).first()
+        existing_vote = vote_model.query.filter_by(
+            user_id=user_id, target_id=target_id
+        ).first()
 
-            if existing_vote:
-                if existing_vote.vote_type == vote_type:
-                    db.session.delete(existing_vote)
-                    vote_type = None
-                else:
-                    existing_vote.vote_type = vote_type
+        if existing_vote:
+            if existing_vote.vote_type == vote_type:
+                db.session.delete(existing_vote)
+                vote_type = None
             else:
-                new_vote = vote_model(
-                    user_id=user_id, target_id=target_id, vote_type=vote_type
-                )
-                db.session.add(new_vote)
+                existing_vote.vote_type = vote_type
+        else:
+            new_vote = vote_model(
+                user_id=user_id, target_id=target_id, vote_type=vote_type
+            )
+            db.session.add(new_vote)
 
-            db.session.commit()
+        db.session.commit()
 
-            return Result(
-                success=True,
-                data={
-                    "vote_type": vote_type,
-                    "action": (
-                        "deleted"
-                        if existing_vote and existing_vote.vote_type == vote_type
-                        else "updated"
-                    ),
-                    "target": target
-                },
-            )
-
-        except OperationalError as e:
-            db.session.rollback()
-            return Result(
-                success=False,
-                error=f"Database connection error: {str(e)}",
-                error_code="DATABASE_CONNECTION_ERROR",
-            )
-        except SQLAlchemyError as e:
-            db.session.rollback()
-            return Result(
-                success=False,
-                error=f"Database error: {str(e)}",
-                error_code="DATABASE_ERROR",
-            )
-        except Exception as e:
-            db.session.rollback()
-            return Result(
-                success=False,
-                error=f"Unexpected error: {str(e)}",
-                error_code="UNEXPECTED_ERROR",
-            )
+        return Result(
+            success=True,
+            data={
+                "vote_type": vote_type,
+                "action": (
+                    "deleted"
+                    if existing_vote and existing_vote.vote_type == vote_type
+                    else "updated"
+                ),
+                "target": target
+            },
+        )
 
     @staticmethod
     @abstractmethod

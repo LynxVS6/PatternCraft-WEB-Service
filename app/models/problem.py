@@ -26,10 +26,18 @@ class Problem(db.Model):
         db.DateTime, nullable=False, default=datetime.now(timezone.utc)
     )
 
-    solutions = db.relationship("Solution", back_populates="problem")
-    discourse_comments = db.relationship("DiscourseComment", back_populates="problem")
-    bookmarks = db.relationship("Bookmark", back_populates="problem")
-    votes = db.relationship("ProblemVote", back_populates="problem")
+    solutions = db.relationship(
+        "Solution", back_populates="problem", cascade="all, delete-orphan"
+    )
+    discourse_comments = db.relationship(
+        "DiscourseComment", back_populates="problem", cascade="all, delete-orphan"
+    )
+    bookmarks = db.relationship(
+        "Bookmark", back_populates="problem", cascade="all, delete-orphan"
+    )
+    votes = db.relationship(
+        "ProblemVote", back_populates="problem", cascade="all, delete-orphan"
+    )
     author = db.relationship("User", back_populates="authored_problems")
 
     @property
@@ -84,7 +92,7 @@ class Problem(db.Model):
                 self.neutral_vote += 1
             elif vote.vote_type == "negative":
                 self.negative_vote += 1
-        
+
         # Commit the changes to the database
         db.session.commit()
 

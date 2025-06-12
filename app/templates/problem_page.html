@@ -19,7 +19,7 @@
             </div>
             <div class="problem-actions-bar">
                 <button class="btn btn-bookmark" data-problem-id="{{ problem.id }}" onclick="toggleBookmark({{ problem.id }})">
-                    <i class="{% if problem.id in current_user.bookmarks|map(attribute='problem_id')|list %}fas{% else %}far{% endif %} fa-star"></i>
+                    <i class="{% if problem.id in current_user.bookmarks|map(attribute='target_id')|list %}fas{% else %}far{% endif %} fa-star"></i>
                 </button>
                 <div class="vote-buttons-container">
                     <button class="btn btn-vote-problem {% if problem.user_vote == 'positive' %}active{% endif %}" 
