@@ -10,7 +10,7 @@ from wtforms import (
     SelectMultipleField,
 )
 from wtforms.validators import DataRequired, Length, EqualTo, Email, ValidationError
-from app.models.user import User
+from app.models import User
 
 languages = [
     {"code": "python", "name": "Python"},

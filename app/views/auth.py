@@ -6,7 +6,7 @@ from app.extensions import db
 from app.forms.forms import LoginForm, RegistrationForm
 from app.models.user import User
 from app.utils.tokens import confirm_token
-from app.services.email_service import send_confirmation_email
+from app.services import send_confirmation_email
 from flask_login import current_user, login_required, login_user, logout_user
 
 bp = Blueprint("auth", __name__)

@@ -1,9 +1,7 @@
 from flask import Blueprint, render_template, request, current_app
-from app.models.problem import Problem
-from app.models.solution import Solution
+from app.models import Problem, Solution, User
 from flask_login import login_required, current_user
 from sqlalchemy import func, desc, asc, or_, and_
-from app.models.user import User
 from flask_sqlalchemy import SQLAlchemy
 from app.forms.forms import ProblemsSearchForm
 

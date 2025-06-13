@@ -4,7 +4,7 @@ from app.extensions import db
 from flask_login import current_user
 from sqlalchemy import select, cast, String
 import json
-from app.utils.validators import validate_filter_tasks_data, validate_task_data, validate_solution_data
+from app.services.content_validators import validate_filter_tasks_data, validate_task_data, validate_solution_data
 
 bp = Blueprint("tasks", __name__)
 

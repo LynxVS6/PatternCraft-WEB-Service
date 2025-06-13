@@ -192,13 +192,14 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             if (!response.ok) {
+                const errorData = await response.json();
                 if (response.status === 403) {
                     // If user is not authorized, remove hover effect and click handler
                     problemDescription.style.cursor = 'default';
                     problemDescription.removeEventListener('click', handleDescriptionClick);
-                    throw new Error('You are not authorized to edit this description');
+                    throw new Error(errorData.error || 'You are not authorized to edit this description');
                 }
-                throw new Error('Failed to update description');
+                throw new Error(errorData.error || 'Failed to update description');
             }
 
             // Update the rendered content with parsed markdown
@@ -365,6 +366,12 @@ const toggleLike = async (solutionId) => {
             credentials: 'same-origin',
             body: JSON.stringify({ vote_type: 'like' })
         });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || 'Failed to update like');
+        }
+
         const data = await response.json();
         
         document.querySelectorAll(`.btn-like[onclick*="${solutionId}"]`).forEach(button => {
@@ -378,6 +385,7 @@ const toggleLike = async (solutionId) => {
         });
     } catch (error) {
         console.error('Error toggling like:', error);
+        alert(error.message || 'Failed to update like. Please try again.');
     }
 };
 
@@ -482,13 +490,9 @@ const handleCommentSubmit = async (event, id, type) => {
             body: JSON.stringify({ comment })
         });
         
-        console.log('Response status:', response.status);
-        console.log('Response ok:', response.ok);
-        
         if (!response.ok) {
-            const errorText = await response.text();
-            console.error('Error response:', errorText);
-            throw new Error('Failed to submit comment');
+            const errorData = await response.json();
+            throw new Error(errorData.error || 'Failed to submit comment');
         }
         
         const data = await response.json();
@@ -510,7 +514,7 @@ const handleCommentSubmit = async (event, id, type) => {
     } catch (error) {
         console.error(`Error submitting ${type} comment:`, error);
         console.error('Error stack:', error.stack);
-        alert('Failed to submit comment. Please try again.');
+        alert(error.message || 'Failed to submit comment. Please try again.');
     }
 };
 
@@ -597,7 +601,8 @@ const handleSaveEdit = async (commentId, type) => {
         });
         
         if (!response.ok) {
-            throw new Error('Failed to update comment');
+            const errorData = await response.json();
+            throw new Error(errorData.error || 'Failed to update comment');
         }
         
         const data = await response.json();
@@ -606,7 +611,7 @@ const handleSaveEdit = async (commentId, type) => {
         editForm.style.display = 'none';
     } catch (error) {
         console.error(`Error updating ${type} comment:`, error);
-        alert('Failed to update comment. Please try again.');
+        alert(error.message || 'Failed to update comment. Please try again.');
     }
 };
 
@@ -628,7 +633,8 @@ const handleDelete = async (commentId, type) => {
         });
         
         if (!response.ok) {
-            throw new Error('Failed to delete comment');
+            const errorData = await response.json();
+            throw new Error(errorData.error || 'Failed to delete comment');
         }
         
         const commentDiv = document.getElementById(`${type}-comment-${commentId}`);
@@ -656,7 +662,7 @@ const handleDelete = async (commentId, type) => {
         }
     } catch (error) {
         console.error(`Error deleting ${type} comment:`, error);
-        alert('Failed to delete comment. Please try again.');
+        alert(error.message || 'Failed to delete comment. Please try again.');
     }
 };
 
@@ -707,7 +713,6 @@ const mentionUser = (username, type, id) => {
 async function voteComment(commentId, voteType) {
     console.log("Voting on comment:", { commentId, voteType });
     
-    // First determine if this is a discourse comment by checking the comment div
     const discourseCommentDiv = document.getElementById(`discourse-comment-${commentId}`);
     const solutionCommentDiv = document.getElementById(`solution-comment-${commentId}`);
     
@@ -724,9 +729,6 @@ async function voteComment(commentId, voteType) {
         ? `/api/problems/discourse/comments/${commentId}/vote`
         : `/api/comments/${commentId}/vote`;
 
-    console.log("Sending request to:", endpoint);
-    console.log("Request data:", { vote_type: voteType });
-
     try {
         const response = await fetch(endpoint, {
             method: "POST",
@@ -737,13 +739,9 @@ async function voteComment(commentId, voteType) {
             body: JSON.stringify({ vote_type: voteType }),
         });
 
-        console.log("Response status:", response.status);
-        console.log("Response ok:", response.ok);
-
         if (!response.ok) {
-            const errorText = await response.text();
-            console.error("Error response:", errorText);
-            throw new Error("Failed to vote on comment");
+            const errorData = await response.json();
+            throw new Error(errorData.error || 'Failed to vote on comment');
         }
 
         const data = await response.json();
@@ -762,6 +760,7 @@ async function voteComment(commentId, voteType) {
     } catch (error) {
         console.error("Error voting on comment:", error);
         console.error("Error stack:", error.stack);
+        alert(error.message || 'Failed to vote on comment. Please try again.');
     }
 }
 
@@ -769,13 +768,12 @@ async function voteComment(commentId, voteType) {
 async function toggleBookmark(problemId) {
     console.log('toggleBookmark called with problemId:', problemId);
     
-    // Get the button and disable it temporarily
     const bookmarkBtn = document.querySelector(`.btn-bookmark[data-problem-id="${problemId}"]`);
     console.log('Found bookmark button:', bookmarkBtn);
     
     if (bookmarkBtn.disabled) {
         console.log('Button is disabled, returning');
-        return; // Prevent multiple rapid clicks
+        return;
     }
     bookmarkBtn.disabled = true;
     
@@ -790,13 +788,9 @@ async function toggleBookmark(problemId) {
             credentials: 'same-origin'
         });
 
-        console.log('Response status:', response.status);
-        console.log('Response ok:', response.ok);
-
         if (!response.ok) {
-            const errorText = await response.text();
-            console.error('Error response:', errorText);
-            throw new Error(`Failed to update bookmark: ${errorText}`);
+            const errorData = await response.json();
+            throw new Error(errorData.error || 'Failed to update bookmark');
         }
 
         const data = await response.json();
@@ -811,27 +805,22 @@ async function toggleBookmark(problemId) {
                 bookmark_count: data.bookmark_count
             });
             
-            // Update the button state
             bookmarkBtn.classList.toggle('active', data.bookmarked);
             const icon = bookmarkBtn.querySelector('i');
             console.log('Found icon element:', icon);
             icon.classList.toggle('far', !data.bookmarked);
             icon.classList.toggle('fas', data.bookmarked);
             
-            // Update the count
             bookmarkCount.textContent = data.bookmark_count;
             
-            // Store the updated count
             sessionStorage.setItem(`bookmark_count_${problemId}`, data.bookmark_count);
             
-            // Add animation
             bookmarkBtn.style.transform = 'scale(1.2)';
             setTimeout(() => {
                 bookmarkBtn.style.transform = 'scale(1)';
                 bookmarkBtn.disabled = false;
             }, 200);
 
-            // Dispatch custom event
             document.dispatchEvent(new CustomEvent('bookmarkUpdated', {
                 detail: {
                     problemId: problemId,
@@ -848,7 +837,7 @@ async function toggleBookmark(problemId) {
     } catch (error) {
         console.error('Error in toggleBookmark:', error);
         console.error('Error stack:', error.stack);
-        alert('Failed to update bookmark. Please try again.');
+        alert(error.message || 'Failed to update bookmark. Please try again.');
         bookmarkBtn.disabled = false;
     }
 }
@@ -917,7 +906,6 @@ async function voteProblem(problemId, voteType) {
         return;
     }
 
-    // Disable all vote buttons temporarily
     voteButtons.forEach(btn => btn.disabled = true);
 
     try {
@@ -932,29 +920,30 @@ async function voteProblem(problemId, voteType) {
         });
 
         if (!response.ok) {
-            throw new Error('Failed to update vote');
+            const errorData = await response.json();
+            throw new Error(errorData.error || 'Failed to update vote');
         }
 
         const data = await response.json();
         console.log('Response data:', data);
         
-        // Update UI with server response
         voteButtons.forEach(btn => {
             const icon = btn.querySelector('i');
             const btnVoteType = btn.dataset.voteType;
-            
+            console.log(btnVoteType, data.vote_type)
             if (btnVoteType === data.vote_type) {
+                console.log(1111)
                 btn.classList.add('active');
                 icon.classList.remove('far');
                 icon.classList.add('fas');
             } else {
+                console.log(21111)
                 btn.classList.remove('active');
                 icon.classList.remove('fas');
                 icon.classList.add('far');
             }
         });
 
-        // Update satisfaction percentage and total votes
         const statItem = document.querySelector('.stat-item:nth-child(2)');
         if (statItem) {
             const voteText = statItem.querySelector('span');
@@ -963,19 +952,16 @@ async function voteProblem(problemId, voteType) {
             }
         }
 
-        // Store the updated vote state
         sessionStorage.setItem(`vote_${problemId}`, data.vote_type);
         sessionStorage.setItem(`satisfaction_${problemId}`, data.satisfaction_percent);
         sessionStorage.setItem(`total_votes_${problemId}`, data.total_votes);
 
-        // Add animation
         clickedButton.style.transform = 'scale(1.2)';
         setTimeout(() => {
             clickedButton.style.transform = 'scale(1)';
             voteButtons.forEach(btn => btn.disabled = false);
         }, 200);
 
-        // Dispatch custom event for vote updates
         document.dispatchEvent(new CustomEvent('voteUpdated', {
             detail: {
                 problemId: problemId,
@@ -987,7 +973,7 @@ async function voteProblem(problemId, voteType) {
 
     } catch (error) {
         console.error('Error in voteProblem:', error);
-        alert('Failed to update vote. Please try again.');
+        alert(error.message || 'Failed to update vote. Please try again.');
         voteButtons.forEach(btn => btn.disabled = false);
     }
 }

@@ -2,9 +2,9 @@ from flask import Blueprint, render_template, redirect, request, url_for, flash,
 from flask_login import login_required, current_user
 from app import db
 from app.forms.forms import EditProfileForm, ChangePasswordForm
-from app.models.user import User
-from app.services.email_service import send_confirmation_email
-from app.utils.validators import validate_user_data
+from app.models import User
+from app.services import send_confirmation_email
+from app.services.content_validators import validate_user_data
 
 bp = Blueprint("users", __name__)
 
