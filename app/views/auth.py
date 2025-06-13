@@ -1,13 +1,9 @@
 from datetime import datetime
 from urllib.parse import urljoin, urlparse
 from flask import Blueprint, flash, redirect, render_template, request, url_for
-from sqlalchemy import or_
-from app.extensions import db
-from app.forms.forms import LoginForm, RegistrationForm
-from app.models.user import User
-from app.utils.tokens import confirm_token
-from app.services import send_confirmation_email
 from flask_login import current_user, login_required, login_user, logout_user
+from app.forms.forms import LoginForm, RegistrationForm
+from app.services.auth_service import AuthService
 
 bp = Blueprint("auth", __name__)
 
@@ -27,21 +23,18 @@ def register():
     login_form = LoginForm(prefix="login")
 
     if request.method == "POST" and register_form.validate_on_submit():
-        if User.query.filter_by(username=register_form.username.data).first():
-            flash("Такой ник уже занят", "error")
-        elif User.query.filter_by(email=register_form.email.data).first():
-            flash("Такой email уже зарегистрирован", "error")
-        else:
-            user = User(
-                username=register_form.username.data.strip(),
-                email=register_form.email.data.lower().strip(),
-            )
-            user.set_password(register_form.password.data)
-            db.session.add(user)
-            db.session.commit()
+        result = AuthService.register(
+            {
+                "username": register_form.username.data,
+                "email": register_form.email.data,
+                "password": register_form.password.data,
+            }
+        )
 
-            send_confirmation_email(user)
-            flash("Проверьте почту и подтвердите регистрацию", "info")
+        if not result.success:
+            flash(result.error, "error")
+        else:
+            flash(result.data["message"], "info")
             return redirect(url_for("auth.login"))
 
     return render_template(
@@ -58,23 +51,15 @@ def confirm_email(token):
     ):
         return redirect(url_for("main.index"))
 
-    email = confirm_token(token)
-    if not email:
-        flash("Ссылка просрочена или недействительна", "error")
+    result = AuthService.confirm_email(token)
+    if not result.success:
+        flash(result.error, "error")
         return redirect(url_for("auth.login"))
 
-    user = User.query.filter_by(email=email).first_or_404()
-
+    user = result.data["user"]
     if user.new_email:
-        user.email = user.new_email
-        user.new_email = None
-        user.email_confirmed = True
-        db.session.commit()
         flash("Новый email успешно подтверждён!", "success")
     elif not user.email_confirmed:
-        user.email_confirmed = True
-        user.email_confirmed_at = datetime.utcnow()
-        db.session.commit()
         flash("E‑mail подтверждён! Добро пожаловать 👋", "success")
     else:
         flash("Почта уже была подтверждена", "info")
@@ -92,30 +77,27 @@ def login():
     register_form = RegistrationForm(prefix="register")
 
     if request.method == "POST" and login_form.validate_on_submit():
-        user = User.query.filter(
-            or_(
-                User.username == login_form.identity.data,
-                User.email == login_form.identity.data.lower(),
-            )
-        ).first()
+        result = AuthService.login(
+            {
+                "identity": login_form.identity.data,
+                "password": login_form.password.data,
+                "remember_me": login_form.remember_me.data,
+            },
+            current_user
+        )
 
-        if user and user.check_password(login_form.password.data):
-            if not user.email_confirmed:
-                flash("Сначала подтвердите e‑mail, письмо отправлено повторно", "error")
-                send_confirmation_email(user)
-            else:
-                login_user(user, remember=login_form.remember_me.data)
-                user.last_login = datetime.utcnow()
-                db.session.commit()
-                flash("Успешный вход в аккаунт!", "success")  # Добавлено уведомление
-                next_page = request.args.get("next")
-                return (
-                    redirect(next_page)
-                    if next_page and is_safe_url(next_page)
-                    else redirect(url_for("main.index"))
-                )
+        if not result.success:
+            flash(result.error, "error")
         else:
-            flash("Неверный логин/email или пароль", "error")
+            user = result.data["user"]
+            login_user(user, remember=login_form.remember_me.data)
+            flash("Успешный вход в аккаунт!", "success")
+            next_page = request.args.get("next")
+            return (
+                redirect(next_page)
+                if next_page and is_safe_url(next_page)
+                else redirect(url_for("main.index"))
+            )
 
     return render_template(
         "auth.html", login_form=login_form, register_form=register_form

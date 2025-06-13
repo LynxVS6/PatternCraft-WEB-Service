@@ -1,6 +1,5 @@
 from flask import Blueprint, jsonify, render_template, request
 from flask_login import login_required, current_user
-from app.extensions import db
 from .problem_hub import get_problem_query, process_language_for_devicon
 from app.forms.forms import CommentForm
 from app.models import (
