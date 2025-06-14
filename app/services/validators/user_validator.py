@@ -7,7 +7,11 @@ class UserValidator:
     @staticmethod
     def validate_user_data(username, email, password=None, current_user=None) -> Result:
         """Validate user data including username, email, and optionally password."""
-        if not username or not isinstance(username, str) or not (3 <= len(username) <= 32):
+        if (
+            not username
+            or not isinstance(username, str)
+            or not (3 <= len(username) <= 32)
+        ):
             return Result(
                 success=False,
                 error="Username must be a string between 3 and 32 characters",
@@ -16,7 +20,11 @@ class UserValidator:
 
         # Validate email format
         email_pattern = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
-        if not email or not isinstance(email, str) or not re.match(email_pattern, email):
+        if (
+            not email
+            or not isinstance(email, str)
+            or not re.match(email_pattern, email)
+        ):
             return Result(
                 success=False,
                 error="Valid email is required",
@@ -126,6 +134,7 @@ class UserValidator:
     @staticmethod
     def check_authentication(current_user) -> Result:
         """Check if user is authenticated."""
+        print("current", current_user)
         if current_user is None:
             return Result(
                 success=False,
@@ -138,4 +147,4 @@ class UserValidator:
                 error="User must be authenticated",
                 error_code=401,
             )
-        return Result(success=True) 
+        return Result(success=True)
