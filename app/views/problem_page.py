@@ -1,6 +1,7 @@
 from flask import Blueprint, jsonify, render_template, request
 from flask_login import login_required, current_user
-from .problem_hub import get_problem_query, process_language_for_devicon
+from .problem_hub import get_problem_query
+from app.utils.process_language_for_devicon import process_language_for_devicon
 from app.forms.forms import CommentForm
 from app.models import (
     User,
@@ -12,15 +13,13 @@ from app.models import (
     Comment,
     CommentVote,
     DiscourseComment,
-    DiscourseVote
+    DiscourseVote,
 )
 from app.services import (
     DescriptionService,
     BookmarkService,
     CommentService,
-    EmojiVoteService,
-    ArrowVoteService,
-    LikeVoteService,
+    VoteService,
 )
 
 bp = Blueprint("problems", __name__)
@@ -92,9 +91,9 @@ def get_more_solutions(problem_id):
 @bp.route("/api/solutions/<int:solution_id>/comments", methods=["POST"])
 @login_required
 def add_solution_comment(solution_id):
-    raw_data = request.get_json()
+    raw_json = request.get_json()
     result = CommentService.submit_comment(
-        Solution, Comment, raw_data, solution_id, current_user
+        Solution, Comment, raw_json, solution_id, current_user
     )
     if not result.success:
         return jsonify({"error": result.error}), result.error_code
@@ -105,10 +104,8 @@ def add_solution_comment(solution_id):
 @bp.route("/api/comments/<int:comment_id>", methods=["PUT"])
 @login_required
 def edit_comment(comment_id):
-    raw_data = request.get_json()
-    result = CommentService.edit_comment(
-        Comment, raw_data, comment_id, current_user
-    )
+    raw_json = request.get_json()
+    result = CommentService.edit_comment(Comment, raw_json, comment_id, current_user)
     if not result.success:
         return jsonify({"error": result.error}), result.error_code
 
@@ -118,22 +115,19 @@ def edit_comment(comment_id):
 @bp.route("/api/comments/<int:comment_id>", methods=["DELETE"])
 @login_required
 def delete_comment(comment_id):
-    result = CommentService.delete_comment(
-        Comment, comment_id, current_user
-    )
+    result = CommentService.delete_comment(Comment, comment_id, current_user)
     if not result.success:
         return jsonify({"error": result.error}), result.error_code
 
     return jsonify(result.data)
 
 
-
 @bp.route("/api/problems/<int:problem_id>/discourse/comments", methods=["POST"])
 @login_required
 def add_discourse_comment(problem_id):
-    raw_data = request.get_json()
+    raw_json = request.get_json()
     result = CommentService.submit_comment(
-        Problem, DiscourseComment, raw_data, problem_id, current_user
+        Problem, DiscourseComment, raw_json, problem_id, current_user
     )
     if not result.success:
         return jsonify({"error": result.error}), result.error_code
@@ -144,9 +138,9 @@ def add_discourse_comment(problem_id):
 @bp.route("/api/problems/discourse/comments/<int:comment_id>", methods=["PUT"])
 @login_required
 def edit_discourse_comment(comment_id):
-    raw_data = request.get_json()
+    raw_json = request.get_json()
     result = CommentService.edit_comment(
-        DiscourseComment, raw_data, comment_id, current_user
+        DiscourseComment, raw_json, comment_id, current_user
     )
     if not result.success:
         return jsonify({"error": result.error}), result.error_code
@@ -157,9 +151,7 @@ def edit_discourse_comment(comment_id):
 @bp.route("/api/problems/discourse/comments/<int:comment_id>", methods=["DELETE"])
 @login_required
 def delete_discourse_comment(comment_id):
-    result = CommentService.delete_comment(
-        DiscourseComment, comment_id, current_user
-    )
+    result = CommentService.delete_comment(DiscourseComment, comment_id, current_user)
     if not result.success:
         return jsonify({"error": result.error}), result.error_code
 
@@ -181,9 +173,9 @@ def toggle_bookmark(problem_id):
 @bp.route("/api/solutions/<int:solution_id>/like", methods=["POST"])
 @login_required
 def toggle_solution_like(solution_id):
-    raw_data = request.get_json()
-    result = LikeVoteService.submit_vote(
-        Solution, SolutionVote, raw_data, solution_id, current_user
+    raw_json = request.get_json()
+    result = VoteService.submit_vote(
+        Solution, SolutionVote, raw_json, solution_id, current_user, vote_class="like"
     )
     if not result.success:
         return jsonify({"error": result.error}), result.error_code
@@ -194,9 +186,14 @@ def toggle_solution_like(solution_id):
 @bp.route("/api/problems/discourse/comments/<int:comment_id>/vote", methods=["POST"])
 @login_required
 def vote_discourse_comment(comment_id):
-    raw_data = request.get_json()
-    result = ArrowVoteService.submit_vote(
-        DiscourseComment, DiscourseVote, raw_data, comment_id, current_user
+    raw_json = request.get_json()
+    result = VoteService.submit_vote(
+        DiscourseComment,
+        DiscourseVote,
+        raw_json,
+        comment_id,
+        current_user,
+        vote_class="arrow",
     )
     if not result.success:
         return jsonify({"error": result.error}), result.error_code
@@ -207,9 +204,9 @@ def vote_discourse_comment(comment_id):
 @bp.route("/api/problems/<int:problem_id>/vote", methods=["POST"])
 @login_required
 def vote_problem(problem_id):
-    raw_data = request.get_json()
-    result = EmojiVoteService.submit_vote(
-        Problem, ProblemVote, raw_data, problem_id, current_user
+    raw_json = request.get_json()
+    result = VoteService.submit_vote(
+        Problem, ProblemVote, raw_json, problem_id, current_user, vote_class="emoji"
     )
     if not result.success:
         return jsonify({"error": result.error}), result.error_code
@@ -220,9 +217,9 @@ def vote_problem(problem_id):
 @bp.route("/api/comments/<int:comment_id>/vote", methods=["POST"])
 @login_required
 def vote_solution_comment(comment_id):
-    raw_data = request.get_json()
-    result = ArrowVoteService.submit_vote(
-        Comment, CommentVote, raw_data, comment_id, current_user
+    raw_json = request.get_json()
+    result = VoteService.submit_vote(
+        Comment, CommentVote, raw_json, comment_id, current_user, vote_class="arrow"
     )
     if not result.success:
         return jsonify({"error": result.error}), result.error_code
@@ -233,9 +230,9 @@ def vote_solution_comment(comment_id):
 @bp.route("/api/problems/<int:problem_id>/description", methods=["PUT"])
 @login_required
 def update_problem_description(problem_id):
-    raw_data = request.get_json()
+    raw_json = request.get_json()
     result = DescriptionService.submit_description(
-        Problem, raw_data, problem_id, current_user
+        Problem, raw_json, problem_id, current_user
     )
     if not result.success:
         return jsonify({"error": result.error}), result.error_code
@@ -246,9 +243,7 @@ def update_problem_description(problem_id):
 @bp.route("/api/problems/<int:problem_id>/description", methods=["GET"])
 @login_required
 def check_description_edit_auth(problem_id):
-    result = DescriptionService.check_edit_auth(
-        Problem, problem_id, current_user
-    )
+    result = DescriptionService.check_edit_auth(Problem, problem_id, current_user)
     if not result.success:
         return jsonify({"error": result.error}), result.error_code
 

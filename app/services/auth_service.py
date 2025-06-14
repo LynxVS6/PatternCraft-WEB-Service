@@ -1,294 +1,46 @@
-from app.extensions import db
-from .base_service import BaseService, Result
-from .email_service import send_confirmation_email
-from .validators.user_validator import UserValidator
-from app.models import User
-from itsdangerous import URLSafeTimedSerializer
-from flask import current_app
+from .ropp_service import ROPPService, Result, RailwayService
+from .components import ConfirmEmail, LoginUser, RegisterUser
 
 
-class AuthService(BaseService):
+class AuthService(ROPPService):
     @staticmethod
-    def register(raw_data, current_user) -> Result:
-        input_data = {
-            "raw_data": raw_data,
-            "current_user": current_user,
-        }
-        return BaseService._process_input_data(
-            input_data,
-            AuthService._parse_register_data,
-            AuthService._validate_register_data,
-            AuthService._handle_register,
-            AuthService._send_register_data,
+    def register(raw_json, current_user) -> Result:
+        return RailwayService.execute_flow(
+            {
+                "raw_json": raw_json,
+                "current_user": current_user,
+            },
+            steps=(
+                (RegisterUser.parse_json, "parse_json"),
+                (RegisterUser.validate_user_data, "validate_register_data"),
+                (RegisterUser.execute, "execute_register"),
+                (RegisterUser.format, "format_output"),
+            ),
         )
 
     @staticmethod
-    def login(raw_data, current_user) -> Result:
-        input_data = {
-            "raw_data": raw_data,
-            "current_user": current_user,
-        }
-        return BaseService._process_input_data(
-            input_data,
-            AuthService._parse_login_data,
-            AuthService._validate_login_data,
-            AuthService._handle_login,
-            AuthService._send_login_data,
+    def login(raw_json, current_user) -> Result:
+        return RailwayService.execute_flow(
+            {
+                "raw_json": raw_json,
+                "current_user": current_user,
+            },
+            steps=(
+                (LoginUser.parse_json, "parse_json"),
+                (LoginUser.validate_credentials, "validate_credentials"),
+                (LoginUser.execute, "execute_login"),
+                (LoginUser.format, "format_output"),
+            ),
         )
 
     @staticmethod
     def confirm_email(token) -> Result:
-        input_data = {"token": token}
-        return BaseService._process_input_data(
-            input_data,
-            AuthService._parse_token,
-            BaseService._combine_funcs(
-                AuthService.confirm_token, AuthService._validate_token
+        return RailwayService.execute_flow(
+            {"token": token},
+            steps=(
+                (ConfirmEmail.validate_token, "validate_token"),
+                (ConfirmEmail.validate_user, "validate_user"),
+                (ConfirmEmail.execute, "execute_confirmation"),
+                (ConfirmEmail.format, "format_output"),
             ),
-            AuthService._handle_confirm,
-            AuthService._send_confirmation_data,
-        )
-
-    @staticmethod
-    @BaseService._parse_errors
-    def _parse_register_data(input_data):
-        raw_data = input_data["raw_data"]
-        return Result(
-            True,
-            data={
-                "username": raw_data["username"],
-                "email": raw_data["email"],
-                "password": raw_data["password"],
-                "current_user": input_data["current_user"],
-            },
-        )
-
-    @staticmethod
-    @BaseService._parse_errors
-    def _parse_login_data(input_data):
-        raw_data = input_data["raw_data"]
-        return Result(
-            True,
-            data={
-                "username": raw_data["identity"],
-                "password": raw_data["password"],
-                "current_user": input_data["current_user"],
-            },
-        )
-
-    @staticmethod
-    @BaseService._parse_errors
-    def _parse_token(input_data):
-        return Result(True, data=input_data)
-
-    @staticmethod
-    @BaseService._handle_errors
-    def _validate_register_data(input_data) -> Result:
-        # Validate user data
-        validation_result = UserValidator.validate_user_data(
-            username=input_data["username"],
-            email=input_data["email"],
-            password=input_data["password"],
-        )
-        if not validation_result.success:
-            return validation_result
-
-        return Result(success=True, data=input_data)
-
-    @staticmethod
-    @BaseService._handle_errors
-    def _validate_login_data(input_data) -> Result:
-        # Validate login data
-        if not input_data["username"] or not isinstance(input_data["username"], str):
-            return Result(
-                success=False,
-                error="Username is required",
-                error_code=400,
-            )
-
-        validation_result = UserValidator.validate_password(input_data["password"])
-        if not validation_result.success:
-            return validation_result
-
-        return Result(success=True, data=input_data)
-
-    @staticmethod
-    def confirm_token(input_data) -> Result:
-        token = input_data["token"]
-
-        s = URLSafeTimedSerializer(current_app.config["SECRET_KEY"])
-        try:
-            email = s.loads(
-                token,
-                salt=current_app.config["SECURITY_PASSWORD_SALT"],
-                max_age=36000,
-            )
-        except Exception:
-            return Result(success=False, error="Invalid token", error_code=400)
-        input_data.update({"email": email})
-        return Result(True, data=email)
-
-    @staticmethod
-    def _validate_token(input_data) -> Result:
-        # token = input_data["token"]
-        email = input_data["email"]
-
-        # Find unconfirmed user
-        user = User.query.filter_by(email=email, email_confirmed=False).first()
-
-        if not user:
-            return Result(
-                success=False,
-                error="User not found",
-                error_code=400,
-            )
-        # Uncomment if user.verify_token logic is implemented
-        # if not user.verify_token(token):
-        #     return Result(
-        #         success=False,
-        #         error="Invalid or expired token",
-        #         error_code=400,
-        #     )
-        if user.email_confirmed:
-            return Result(
-                success=False,
-                error="Email is already confirmed",
-                error_code=400,
-            )
-        input_data = None
-        print(input_data)
-        return Result(success=True, data={"user": user})
-
-    @staticmethod
-    @BaseService._handle_errors
-    def _handle_register(input_data) -> Result:
-        username = input_data["username"]
-        email = input_data["email"]
-        password = input_data["password"]
-
-        # Check if user already exists
-        if User.query.filter_by(username=username).first():
-            return Result(
-                success=False,
-                error="Username already exists",
-                error_code=400,
-            )
-        if User.query.filter_by(email=email).first():
-            return Result(
-                success=False,
-                error="Email already exists",
-                error_code=400,
-            )
-
-        new_user = User(
-            username=username,
-            email=email,
-        )
-        new_user.set_password(password)
-        print(new_user.username, new_user.email, new_user.password_hash)
-        db.session.add(new_user)
-        # Use if autogenerated new_user.id is needed for send_confirmation_email()
-        # db.session.flush()  # optional
-
-        try:
-            send_confirmation_email(new_user)
-        except Exception as e:
-            db.session.rollback()
-            return Result(
-                success=False,
-                error="Failed to send confirmation email",
-                error_code=500,
-            )
-
-        db.session.commit()
-
-        return Result(success=True, data={"user": new_user})
-
-    @staticmethod
-    @BaseService._handle_errors
-    def _handle_login(input_data) -> Result:
-        identity = input_data["username"]
-        password = input_data["password"]
-
-        user = User.query.filter(
-            (User.username == identity) | (User.email == identity.lower())
-        ).first()
-
-        if not user or not user.check_password(password):
-            return Result(
-                success=False,
-                error="Invalid username/email or password",
-                error_code=401,
-            )
-
-        if not user.email_confirmed:
-            return Result(
-                success=False,
-                error="Email not confirmed",
-                error_code=401,
-            )
-
-        # if user.is_locked:
-        #     return Result(
-        #         success=False,
-        #         error="Account is locked",
-        #         error_code=401,
-        #     )
-
-        input_data["user"] = user
-        return Result(success=True, data=input_data)
-
-    @staticmethod
-    @BaseService._handle_errors
-    def _handle_confirm(input_data) -> Result:
-        user = input_data["user"]
-        user.email_confirmed = True
-        db.session.commit()
-        return Result(success=True, data=input_data)
-
-    @staticmethod
-    def _send_register_data(input_data) -> Result:
-        user = input_data["user"]
-        return Result(
-            success=True,
-            data={
-                "id": user.id,
-                "username": user.username,
-                "email": user.email,
-                "email_confirmed": user.email_confirmed,
-                "created_at": user.created_at.isoformat() if user.created_at else None,
-                "message": "Registration successful. Please check your email to confirm your account.",
-            },
-        )
-
-    @staticmethod
-    def _send_login_data(input_data) -> Result:
-        user = input_data["user"]
-        return Result(
-            success=True,
-            data={
-                "id": user.id,
-                "user": user,
-                "username": user.username,
-                "email": user.email,
-                "email_confirmed": user.email_confirmed,
-                "created_at": user.created_at.isoformat() if user.created_at else None,
-                "message": "Login successful",
-            },
-        )
-
-    @staticmethod
-    def _send_confirmation_data(input_data) -> Result:
-        user = input_data["user"]
-        return Result(
-            success=True,
-            data={
-                "id": user.id,
-                "user": user,
-                "username": user.username,
-                "email": user.email,
-                "email_confirmed": user.email_confirmed,
-                "created_at": user.created_at.isoformat() if user.created_at else None,
-                "message": "E‑mail подтверждён! Добро пожаловать 👋",
-            },
         )

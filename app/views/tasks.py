@@ -2,6 +2,7 @@ from flask import Blueprint, jsonify, request
 from flask_login import current_user
 from app.services.problem_service import ProblemService
 from app.services.solution_service import SolutionService
+from app.models import Problem
 
 bp = Blueprint("tasks", __name__)
 
@@ -41,7 +42,7 @@ def submit_solution():
 
     results = []
     for item in data:
-        result = SolutionService.submit_solution(item, current_user)
+        result = SolutionService.submit_solution(Problem, item, current_user)
         if not result.success:
             return jsonify({"error": result.error}), result.error_code
         results.append(result.data)

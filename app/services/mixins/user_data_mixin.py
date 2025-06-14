@@ -1,19 +1,22 @@
-from app.services.base_service import Result
-from app.models import User
+from ..ropp_service import Result
 import re
+from app.models import User
 
 
-class UserValidator:
+class UserDataMixin:
     @staticmethod
-    def validate_user_data(username, email, password=None, current_user=None) -> Result:
+    def validate_user_data(input_data) -> Result:
         """Validate user data including username, email, and optionally password."""
+        username = input_data["username"]
+        email = input_data["email"]
+        password = input_data.get("password")
+        current_user = input_data["current_user"]
         if (
             not username
             or not isinstance(username, str)
             or not (3 <= len(username) <= 32)
         ):
-            return Result(
-                success=False,
+            return Result.fail(
                 error="Username must be a string between 3 and 32 characters",
                 error_code=400,
             )
@@ -25,8 +28,7 @@ class UserValidator:
             or not isinstance(email, str)
             or not re.match(email_pattern, email)
         ):
-            return Result(
-                success=False,
+            return Result.fail(
                 error="Valid email is required",
                 error_code=400,
             )
@@ -90,61 +92,4 @@ class UserValidator:
                     error_code=400,
                 )
 
-        return Result(success=True)
-
-    @staticmethod
-    def validate_password(password, current_user=None) -> Result:
-        """Validate password format and optionally check against current user's password."""
-        if not password or not isinstance(password, str) or len(password) < 8:
-            return Result(
-                success=False,
-                error="Password must be at least 8 characters",
-                error_code=400,
-            )
-
-        # Check password complexity
-        if not re.search(r"[A-Z]", password):
-            return Result(
-                success=False,
-                error="Password must contain at least one uppercase letter",
-                error_code=400,
-            )
-        if not re.search(r"[a-z]", password):
-            return Result(
-                success=False,
-                error="Password must contain at least one lowercase letter",
-                error_code=400,
-            )
-        if not re.search(r"\d", password):
-            return Result(
-                success=False,
-                error="Password must contain at least one number",
-                error_code=400,
-            )
-
-        if current_user and not current_user.check_password(password):
-            return Result(
-                success=False,
-                error="Current password is incorrect",
-                error_code=400,
-            )
-
-        return Result(success=True)
-
-    @staticmethod
-    def check_authentication(current_user) -> Result:
-        """Check if user is authenticated."""
-        print("current", current_user)
-        if current_user is None:
-            return Result(
-                success=False,
-                error="User must be authenticated",
-                error_code=401,
-            )
-        if not current_user.is_authenticated:
-            return Result(
-                success=False,
-                error="User must be authenticated",
-                error_code=401,
-            )
-        return Result(success=True)
+        return Result.ok(input_data)
