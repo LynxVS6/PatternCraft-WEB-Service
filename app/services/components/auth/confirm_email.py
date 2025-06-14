@@ -20,7 +20,7 @@ class ConfirmEmail:
         except Exception:
             return Result.fail(error="Invalid token", error_code=400)
         input_data.update({"email": email})
-        return Result.ok(email)
+        return Result.ok(input_data)
 
     @staticmethod
     def validate_user(input_data) -> Result:

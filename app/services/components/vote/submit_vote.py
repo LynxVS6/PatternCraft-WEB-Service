@@ -32,6 +32,7 @@ class SubmitVote:
                 "target_id": input_data["target_id"],
                 "current_user": input_data["current_user"],
                 "vote_type": vote_type,
+                "vote_class": input_data["vote_class"]
             },
         )
 
@@ -39,11 +40,11 @@ class SubmitVote:
     def validate_vote_class(input_data) -> Result:
         vote_class = input_data["vote_class"]
         if vote_class == "like":
-            input_data.update({"allowed_types": LikeVoteType})
+            input_data.update({"allowed_states": LikeVoteType})
         elif vote_class == "arrow":
-            input_data.update({"allowed_types": ArrowVoteType})
+            input_data.update({"allowed_states": ArrowVoteType})
         elif vote_class == "emoji":
-            input_data.update({"allowed_types": EmojiVoteType})
+            input_data.update({"allowed_states": EmojiVoteType})
         else:
             Result.fail(error="Incorrect vote class", error_code=400)
         return Result.ok(input_data)
@@ -51,8 +52,7 @@ class SubmitVote:
     @staticmethod
     def validate_vote_type(input_data) -> Result:
         vote_type = input_data["vote_type"]
-        vote_type_enum = cls.get_vote_type_enum()
-        allowed_states = [e.value for e in vote_type_enum]
+        allowed_states = input_data["allowed_states"]
 
         if vote_type is None:
             return Result.fail(
@@ -93,7 +93,7 @@ class SubmitVote:
             )
             db.session.add(new_vote)
 
-        if input_data["vote_class"] == "like":
+        if input_data["vote_class"] == "emoji":
             input_data["target"].update_vote_counts()
 
         db.session.commit()
@@ -105,7 +105,7 @@ class SubmitVote:
         vote_class = input_data["vote_class"]
         target = input_data["target"]
         vote_type = input_data["vote_type"]
-        if vote_class == "like":
+        if vote_class == "emoji":
             return Result.ok(
                 {
                     "satisfaction_percent": round(target.satisfaction_percent),
@@ -115,7 +115,7 @@ class SubmitVote:
             )
         elif vote_class == "arrow":
             return Result.ok({"vote_count": target.vote_count})
-        elif vote_class == "emoji":
+        elif vote_class == "like":
             return Result.ok(
                 {
                     "likes": target.votes_count,
