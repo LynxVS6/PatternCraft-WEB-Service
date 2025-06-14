@@ -28,7 +28,8 @@ def register():
                 "username": register_form.username.data,
                 "email": register_form.email.data,
                 "password": register_form.password.data,
-            }
+            },
+            current_user,
         )
 
         if not result.success:
@@ -52,18 +53,14 @@ def confirm_email(token):
         return redirect(url_for("main.index"))
 
     result = AuthService.confirm_email(token)
+
     if not result.success:
         flash(result.error, "error")
         return redirect(url_for("auth.login"))
+    else:
+        flash(result.data["message"], "success")
 
     user = result.data["user"]
-    if user.new_email:
-        flash("Новый email успешно подтверждён!", "success")
-    elif not user.email_confirmed:
-        flash("E‑mail подтверждён! Добро пожаловать 👋", "success")
-    else:
-        flash("Почта уже была подтверждена", "info")
-
     login_user(user, remember=True)
     return redirect(url_for("main.index"))
 
@@ -83,7 +80,7 @@ def login():
                 "password": login_form.password.data,
                 "remember_me": login_form.remember_me.data,
             },
-            current_user
+            current_user,
         )
 
         if not result.success:

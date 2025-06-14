@@ -107,13 +107,14 @@ class BaseService(ABC):
 
     @staticmethod
     def _combine_funcs(*funcs):
-        """Combine multiple validators into a single function for ROP chaining."""
+        """Combine multiple functions into a single function for ROP chaining."""
 
         def combined(data):
+            result = Result(False)
             for func in funcs:
                 result = func(data)
                 if not result.success:
                     return result
-            return Result(success=True, data=data)
+            return Result(success=True, data=result.data)
 
         return combined
