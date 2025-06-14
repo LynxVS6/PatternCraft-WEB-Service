@@ -126,7 +126,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     'preview', 'side-by-side', 'fullscreen', '|',
                     {
                         name: "save",
-                        action: async function(editor) {
+                        action: async function (editor) {
                             console.log('Save button clicked');
                             const newContent = editor.value();
                             console.log('New content:', newContent);
@@ -188,7 +188,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     'Content-Type': 'application/json',
                     'X-CSRFToken': getCsrfToken()
                 },
-                body: JSON.stringify({ description: newContent })
+                body: JSON.stringify({description: newContent})
             });
 
             if (!response.ok) {
@@ -261,7 +261,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (statItem) {
                 const voteText = statItem.querySelector('span');
                 if (voteText) {
-                    voteText.textContent = `${satisfactionPercent}% ${ _('stats.votes') } ${totalVotes}`;
+                    voteText.textContent = `${satisfactionPercent}% ${_('stats.votes')} ${totalVotes}`;
                 }
             }
         }
@@ -346,7 +346,7 @@ window.addEventListener('pageshow', (event) => {
                 if (statItem) {
                     const voteText = statItem.querySelector('span');
                     if (voteText) {
-                        voteText.textContent = `${satisfactionPercent}% ${ _('stats.votes') } ${totalVotes}`;
+                        voteText.textContent = `${satisfactionPercent}% ${_('stats.votes')} ${totalVotes}`;
                     }
                 }
             }
@@ -359,12 +359,12 @@ const toggleLike = async (solutionId) => {
     try {
         const response = await fetch(`/api/solutions/${solutionId}/like`, {
             method: 'POST',
-            headers: { 
+            headers: {
                 'Content-Type': 'application/json',
                 'X-CSRFToken': getCsrfToken()
             },
             credentials: 'same-origin',
-            body: JSON.stringify({ vote_type: 'like' })
+            body: JSON.stringify({vote_type: 'like'})
         });
 
         if (!response.ok) {
@@ -373,11 +373,11 @@ const toggleLike = async (solutionId) => {
         }
 
         const data = await response.json();
-        
+
         document.querySelectorAll(`.btn-like[onclick*="${solutionId}"]`).forEach(button => {
             const likesCount = button.querySelector('.likes-count');
             const heartIcon = button.querySelector('i');
-            
+
             likesCount.textContent = data.likes;
             heartIcon.classList.toggle('far', !data.liked);
             heartIcon.classList.toggle('fas', data.liked);
@@ -400,25 +400,25 @@ const createCommentElement = (data, type, parentId) => {
     console.log('Creating comment element with data:', data);
     console.log('Type:', type);
     console.log('Parent ID:', parentId);
-    
+
     const commentDiv = document.createElement('div');
     commentDiv.className = 'comment';
     commentDiv.id = `${type}-comment-${data.id}`;
-    
+
     const isDiscourse = type === 'discourse';
     const editFunction = isDiscourse ? 'startEditDiscourseComment' : 'startEditComment';
     const deleteFunction = isDiscourse ? 'deleteDiscourseComment' : 'deleteComment';
     const saveFunction = isDiscourse ? 'saveEditDiscourseComment' : 'saveEditComment';
     const cancelFunction = isDiscourse ? 'cancelEditDiscourseComment' : 'cancelEditComment';
     const voteFunction = 'voteComment';
-    
+
     // Get current user ID from the page
     const currentUserId = document.querySelector('meta[name="user-id"]')?.content;
     console.log('Current user ID:', currentUserId);
     console.log('Comment user ID:', data.user_id);
     const isCurrentUser = currentUserId && data.user_id && parseInt(currentUserId) === data.user_id;
     console.log('Is current user:', isCurrentUser);
-    
+
     commentDiv.innerHTML = `
         <div class="comment-header">
             <strong>${data.username}</strong>
@@ -467,44 +467,44 @@ const getCsrfToken = () => {
 };
 
 const handleCommentSubmit = async (event, id, type) => {
-    console.log('Handling comment submit:', { event, id, type });
+    console.log('Handling comment submit:', {event, id, type});
     event.preventDefault();
     const form = event.target;
     const textarea = form.querySelector('textarea');
     const comment = textarea.value;
-    
+
     try {
-        const endpoint = type === 'discourse' 
+        const endpoint = type === 'discourse'
             ? `/api/problems/${id}/discourse/comments`
             : `/api/solutions/${id}/comments`;
-            
+
         console.log('Sending request to:', endpoint);
-        console.log('Request data:', { comment });
-        
+        console.log('Request data:', {comment});
+
         const response = await fetch(endpoint, {
             method: 'POST',
-            headers: { 
+            headers: {
                 'Content-Type': 'application/json',
                 'X-CSRFToken': getCsrfToken()
             },
-            body: JSON.stringify({ comment })
+            body: JSON.stringify({comment})
         });
-        
+
         if (!response.ok) {
             const errorData = await response.json();
             throw new Error(errorData.error || 'Failed to submit comment');
         }
-        
+
         const data = await response.json();
         console.log('Response data:', data);
-        
+
         const commentsList = form.previousElementSibling;
         console.log('Comments list element:', commentsList);
-        
+
         const newComment = createCommentElement(data, type, id);
         commentsList.appendChild(newComment);
         textarea.value = '';
-        
+
         // Update comment count
         const commentButton = document.querySelector(`.btn-comment[onclick*="${id}"]`);
         if (commentButton) {
@@ -532,7 +532,7 @@ const handleEdit = (commentId, type) => {
 
     const commentText = commentDiv.querySelector('.comment-text');
     const editForm = commentDiv.querySelector('.comment-edit-form');
-    
+
     if (!commentText || !editForm) {
         console.error('Required elements not found in comment');
         return;
@@ -543,7 +543,7 @@ const handleEdit = (commentId, type) => {
         console.error('Textarea not found in edit form');
         return;
     }
-    
+
     commentText.style.display = 'none';
     editForm.style.display = 'block';
     textarea.value = commentText.textContent;
@@ -559,12 +559,12 @@ const handleCancelEdit = (commentId, type) => {
 
     const commentText = commentDiv.querySelector('.comment-text');
     const editForm = commentDiv.querySelector('.comment-edit-form');
-    
+
     if (!commentText || !editForm) {
         console.error('Required elements not found in comment');
         return;
     }
-    
+
     commentText.style.display = 'block';
     editForm.style.display = 'none';
 };
@@ -579,32 +579,32 @@ const handleSaveEdit = async (commentId, type) => {
     const commentText = commentDiv.querySelector('.comment-text');
     const editForm = commentDiv.querySelector('.comment-edit-form');
     const textarea = editForm?.querySelector('textarea');
-    
+
     if (!commentText || !editForm || !textarea) {
         console.error('Required elements not found in comment');
         return;
     }
-    
+
     try {
         const isDiscourse = type === 'discourse';
-        const endpoint = isDiscourse 
+        const endpoint = isDiscourse
             ? `/api/problems/discourse/comments/${commentId}`
             : `/api/comments/${commentId}`;
 
         const response = await fetch(endpoint, {
             method: 'PUT',
-            headers: { 
+            headers: {
                 'Content-Type': 'application/json',
                 'X-CSRFToken': getCsrfToken()
             },
-            body: JSON.stringify({ comment: textarea.value })
+            body: JSON.stringify({comment: textarea.value})
         });
-        
+
         if (!response.ok) {
             const errorData = await response.json();
             throw new Error(errorData.error || 'Failed to update comment');
         }
-        
+
         const data = await response.json();
         commentText.textContent = data.comment;
         commentText.style.display = 'block';
@@ -617,26 +617,26 @@ const handleSaveEdit = async (commentId, type) => {
 
 const handleDelete = async (commentId, type) => {
     if (!confirm('Are you sure you want to delete this comment?')) return;
-    
+
     try {
         const isDiscourse = type === 'discourse';
-        const endpoint = isDiscourse 
+        const endpoint = isDiscourse
             ? `/api/problems/discourse/comments/${commentId}`
             : `/api/comments/${commentId}`;
 
         const response = await fetch(endpoint, {
             method: 'DELETE',
-            headers: { 
+            headers: {
                 'Content-Type': 'application/json',
                 'X-CSRFToken': getCsrfToken()
             }
         });
-        
+
         if (!response.ok) {
             const errorData = await response.json();
             throw new Error(errorData.error || 'Failed to delete comment');
         }
-        
+
         const commentDiv = document.getElementById(`${type}-comment-${commentId}`);
         if (commentDiv) {
             // Update the comment count
@@ -682,7 +682,7 @@ const deleteDiscourseComment = (commentId) => handleDelete(commentId, 'discourse
 // Updated mention function to handle both solution and discourse comments
 const mentionUser = (username, type, id) => {
     if (!type || !id) {
-        console.error('Missing required parameters:', { type, id });
+        console.error('Missing required parameters:', {type, id});
         return;
     }
 
@@ -691,31 +691,31 @@ const mentionUser = (username, type, id) => {
         console.error(`Textarea not found for target: ${type}-${id}`);
         return;
     }
-    
+
     const mention = `@${username} `;
-    
+
     // If there's already text, add a newline before the mention
     if (textarea.value) {
         textarea.value += '\n' + mention;
     } else {
         textarea.value = mention;
     }
-    
+
     // Focus the textarea and place cursor after the mention
     textarea.focus();
     textarea.setSelectionRange(mention.length, mention.length);
-    
+
     // Scroll to the comment form
-    textarea.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    textarea.scrollIntoView({behavior: 'smooth', block: 'center'});
 };
 
 // Unified voting functionality
 async function voteComment(commentId, voteType) {
-    console.log("Voting on comment:", { commentId, voteType });
-    
+    console.log("Voting on comment:", {commentId, voteType});
+
     const discourseCommentDiv = document.getElementById(`discourse-comment-${commentId}`);
     const solutionCommentDiv = document.getElementById(`solution-comment-${commentId}`);
-    
+
     const commentDiv = discourseCommentDiv || solutionCommentDiv;
     if (!commentDiv) {
         console.error("Comment div not found");
@@ -736,7 +736,7 @@ async function voteComment(commentId, voteType) {
                 "Content-Type": "application/json",
                 "X-CSRFToken": getCsrfToken()
             },
-            body: JSON.stringify({ vote_type: voteType }),
+            body: JSON.stringify({vote_type: voteType}),
         });
 
         if (!response.ok) {
@@ -767,16 +767,16 @@ async function voteComment(commentId, voteType) {
 // Bookmark functionality
 async function toggleBookmark(problemId) {
     console.log('toggleBookmark called with problemId:', problemId);
-    
+
     const bookmarkBtn = document.querySelector(`.btn-bookmark[data-problem-id="${problemId}"]`);
     console.log('Found bookmark button:', bookmarkBtn);
-    
+
     if (bookmarkBtn.disabled) {
         console.log('Button is disabled, returning');
         return;
     }
     bookmarkBtn.disabled = true;
-    
+
     try {
         console.log('Sending request to /api/problems/${problemId}/bookmark');
         const response = await fetch(`/api/problems/${problemId}/bookmark`, {
@@ -795,26 +795,26 @@ async function toggleBookmark(problemId) {
 
         const data = await response.json();
         console.log('Response data:', data);
-        
+
         const bookmarkCount = document.querySelector(`.bookmark-count[data-problem-id="${problemId}"]`);
         console.log('Found bookmark count element:', bookmarkCount);
-        
+
         if (bookmarkBtn && bookmarkCount) {
             console.log('Updating UI with data:', {
                 bookmarked: data.bookmarked,
                 bookmark_count: data.bookmark_count
             });
-            
+
             bookmarkBtn.classList.toggle('active', data.bookmarked);
             const icon = bookmarkBtn.querySelector('i');
             console.log('Found icon element:', icon);
             icon.classList.toggle('far', !data.bookmarked);
             icon.classList.toggle('fas', data.bookmarked);
-            
+
             bookmarkCount.textContent = data.bookmark_count;
-            
+
             sessionStorage.setItem(`bookmark_count_${problemId}`, data.bookmark_count);
-            
+
             bookmarkBtn.style.transform = 'scale(1.2)';
             setTimeout(() => {
                 bookmarkBtn.style.transform = 'scale(1)';
@@ -842,7 +842,6 @@ async function toggleBookmark(problemId) {
     }
 }
 
-// Training functionality
 async function startTraining(problemId) {
     try {
         // Get the button and disable it temporarily
@@ -852,19 +851,16 @@ async function startTraining(problemId) {
         }
         trainBtn.disabled = true;
 
-        // TODO: Implement actual training functionality
-        // This is a dummy function that will be replaced with actual implementation
-        const response = await fetch(`http://localhost:5000/api/training/${problemId}`, {
+        const response = await fetch(`http://localhost:8000/api/training/${problemId}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'X-CSRFToken': getCsrfToken()
             },
-            credentials: 'same-origin',
+            credentials: 'include',
             body: JSON.stringify({
                 problem_id: problemId,
                 timestamp: new Date().toISOString(),
-                // Add any other metadata you want to send
             })
         });
 
@@ -874,7 +870,10 @@ async function startTraining(problemId) {
 
         // Show success notification
         alert('Training session started! The training application will open shortly.');
-        
+
+        // Переход на страницу задачи
+        window.location.href = `http://localhost:8000/problem/${problemId}`;
+
         // Add animation
         trainBtn.style.transform = 'scale(1.2)';
         setTimeout(() => {
@@ -916,7 +915,7 @@ async function voteProblem(problemId, voteType) {
                 "X-CSRFToken": getCsrfToken()
             },
             credentials: 'same-origin',
-            body: JSON.stringify({ vote_type: voteType })
+            body: JSON.stringify({vote_type: voteType})
         });
 
         if (!response.ok) {
@@ -926,7 +925,7 @@ async function voteProblem(problemId, voteType) {
 
         const data = await response.json();
         console.log('Response data:', data);
-        
+
         voteButtons.forEach(btn => {
             const icon = btn.querySelector('i');
             const btnVoteType = btn.dataset.voteType;

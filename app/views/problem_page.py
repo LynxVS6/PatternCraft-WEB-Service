@@ -21,6 +21,7 @@ from app.services import (
     CommentService,
     VoteService,
 )
+from .. import db
 
 bp = Blueprint("problems", __name__)
 

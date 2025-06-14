@@ -24,6 +24,16 @@
     </a>
   </section>
 
+  <div class="info-block" style="margin-bottom: 2.5rem;">
+    <h2><i class="fas fa-sync-alt"></i> Обновить данные моей учебной группы</h2>
+    <p class="info-text">
+      Поддерживайте актуальность информации о вашей учебной группе. Нажмите кнопку ниже, чтобы получить последние обновления расписания, списка студентов и учебных материалов. Это поможет вам всегда быть в курсе изменений и успешно планировать своё обучение.
+    </p>
+    <button class="download-btn" id="refresh-group-data-btn" type="button">
+      <i class="fas fa-sync-alt"></i> Обновить данные
+    </button>
+  </div>
+
   <h3>{{ _('index_sections_heading') }}</h3>
   <div class="divider"></div>
   <div class="nav-cards-container">
@@ -49,4 +59,27 @@
       </div>
     </a>
   </div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+  document.getElementById('refresh-group-data-btn').addEventListener('click', function() {
+    Swal.fire({
+      title: 'Обновление данных',
+      text: 'Данные вашей учебной группы обновляются...',
+      icon: 'info',
+      timer: 3000,
+      timerProgressBar: true,
+      showConfirmButton: false,
+      background: '#f0f4f8',
+      customClass: {
+        popup: 'animated-popup',
+        title: 'swal-title',
+        content: 'swal-text'
+      }
+    });
+  });
+</script>
 {% endblock %}
