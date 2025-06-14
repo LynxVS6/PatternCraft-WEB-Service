@@ -1,5 +1,7 @@
 from flask import Blueprint, jsonify, render_template, request
 from flask_login import login_required, current_user
+from sqlalchemy import select
+
 from .problem_hub import get_problem_query, process_language_for_devicon
 from app.forms.forms import CommentForm
 from app.models import (
@@ -22,6 +24,7 @@ from app.services import (
     ArrowVoteService,
     LikeVoteService,
 )
+from .. import db
 
 bp = Blueprint("problems", __name__)
 
@@ -125,6 +128,33 @@ def delete_comment(comment_id):
         return jsonify({"error": result.error}), result.error_code
 
     return jsonify(result.data)
+
+
+@bp.route("/api/problems/<int:problem_id>", methods=["GET"])
+@login_required
+def get_problem(problem_id: int):
+    problem = db.session.get(Problem, problem_id)
+
+    if not problem:
+        return jsonify({"error": "Problem not found"}), 404
+
+    return jsonify(
+        {
+            "id": problem.id,
+            "name": problem.name,
+            "description": problem.description,
+            "tags_json": problem.tags_json,
+            "difficulty": problem.difficulty,
+            "author_id": problem.author_id,
+            "language": problem.language,
+            "status": problem.status,
+            "bookmark_count": problem.bookmark_count,
+            "positive_vote": problem.positive_vote,
+            "negative_vote": problem.negative_vote,
+            "neutral_vote": problem.neutral_vote,
+            "created_at": problem.created_at.strftime("%Y-%m-%d %H:%M"),
+        }
+    )
 
 
 
