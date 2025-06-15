@@ -1,29 +1,31 @@
-
 {% extends "base.html" %}
 
-{% block title %}{{ _('catalog_title') }}{% endblock %}
+{% block title %}Каталог курсов{% endblock %}
 
 {% block content %}
 <section class="catalog-section container" aria-labelledby="catalog-heading">
+  <!-- Заголовок и описание -->
   <div class="info-block">
-    <h1 id="catalog-heading">{{ _('Каталог курсов') }}</h1>
-    <p class="info-text">{{ _('описание каталога') }}</p>
+    <h1 id="catalog-heading">Наши курсы</h1>
+    <p class="info-text">Изучите программирование и дизайн с нашими курсами для всех уровней!</p>
   </div>
 
+  <!-- Поиск -->
   <div class="filter-container">
     <div class="search-bar">
-      <label for="courseSearch" class="visually-hidden">{{ _('catalog_search_aria_label') }}</label>
+      <label for="courseSearch" class="visually-hidden">Поиск курсов по названию</label>
       <input
         type="text"
         id="courseSearch"
-        placeholder="{{ _('каталог_поиска') }}"
-        aria-label="{{ _('catalog_search_aria_label') }}"
+        placeholder="Поиск курсов..."
+        aria-label="Поиск курсов по названию"
         autocomplete="off"
       >
       <i class="fas fa-search" aria-hidden="true"></i>
     </div>
   </div>
 
+  <!-- Сетка курсов -->
   <div class="courses-grid" id="coursesGrid" role="list">
     {% for course in courses %}
     <a
@@ -36,12 +38,12 @@
       <div class="course-card-image-wrapper">
         <img
           src="{{ course.image_url or url_for('static', filename='img/default-course.jpg') }}"
-          alt="{{ _('catalog_course_image_alt', title=course.title) }}"
+          alt="Изображение курса {{ course.title }}"
           class="course-card-image"
           loading="lazy"
         >
         <div class="course-card-overlay">
-          <span class="course-card-btn">{{ _('catalog_view_course') }}</span>
+          <span class="course-card-btn">Подробнее</span>
         </div>
       </div>
       <div class="course-card-content">
@@ -54,7 +56,7 @@
           </span>
           <span>
             <i class="fas fa-calendar" aria-hidden="true"></i>
-            {{ course.created_at | datetimeformat }}
+            {{ course.created_at | monthyearformat }}
           </span>
         </div>
       </div>
@@ -62,8 +64,9 @@
     {% endfor %}
   </div>
 
+  <!-- Сообщение, если курсы не найдены -->
   <div class="no-results" id="noResults" style="display: none;" role="alert">
-    <p>{{ _('catalog_no_results') }}</p>
+    <p>Курсы не найдены.</p>
   </div>
 </section>
 {% endblock %}
@@ -82,7 +85,7 @@
   .info-block h1 {
     font-size: 2.75rem;
     font-weight: 700;
-    color: var(--secondary);
+    color: var(--primary);
     margin-bottom: 0.75rem;
     line-height: 1.2;
   }
@@ -102,7 +105,7 @@
   }
 
   .search-bar {
-    width: 300px; 
+    width: 300px;
     background: var(--bg-card);
     border-radius: 12px;
     border: 1px solid var(--divider);
@@ -375,6 +378,7 @@
       noResults.style.display = visibleCards === 0 ? 'block' : 'none';
     });
 
+    // Поддержка клавиатуры
     courseCards.forEach(card => {
       card.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' || e.key === ' ') {
