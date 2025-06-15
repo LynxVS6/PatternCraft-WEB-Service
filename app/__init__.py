@@ -10,8 +10,7 @@ from .extensions import (
     get_timezone,
     get_locale,
 )
-from .views import auth, main, problem_hub, problem_page, users, tasks
-
+from .views import auth, main, problem_hub, problem_page, users, tasks, courses
 
 def create_app():
     app = Flask(__name__)
@@ -30,5 +29,6 @@ def create_app():
     app.register_blueprint(problem_hub.bp)
     app.register_blueprint(tasks.bp)
     app.register_blueprint(problem_page.bp)
+    app.register_blueprint(courses.courses_bp)
 
     return app

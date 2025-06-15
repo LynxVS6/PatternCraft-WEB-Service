@@ -16,9 +16,9 @@
     <div class="header-container">
       <div class="logo">
          <a href="{{ url_for('main.index') }}" class="logo-link">
-    <img class="logo-icon" src="{{ url_for('static', filename='img/logo.png') }}"></img>
-    <h1>{{ _('base_logo_text') }}</h1>
-  </a>
+           <img class="logo-icon" src="{{ url_for('static', filename='img/logo.png') }}"></img>
+           <h1>{{ _('base_logo_text') }}</h1>
+         </a>
       </div>
       
       <button class="mobile-menu-btn" aria-label="{{ _('base_menu_button_aria_label') }}">
@@ -27,6 +27,7 @@
       
       <nav class="main-nav" aria-label="{{ _('base_main_nav_aria_label') }}">
         <ul>
+          <li><a href="{{ url_for('courses.catalog') }}"><i class="fas fa-th-list"></i> {{ _('Каталог курсов') }}</a></li>
           {% if current_user.is_authenticated %}
             <li><a href="{{ url_for('users.account') }}"><i class="fas fa-user"></i> {{ _('base_nav_account') }}</a></li>
             <li><a href="{{ url_for('auth.logout') }}"><i class="fas fa-sign-out-alt"></i> {{ _('base_nav_logout') }}</a></li>

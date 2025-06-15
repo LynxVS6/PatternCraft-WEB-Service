@@ -1,0 +1,388 @@
+
+{% extends "base.html" %}
+
+{% block title %}{{ _('catalog_title') }}{% endblock %}
+
+{% block content %}
+<section class="catalog-section container" aria-labelledby="catalog-heading">
+  <div class="info-block">
+    <h1 id="catalog-heading">{{ _('Каталог курсов') }}</h1>
+    <p class="info-text">{{ _('описание каталога') }}</p>
+  </div>
+
+  <div class="filter-container">
+    <div class="search-bar">
+      <label for="courseSearch" class="visually-hidden">{{ _('catalog_search_aria_label') }}</label>
+      <input
+        type="text"
+        id="courseSearch"
+        placeholder="{{ _('каталог_поиска') }}"
+        aria-label="{{ _('catalog_search_aria_label') }}"
+        autocomplete="off"
+      >
+      <i class="fas fa-search" aria-hidden="true"></i>
+    </div>
+  </div>
+
+  <div class="courses-grid" id="coursesGrid" role="list">
+    {% for course in courses %}
+    <a
+      href="{{ url_for('courses.detail', course_id=course.id) }}"
+      class="course-card"
+      data-title="{{ course.title | lower }}"
+      role="listitem"
+      tabindex="0"
+    >
+      <div class="course-card-image-wrapper">
+        <img
+          src="{{ course.image_url or url_for('static', filename='img/default-course.jpg') }}"
+          alt="{{ _('catalog_course_image_alt', title=course.title) }}"
+          class="course-card-image"
+          loading="lazy"
+        >
+        <div class="course-card-overlay">
+          <span class="course-card-btn">{{ _('catalog_view_course') }}</span>
+        </div>
+      </div>
+      <div class="course-card-content">
+        <h3 class="course-card-title">{{ course.title }}</h3>
+        <p class="course-card-desc">{{ course.description | truncate(80, true) }}</p>
+        <div class="course-card-meta">
+          <span>
+            <i class="fas fa-user" aria-hidden="true"></i>
+            {{ course.author }}
+          </span>
+          <span>
+            <i class="fas fa-calendar" aria-hidden="true"></i>
+            {{ course.created_at | datetimeformat }}
+          </span>
+        </div>
+      </div>
+    </a>
+    {% endfor %}
+  </div>
+
+  <div class="no-results" id="noResults" style="display: none;" role="alert">
+    <p>{{ _('catalog_no_results') }}</p>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+  .catalog-section {
+    padding: 2.5rem 2rem;
+  }
+
+  .info-block {
+    text-align: center;
+    margin-bottom: 2.5rem;
+  }
+
+  .info-block h1 {
+    font-size: 2.75rem;
+    font-weight: 700;
+    color: var(--secondary);
+    margin-bottom: 0.75rem;
+    line-height: 1.2;
+  }
+
+  .info-block .info-text {
+    font-size: 1.125rem;
+    color: var(--text-secondary);
+    max-width: 700px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  .filter-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 2.5rem;
+  }
+
+  .search-bar {
+    width: 300px; 
+    background: var(--bg-card);
+    border-radius: 12px;
+    border: 1px solid var(--divider);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    position: relative;
+    transition: background 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+  }
+
+  .search-bar:hover,
+  .search-bar:focus-within {
+    background: var(--bg-hover);
+    box-shadow: 0 6px 20px rgba(174, 157, 252, 0.3);
+    transform: translateY(-2px);
+  }
+
+  .search-bar input {
+    width: 100%;
+    padding: 0.875rem 1rem 0.875rem 2.75rem;
+    border: none;
+    border-radius: 12px;
+    background: transparent;
+    color: var(--text-primary);
+    font-size: 1rem;
+    font-family: 'Roboto', sans-serif;
+  }
+
+  .search-bar input:focus {
+    outline: none;
+  }
+
+  .search-bar .fa-search {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-secondary);
+    font-size: 1.125rem;
+  }
+
+  .courses-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.75rem;
+    padding: 0 0.5rem;
+    animation: fadeIn 0.8s ease-out;
+  }
+
+  .course-card {
+    background: var(--bg-card);
+    border-radius: 12px;
+    border: 1px solid var(--divider);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+    text-decoration: none;
+    color: var(--text-primary);
+    display: flex;
+    flex-direction: column;
+    transition: background 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+  }
+
+  .course-card:hover,
+  .course-card:focus {
+    background: var(--bg-hover);
+    transform: translateY(-8px);
+    box-shadow: 0 8px 24px rgba(174, 157, 252, 0.3);
+    outline: none;
+  }
+
+  .course-card-image-wrapper {
+    position: relative;
+    width: 100%;
+    height: 200px;
+  }
+
+  .course-card-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .course-card-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .course-card:hover .course-card-overlay,
+  .course-card:focus .course-card-overlay {
+    opacity: 1;
+  }
+
+  .course-card-btn {
+    padding: 0.75rem 1.5rem;
+    background: var(--primary);
+    color: var(--text-primary);
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    transition: background 0.3s ease, transform 0.2s ease;
+  }
+
+  .course-card-btn:hover,
+  .course-card-btn:focus {
+    background: var(--secondary);
+    transform: scale(1.05);
+    outline: none;
+  }
+
+  .course-card-content {
+    padding: 1.5rem;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .course-card-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary);
+    margin: 0;
+    line-height: 1.3;
+  }
+
+  .course-card-desc {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  .course-card-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin-top: auto;
+  }
+
+  .course-card-meta span {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .course-card-meta .fa {
+    color: var(--primary);
+    font-size: 1rem;
+  }
+
+  .no-results {
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 1.125rem;
+    margin-top: 2.5rem;
+    padding: 1rem;
+  }
+
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 768px) {
+    .info-block h1 {
+      font-size: 2.25rem;
+    }
+
+    .courses-grid {
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .search-bar {
+      width: 260px;
+    }
+
+    .course-card-image-wrapper {
+      height: 180px;
+    }
+
+    .course-card-title {
+      font-size: 1.375rem;
+    }
+
+    .course-card-content {
+      padding: 1.25rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .info-block h1 {
+      font-size: 1.875rem;
+    }
+
+    .info-block .info-text {
+      font-size: 1rem;
+    }
+
+    .search-bar {
+      width: 100%;
+      max-width: 260px;
+      margin: 0 auto;
+    }
+
+    .search-bar input {
+      font-size: 0.875rem;
+      padding: 0.75rem 1rem 0.75rem 2.5rem;
+    }
+
+    .course-card-image-wrapper {
+      height: 160px;
+    }
+
+    .course-card-title {
+      font-size: 1.25rem;
+    }
+
+    .course-card-desc {
+      font-size: 0.875rem;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const searchInput = document.getElementById('courseSearch');
+    const coursesGrid = document.getElementById('coursesGrid');
+    const noResults = document.getElementById('noResults');
+    const courseCards = document.querySelectorAll('.course-card');
+
+    // Фильтрация поиска
+    searchInput.addEventListener('input', () => {
+      const searchTerm = searchInput.value.toLowerCase().trim();
+      let visibleCards = 0;
+
+      courseCards.forEach(card => {
+        const title = card.getAttribute('data-title');
+        const shouldShow = title.includes(searchTerm);
+        card.style.display = shouldShow ? 'flex' : 'none';
+        if (shouldShow) visibleCards++;
+      });
+
+      noResults.style.display = visibleCards === 0 ? 'block' : 'none';
+    });
+
+    courseCards.forEach(card => {
+      card.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          card.click();
+        }
+      });
+    });
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,217 @@
+{% extends "base.html" %}
+
+{% block title %}{{ course.title }} — Детали курса{% endblock %}
+
+{% block content %}
+<section class="course-section container" aria-labelledby="course-heading">
+  <header class="course-header">
+    <h1 id="course-heading">{{ course.title }}</h1>
+    <div class="course-meta">
+      <span><i class="fas fa-user"></i> {{ course.author }}</span>
+      <span><i class="fas fa-calendar"></i> {{ course.created_at.strftime('%d.%m.%Y') }}</span>
+    </div>
+  </header>
+
+  <div class="course-image-wrapper">
+    <img
+      src="{{ course.image_url or url_for('static', filename='img/default-course.jpg') }}"
+      alt="Изображение курса {{ course.title }}"
+      class="course-image"
+      loading="lazy"
+    >
+  </div>
+
+  <article class="course-content">
+    <section>
+      <h2>Описание</h2>
+      <p>{{ course.description }}</p>
+    </section>
+
+    {% if course.tasks %}
+    <section>
+      <h2>Задачи</h2>
+      <ul class="course-list">
+        {% for task in course.tasks %}
+        <li>{{ task }}</li>
+        {% endfor %}
+      </ul>
+    </section>
+    {% endif %}
+
+    {% if course.materials %}
+    <section>
+      <h2>Материалы</h2>
+      <ul class="course-list">
+        {% for material in course.materials %}
+        <li>{{ material }}</li>
+        {% endfor %}
+      </ul>
+    </section>
+    {% endif %}
+  </article>
+
+  <div class="course-actions">
+    <a href="{{ url_for('courses.catalog') }}" class="back-btn" aria-label="Вернуться в каталог курсов">
+      <i class="fas fa-arrow-left"></i> Вернуться в каталог
+    </a>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+  .course-section {
+    padding: 2rem 1rem;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  .course-header {
+    text-align: center;
+    margin-bottom: 1.5rem;
+  }
+
+  .course-header h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 0.5rem;
+  }
+
+  .course-meta {
+    display: flex;
+    justify-content: center;
+    gap: 1.2rem;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+  }
+
+  .course-meta i {
+    color: var(--primary);
+    margin-right: 0.3rem;
+  }
+
+  .course-image-wrapper {
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+    border: 1px solid var(--divider);
+  }
+
+  .course-image {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.3s ease;
+  }
+
+  .course-image-wrapper:hover .course-image {
+    transform: scale(1.05);
+  }
+
+  .course-content section {
+    margin-bottom: 1.5rem;
+  }
+
+  .course-content h2 {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--primary);
+    margin-bottom: 0.7rem;
+    border-bottom: 2px solid var(--primary);
+    padding-bottom: 0.2rem;
+  }
+
+  .course-content p {
+    color: var(--text-secondary);
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+
+  .course-list {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+  }
+
+  .course-list li {
+    position: relative;
+    padding-left: 1.4rem;
+    margin-bottom: 0.5rem;
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+  }
+
+  .course-list li::before {
+    content: "•";
+    position: absolute;
+    left: 0;
+    color: var(--primary);
+    font-size: 1.2rem;
+    line-height: 1;
+  }
+
+  .course-actions {
+    text-align: center;
+    margin-top: 2rem;
+  }
+
+  .back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.6rem 1.2rem;
+    background: var(--primary);
+    color: var(--text-primary);
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-decoration: none;
+    text-transform: uppercase;
+    transition: background 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 3px 8px rgba(174, 157, 252, 0.4);
+  }
+
+  .back-btn:hover,
+  .back-btn:focus {
+    background: var(--secondary);
+    transform: scale(1.05);
+    box-shadow: 0 5px 12px rgba(174, 157, 252, 0.7);
+    outline: none;
+  }
+
+  @media (max-width: 600px) {
+    .course-section {
+      padding: 1.5rem 1rem;
+    }
+
+    .course-header h1 {
+      font-size: 1.6rem;
+    }
+
+    .course-meta {
+      flex-direction: column;
+      gap: 0.5rem;
+      font-size: 0.85rem;
+    }
+
+    .course-image {
+      height: 140px;
+    }
+
+    .course-content h2 {
+      font-size: 1.1rem;
+    }
+
+    .course-list li {
+      font-size: 0.9rem;
+    }
+
+    .back-btn {
+      font-size: 0.85rem;
+      padding: 0.5rem 1rem;
+    }
+  }
+</style>
+{% endblock %}
