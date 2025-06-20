@@ -1,6 +1,6 @@
 from datetime import datetime
 from urllib.parse import urljoin, urlparse
-from flask import Blueprint, flash, redirect, render_template, request, url_for
+from flask import Blueprint, flash, redirect, render_template, request, url_for, jsonify
 from flask_login import current_user, login_required, login_user, logout_user
 from app.forms.forms import LoginForm, RegistrationForm
 from app.services.auth_service import AuthService
@@ -99,6 +99,33 @@ def login():
     return render_template(
         "auth.html", login_form=login_form, register_form=register_form
     )
+
+
+@bp.route("/api/login", methods=["POST"])
+def api_login():
+    if current_user.is_authenticated:
+        return redirect(url_for("main.index"))
+
+    login_form = LoginForm(prefix="login")
+
+    if login_form.validate_on_submit():
+        result = AuthService.login(
+            {
+                "identity": login_form.identity.data,
+                "password": login_form.password.data,
+                "remember_me": login_form.remember_me.data,
+            },
+            current_user,
+        )
+
+        if not result.success:
+            return jsonify({"error": result.error}), result.error_code
+        else:
+            return jsonify({"id": result.data["id"]})
+    else:
+        return jsonify(
+            {"message": "Login failed... Please check your login form again"}
+        )
 
 
 @bp.route("/logout")
