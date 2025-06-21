@@ -39,8 +39,7 @@ class ConfirmEmail:
                 error="Email is already confirmed",
                 error_code=400,
             )
-        input_data = None
-        print(input_data)
+        print(f"Found user: {user.username} with email: {user.email}")
         return Result.ok({"user": user})
 
     @staticmethod
