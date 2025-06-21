@@ -39,6 +39,7 @@ class Problem(db.Model):
         "ProblemVote", back_populates="problem", cascade="all, delete-orphan"
     )
     author = db.relationship("User", back_populates="authored_problems")
+    courses = db.relationship("Course", secondary="course_problems", back_populates="problems")
 
     @property
     def user_vote(self):

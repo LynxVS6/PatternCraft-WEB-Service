@@ -1,20 +1,20 @@
 {% extends "base.html" %}
 
-{% block title %}Курс: {{ course.title }}{% endblock %}
+{% block title %}Курс: {{ course.name }}{% endblock %}
 
 {% block content %}
 <section class="course-section container" aria-labelledby="course-heading">
   <!-- Заголовок и мета-данные -->
   <div class="course-header">
-    <h1 id="course-heading">{{ course.title }}</h1>
+    <h1 id="course-heading">{{ course.name }}</h1>
     <div class="course-meta">
       <span>
         <i class="fas fa-user" aria-hidden="true"></i>
-        {{ course.author }}
+        {{ course.creator.username if course.creator else 'Неизвестный автор' }}
       </span>
       <span>
         <i class="fas fa-calendar" aria-hidden="true"></i>
-        {{ course.created_at | monthyearformat }}
+        {{ course.created_at.strftime('%d.%m.%Y') if course.created_at else 'Дата не указана' }}
       </span>
     </div>
   </div>
@@ -23,7 +23,7 @@
   <div class="course-image-wrapper">
     <img
       src="{{ course.image_url or url_for('static', filename='img/default-course.jpg') }}"
-      alt="Изображение курса {{ course.title }}"
+      alt="Изображение курса {{ course.name }}"
       class="course-image"
       loading="lazy"
     >
@@ -32,17 +32,17 @@
   <!-- Контент курса -->
   <div class="course-content">
     <h2>Описание курса</h2>
-    <p class="course-description">{{ course.description }}</p>
+    <p class="course-description">{{ course.description or 'Описание курса отсутствует' }}</p>
 
-    {% if course.tasks %}
-    <h2>Задачи курса</h2>
+    {% if course.problems %}
+    <h2>Задачи курса ({{ course.problems_count }})</h2>
     <div class="tasks-grid" role="list">
-      {% for task in course.tasks %}
+      {% for problem in course.problems %}
       <div class="course-card" role="listitem">
         <div class="course-card-image-wrapper">
           <img
             src="{{ url_for('static', filename='img/task-placeholder.jpg') }}"
-            alt="Изображение задачи {{ task }}"
+            alt="Изображение задачи {{ problem.name }}"
             class="course-card-image"
             loading="lazy"
           >
@@ -51,23 +51,33 @@
           </div>
         </div>
         <div class="course-card-content">
-          <h3 class="course-card-title">{{ task }}</h3>
-          <p class="course-card-desc">Краткое описание задачи для изучения основ.</p>
+          <h3 class="course-card-title">{{ problem.name }}</h3>
+          <p class="course-card-desc">{{ problem.description | truncate(100, true) if problem.description else 'Описание задачи отсутствует' }}</p>
+          <div class="course-card-meta">
+            <span>
+              <i class="fas fa-signal" aria-hidden="true"></i>
+              {{ problem.difficulty }}
+            </span>
+            <span>
+              <i class="fas fa-code" aria-hidden="true"></i>
+              {{ problem.language }}
+            </span>
+          </div>
         </div>
       </div>
       {% endfor %}
     </div>
     {% endif %}
 
-    {% if course.materials %}
-    <h2>Материалы курса</h2>
+    {% if course.theories %}
+    <h2>Материалы курса ({{ course.theories_count }})</h2>
     <div class="materials-grid" role="list">
-      {% for material in course.materials %}
+      {% for theory in course.theories %}
       <div class="course-card" role="listitem">
         <div class="course-card-image-wrapper">
           <img
-            src="{{ url_for('static', filename='img/material-placeholder.jpg') }}"
-            alt="Изображение материала {{ material }}"
+            src="{{ theory.image_url }}"
+            alt="Изображение теории {{ theory.name }}"
             class="course-card-image"
             loading="lazy"
           >
@@ -76,8 +86,18 @@
           </div>
         </div>
         <div class="course-card-content">
-          <h3 class="course-card-title">{{ material }}</h3>
-          <p class="course-card-desc">Краткое описание учебного материала.</p>
+          <h3 class="course-card-title">{{ theory.name }}</h3>
+          <p class="course-card-desc">{{ theory.description | truncate(100, true) if theory.description else 'Описание теории отсутствует' }}</p>
+          <div class="course-card-meta">
+            <span>
+              <i class="fas fa-user" aria-hidden="true"></i>
+              {{ theory.author.username if theory.author else 'Неизвестный автор' }}
+            </span>
+            <span>
+              <i class="fas fa-thumbs-up" aria-hidden="true"></i>
+              {{ theory.positive_vote or 0 }}
+            </span>
+          </div>
         </div>
       </div>
       {% endfor %}
@@ -89,6 +109,9 @@
   <div class="course-actions">
     <a href="{{ url_for('courses.catalog') }}" class="back-btn">
       Вернуться в каталог
+    </a>
+    <a href="#" class="download-btn">
+      Скачать курс
     </a>
   </div>
 </section>
@@ -272,6 +295,14 @@
     margin: 0;
   }
 
+  .course-card-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+  }
+
   .course-actions {
     text-align: center;
     margin-top: 2.5rem;
@@ -292,6 +323,26 @@
 
   .back-btn:hover,
   .back-btn:focus {
+    background: var(--secondary);
+    transform: scale(1.05);
+    outline: none;
+  }
+
+  .download-btn {
+    display: inline-flex;
+    padding: 0.75rem 1.5rem;
+    background: var(--primary);
+    color: var(--text-primary);
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    text-decoration: none;
+    text-transform: uppercase;
+    transition: background 0.3s ease, transform 0.2s ease;
+  }
+
+  .download-btn:hover,
+  .download-btn:focus {
     background: var(--secondary);
     transform: scale(1.05);
     outline: none;
