@@ -26,6 +26,9 @@
       <a href="{{ url_for('users.change_password') }}" class="btn secondary full-width" role="button" aria-label="{{ _('account_change_password_button_aria_label') }}">
         <i class="fas fa-key"></i> {{ _('account_change_password_button') }}
       </a>
+      <a href="{{ url_for('auth.logout') }}" class="btn logout full-width" role="button" aria-label="{{ _('account_logout_button_aria_label') }}">
+        <i class="fas fa-sign-out-alt"></i> {{ _('base_nav_logout') }}
+      </a>
     </div>
   </section>
 {% endblock %}
