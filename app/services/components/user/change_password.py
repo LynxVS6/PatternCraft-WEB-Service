@@ -8,13 +8,8 @@ class ChangePassword(AuthenticationMixin):
     @staticmethod
     def parse_json(input_data):
         raw_json = input_data["raw_json"]
-        return Result.ok(
-            data={
-                "current_password": raw_json["current_password"],
-                "new_password": raw_json["new_password"],
-                "current_user": input_data["current_user"],
-            },
-        )
+        input_data.update(raw_json)
+        return Result.ok(input_data)
 
     @staticmethod
     def validate_password_change(input_data) -> Result:

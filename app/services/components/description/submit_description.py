@@ -7,8 +7,7 @@ class SubmitDescription(DescriptionMixin):
     @staticmethod
     def parse_json(input_data):
         raw_json = input_data["raw_json"]
-        description = raw_json.get("description")
-        input_data["description"] = description
+        input_data.update(raw_json)
         return Result.ok(input_data)
 
     @staticmethod

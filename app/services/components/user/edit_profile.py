@@ -8,13 +8,8 @@ class EditProfile(AuthenticationMixin, UserDataMixin):
     @staticmethod
     def parse_json(input_data):
         raw_json = input_data["raw_json"]
-        return Result.ok(
-            data={
-                "username": raw_json["username"],
-                "email": raw_json["email"],
-                "current_user": input_data["current_user"],
-            },
-        )
+        input_data.update(raw_json)
+        return Result.ok(input_data)
 
     @staticmethod
     def execute(input_data) -> Result:

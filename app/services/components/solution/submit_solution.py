@@ -8,14 +8,9 @@ class SubmitSolution(AuthenticationMixin):
     @staticmethod
     def parse_json(input_data):
         raw_json = input_data["raw_json"]
-        return Result.ok(
-            data={
-                "target_model": input_data["target_model"],
-                "target_id": raw_json["server_problem_id"],
-                "solution": raw_json["solution"],
-                "current_user": input_data["current_user"],
-            },
-        )
+        input_data["target_id"] = raw_json["server_problem_id"]
+        input_data.update(raw_json)
+        return Result.ok(input_data)
 
     @staticmethod
     def validate_solution_data(input_data) -> Result:

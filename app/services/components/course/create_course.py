@@ -26,7 +26,7 @@ class CreateCourse(AuthenticationMixin):
 
         input_data.update(raw_json)
 
-        return Result.ok(data=input_data)
+        return Result.ok(input_data)
 
     @staticmethod
     def validate_course_data(input_data) -> Result:

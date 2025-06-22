@@ -23,18 +23,8 @@ class SubmitVote:
     @staticmethod
     def parse_json(input_data):
         raw_json = input_data["raw_json"]
-        vote_type = raw_json["vote_type"]
-
-        return Result.ok(
-            data={
-                "target_model": input_data["target_model"],
-                "vote_model": input_data["vote_model"],
-                "target_id": input_data["target_id"],
-                "current_user": input_data["current_user"],
-                "vote_type": vote_type,
-                "vote_class": input_data["vote_class"]
-            },
-        )
+        input_data.update(raw_json)
+        return Result.ok(input_data)
 
     @staticmethod
     def validate_vote_class(input_data) -> Result:

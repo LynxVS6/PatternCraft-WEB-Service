@@ -9,14 +9,8 @@ class RegisterUser(UserDataMixin):
     @staticmethod
     def parse_json(input_data):
         raw_json = input_data["raw_json"]
-        return Result.ok(
-            data={
-                "username": raw_json["username"],
-                "email": raw_json["email"],
-                "password": raw_json["password"],
-                "current_user": input_data["current_user"],
-            },
-        )
+        input_data.update(raw_json)
+        return Result.ok(input_data)
 
     @staticmethod
     def execute(input_data) -> Result:

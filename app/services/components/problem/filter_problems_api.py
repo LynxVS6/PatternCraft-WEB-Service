@@ -9,13 +9,8 @@ class FilterProblemsAPI(AuthenticationMixin):
     @staticmethod
     def parse_json(input_data):
         raw_json = input_data["raw_json"]
-        return Result.ok(
-            data={
-                "lab_ids": raw_json.get("lab_ids", []),
-                "tags_json": raw_json.get("tags_json", {}),
-                "current_user": input_data["current_user"],
-            },
-        )
+        input_data.update(raw_json)
+        return Result.ok(input_data)
 
     @staticmethod
     def validate_filter_data(input_data) -> Result:

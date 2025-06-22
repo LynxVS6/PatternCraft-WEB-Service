@@ -7,18 +7,13 @@ class LoginUser:
     @staticmethod
     def parse_json(input_data):
         raw_json = input_data["raw_json"]
-        return Result.ok(
-            data={
-                "username": raw_json["identity"],
-                "password": raw_json["password"],
-                "current_user": input_data["current_user"],
-            },
-        )
+        input_data.update(raw_json)
+        return Result.ok(input_data)
 
     @staticmethod
     def validate_credentials(input_data) -> Result:
         # Validate login data
-        if not input_data["username"] or not isinstance(input_data["username"], str):
+        if not input_data["identity"] or not isinstance(input_data["identity"], str):
             return Result.fail(
                 error="Username is required",
                 error_code=400,
@@ -32,7 +27,7 @@ class LoginUser:
 
     @staticmethod
     def execute(input_data) -> Result:
-        identity = input_data["username"]
+        identity = input_data["identity"]
         password = input_data["password"]
 
         user = User.query.filter(

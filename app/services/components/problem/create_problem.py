@@ -27,11 +27,7 @@ class CreateProblem(AuthenticationMixin):
         input_data["status"] = "beta"  # remove when status logic added
         input_data.update(raw_json)
 
-        return Result.ok(
-            data={
-                "current_user": input_data["current_user"],
-            },
-        )
+        return Result.ok(input_data)
 
     @staticmethod
     def validate_create_data(input_data) -> Result:
