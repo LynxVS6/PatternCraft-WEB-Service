@@ -1,8 +1,8 @@
-"""init
+"""empty message
 
-Revision ID: 8f85f9da49b4
+Revision ID: 9ba35af6820a
 Revises: 
-Create Date: 2025-06-14 12:01:29.072074
+Create Date: 2025-06-22 13:14:28.279109
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '8f85f9da49b4'
+revision = '9ba35af6820a'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -33,6 +33,23 @@ def upgrade():
     sa.UniqueConstraint('new_email'),
     sa.UniqueConstraint('username')
     )
+    op.create_table('courses',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('name', sa.String(length=200), nullable=False),
+    sa.Column('description', sa.Text(), nullable=True),
+    sa.Column('image_url', sa.String(length=500), nullable=True),
+    sa.Column('server_course_id', sa.Integer(), nullable=True),
+    sa.Column('creator_id', sa.Integer(), nullable=True),
+    sa.Column('status', sa.String(length=20), nullable=False),
+    sa.Column('is_hidden', sa.Boolean(), nullable=False),
+    sa.Column('positive_vote', sa.Integer(), nullable=True),
+    sa.Column('negative_vote', sa.Integer(), nullable=True),
+    sa.Column('neutral_vote', sa.Integer(), nullable=True),
+    sa.Column('created_at', sa.DateTime(), nullable=False),
+    sa.Column('updated_at', sa.DateTime(), nullable=True),
+    sa.ForeignKeyConstraint(['creator_id'], ['users.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
     op.create_table('problems',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(length=200), nullable=False),
@@ -50,6 +67,23 @@ def upgrade():
     sa.ForeignKeyConstraint(['author_id'], ['users.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
+    op.create_table('theories',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('name', sa.String(length=200), nullable=False),
+    sa.Column('content', sa.Text(), nullable=False),
+    sa.Column('description', sa.String(length=500), nullable=False),
+    sa.Column('image_url', sa.String(length=500), nullable=True),
+    sa.Column('in_practice', sa.Boolean(), nullable=False),
+    sa.Column('author_id', sa.Integer(), nullable=False),
+    sa.Column('status', sa.String(length=20), nullable=False),
+    sa.Column('positive_vote', sa.Integer(), nullable=True),
+    sa.Column('negative_vote', sa.Integer(), nullable=True),
+    sa.Column('neutral_vote', sa.Integer(), nullable=True),
+    sa.Column('created_at', sa.DateTime(), nullable=False),
+    sa.Column('updated_at', sa.DateTime(), nullable=True),
+    sa.ForeignKeyConstraint(['author_id'], ['users.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
     op.create_table('bookmarks',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('user_id', sa.Integer(), nullable=False),
@@ -59,6 +93,42 @@ def upgrade():
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('user_id', 'target_id', name='unique_user_problem_bookmark')
+    )
+    op.create_table('course_bookmarks',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('user_id', sa.Integer(), nullable=False),
+    sa.Column('course_id', sa.Integer(), nullable=False),
+    sa.Column('created_at', sa.DateTime(), nullable=True),
+    sa.ForeignKeyConstraint(['course_id'], ['courses.id'], ),
+    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('user_id', 'course_id', name='unique_user_course_bookmark')
+    )
+    op.create_table('course_problems',
+    sa.Column('course_id', sa.Integer(), nullable=False),
+    sa.Column('problem_id', sa.Integer(), nullable=False),
+    sa.ForeignKeyConstraint(['course_id'], ['courses.id'], ),
+    sa.ForeignKeyConstraint(['problem_id'], ['problems.id'], ),
+    sa.PrimaryKeyConstraint('course_id', 'problem_id')
+    )
+    op.create_table('course_theories',
+    sa.Column('course_id', sa.Integer(), nullable=False),
+    sa.Column('theory_id', sa.Integer(), nullable=False),
+    sa.ForeignKeyConstraint(['course_id'], ['courses.id'], ),
+    sa.ForeignKeyConstraint(['theory_id'], ['theories.id'], ),
+    sa.PrimaryKeyConstraint('course_id', 'theory_id')
+    )
+    op.create_table('course_votes',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('user_id', sa.Integer(), nullable=False),
+    sa.Column('target_id', sa.Integer(), nullable=False),
+    sa.Column('vote_type', sa.String(length=10), nullable=False),
+    sa.Column('created_at', sa.DateTime(), nullable=True),
+    sa.Column('updated_at', sa.DateTime(), nullable=True),
+    sa.ForeignKeyConstraint(['target_id'], ['courses.id'], ),
+    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('user_id', 'target_id', name='unique_user_course_vote')
     )
     op.create_table('discourse_comments',
     sa.Column('id', sa.Integer(), nullable=False),
@@ -91,6 +161,28 @@ def upgrade():
     sa.ForeignKeyConstraint(['problem_id'], ['problems.id'], ),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
     sa.PrimaryKeyConstraint('id')
+    )
+    op.create_table('theory_bookmarks',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('user_id', sa.Integer(), nullable=False),
+    sa.Column('theory_id', sa.Integer(), nullable=False),
+    sa.Column('created_at', sa.DateTime(), nullable=True),
+    sa.ForeignKeyConstraint(['theory_id'], ['theories.id'], ),
+    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('user_id', 'theory_id', name='unique_user_theory_bookmark')
+    )
+    op.create_table('theory_votes',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('user_id', sa.Integer(), nullable=False),
+    sa.Column('target_id', sa.Integer(), nullable=False),
+    sa.Column('vote_type', sa.String(length=10), nullable=False),
+    sa.Column('created_at', sa.DateTime(), nullable=True),
+    sa.Column('updated_at', sa.DateTime(), nullable=True),
+    sa.ForeignKeyConstraint(['target_id'], ['theories.id'], ),
+    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('user_id', 'target_id', name='unique_user_theory_vote')
     )
     op.create_table('comments',
     sa.Column('id', sa.Integer(), nullable=False),
@@ -141,10 +233,18 @@ def downgrade():
     op.drop_table('solution_votes')
     op.drop_table('discourse_votes')
     op.drop_table('comments')
+    op.drop_table('theory_votes')
+    op.drop_table('theory_bookmarks')
     op.drop_table('solutions')
     op.drop_table('problem_votes')
     op.drop_table('discourse_comments')
+    op.drop_table('course_votes')
+    op.drop_table('course_theories')
+    op.drop_table('course_problems')
+    op.drop_table('course_bookmarks')
     op.drop_table('bookmarks')
+    op.drop_table('theories')
     op.drop_table('problems')
+    op.drop_table('courses')
     op.drop_table('users')
     # ### end Alembic commands ###

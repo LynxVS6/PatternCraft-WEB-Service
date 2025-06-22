@@ -60,6 +60,7 @@ class CreateProblem(AuthenticationMixin):
         input_data["tags_json"] = tags_json.split(",")
         if not isinstance(input_data["difficulty"], str):
             return Result.fail(error="Difficulty must be a string", error_code=400)
+            return Result.fail(error="Difficulty must be a string", error_code=400)
         if not isinstance(input_data["language"], str):
             return Result.fail(error="Language must be a string", error_code=400)
 

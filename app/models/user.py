@@ -26,6 +26,12 @@ class User(UserMixin, db.Model):
     bookmarks = db.relationship('Bookmark', back_populates='user')
     problem_votes = db.relationship('ProblemVote', back_populates='user')
     authored_problems = db.relationship('Problem', back_populates='author')
+    authored_theories = db.relationship('Theory', back_populates='author')
+    created_courses = db.relationship('Course', back_populates='creator')
+    theory_votes = db.relationship('TheoryVote', back_populates='user')
+    theory_bookmarks = db.relationship('TheoryBookmark', back_populates='user')
+    course_votes = db.relationship('CourseVote', back_populates='user')
+    course_bookmarks = db.relationship('CourseBookmark', back_populates='user')
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
