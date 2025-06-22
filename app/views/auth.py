@@ -1,4 +1,3 @@
-from datetime import datetime
 from urllib.parse import urljoin, urlparse
 from flask import Blueprint, flash, redirect, render_template, request, url_for, jsonify
 from flask_login import current_user, login_required, login_user, logout_user
@@ -121,6 +120,9 @@ def api_login():
         if not result.success:
             return jsonify({"error": result.error}), result.error_code
         else:
+            user = result.data["user"]
+            login_user(user, remember=login_form.remember_me.data)
+
             return jsonify({"id": result.data["id"]})
     else:
         return jsonify(

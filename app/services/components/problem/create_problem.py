@@ -12,10 +12,10 @@ class CreateProblem(AuthenticationMixin):
             data={
                 "name": raw_json["name"],
                 "description": raw_json["description"],
-                "tags_json": raw_json["tags_json"],
+                "tags_json": raw_json.get("tags", []),
                 "difficulty": raw_json["difficulty"],
                 "language": raw_json["language"],
-                "status": raw_json["status"],
+                "status": "beta",
                 "current_user": input_data["current_user"],
             },
         )
@@ -26,10 +26,8 @@ class CreateProblem(AuthenticationMixin):
         required_fields = [
             "name",
             "description",
-            "tags_json",
             "difficulty",
             "language",
-            "status",
         ]
         for field in required_fields:
             if field not in input_data:
@@ -51,25 +49,19 @@ class CreateProblem(AuthenticationMixin):
                 error="Description must be a string between 1 and 2000 characters",
                 error_code=400,
             )
-        if not isinstance(input_data["tags_json"], list):
+
+        # Handle tags_json - make it optional
+        tags_json = input_data.get("tags_json", [])
+        if not isinstance(tags_json, str):
             return Result.fail(
-                error="tags_json must be a list of strings",
+                error="tags_json must be a string",
                 error_code=400,
             )
-        if not all(isinstance(tag, str) for tag in input_data["tags_json"]):
-            return Result.fail(
-                error="Each tag in tags_json must be a string",
-                error_code=400,
-            )
+        input_data["tags_json"] = tags_json.split(",")
         if not isinstance(input_data["difficulty"], str):
-            return Result.fail( error="Difficulty must be a string", error_code=400
-            )
+            return Result.fail(error="Difficulty must be a string", error_code=400)
         if not isinstance(input_data["language"], str):
-            return Result.fail( error="Language must be a string", error_code=400
-            )
-        if not isinstance(input_data["status"], str):
-            return Result.fail( error="Status must be a string", error_code=400
-            )
+            return Result.fail(error="Language must be a string", error_code=400)
 
         return Result.ok(input_data)
 
@@ -87,7 +79,8 @@ class CreateProblem(AuthenticationMixin):
         )
 
         db.session.add(new_problem)
-        db.session.flush()
+        # db.session.flush()
+        db.session.commit()
         return Result.ok({"problem": new_problem})
 
     @staticmethod

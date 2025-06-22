@@ -10,7 +10,8 @@ class SubmitSolution(AuthenticationMixin):
         raw_json = input_data["raw_json"]
         return Result.ok(
             data={
-                "target_id": raw_json["server_problem_id"],
+                "target_model": input_data["target_model"],
+                "target_id": raw_json["problem_id"],
                 "solution": raw_json["solution"],
                 "current_user": input_data["current_user"],
             },
@@ -19,16 +20,14 @@ class SubmitSolution(AuthenticationMixin):
     @staticmethod
     def validate_solution_data(input_data) -> Result:
         # Validate solution data
-        if "server_problem_id" not in input_data or "solution" not in input_data:
+        if "solution" not in input_data:
             return Result.fail(
                 error="server_problem_id and solution are required",
                 error_code=400,
             )
-        if not isinstance(input_data["server_problem_id"], int):
-            return Result.fail( error="server_problem_id must be an integer", error_code=400
-            )
         if not isinstance(input_data["solution"], str) or not input_data["solution"]:
-            return Result.fail( error="solution must be a non-empty string", error_code=400
+            return Result.fail(
+                error="solution must be a non-empty string", error_code=400
             )
         return Result.ok(data=input_data)
 
@@ -45,12 +44,13 @@ class SubmitSolution(AuthenticationMixin):
         )
 
         db.session.add(new_solution)
-        db.session.flush()
+        db.session.commit()
+        print("-"*50)
         return Result.ok(
             data={
                 "solution": new_solution,
-                "problem": target,
-                "user": current_user,
+                "target": target,
+                "current_user": current_user,
             },
         )
 
@@ -58,16 +58,12 @@ class SubmitSolution(AuthenticationMixin):
     def format(input_data) -> Result:
         solution = input_data["solution"]
         target = input_data["target"]
-        user = input_data["user"]
-
+        current_user = input_data["current_user"]
         return Result.ok(
             data={
                 "id": solution.id,
                 "solution": solution.solution,
-                "user": {
-                    "id": user.id,
-                    "username": user.username,
-                },
+                "user_id": current_user.id,
                 "problem": {
                     "id": target.id,
                     "name": target.name,

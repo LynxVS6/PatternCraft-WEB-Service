@@ -12,10 +12,12 @@ from .extensions import (
 )
 from .views import auth, main, problem_hub, problem_page, users, tasks, courses
 
+
 def monthyearformat(value):
     if not value:
         return ""
-    return value.strftime('%B %Y')  # Например: "Июнь 2025"
+    return value.strftime("%B %Y")  # Например: "Июнь 2025"
+
 
 def create_app():
     app = Flask(__name__)
@@ -29,7 +31,7 @@ def create_app():
     csrf.init_app(app)
 
     # Регистрируем фильтр для Jinja2
-    app.jinja_env.filters['monthyearformat'] = monthyearformat
+    app.jinja_env.filters["monthyearformat"] = monthyearformat
 
     app.register_blueprint(auth.bp)
     app.register_blueprint(main.bp)

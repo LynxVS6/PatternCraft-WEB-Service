@@ -14,6 +14,7 @@ class ProblemService(ROPPService):
             steps=(
                 (FilterProblemsAPI.parse_json, "parse_json"),
                 (FilterProblemsAPI.validate_authentication, "validate_authentication"),
+                (FilterProblemsAPI.validate_filter_data, "validate_authentication"),
                 (FilterProblemsAPI.execute, "execute_filter"),
                 (FilterProblemsAPI.format, "format_output"),
             ),
@@ -32,7 +33,6 @@ class ProblemService(ROPPService):
         per_page,
         current_user,
     ) -> Result:
-        print("1-"*40)
         """Frontend filtering for problem hub page"""
         return RailwayService.execute_flow(
             {
@@ -67,6 +67,7 @@ class ProblemService(ROPPService):
             steps=(
                 (CreateProblem.parse_json, "parse_json"),
                 (CreateProblem.validate_authentication, "validate_authentication"),
+                (CreateProblem.validate_create_data, "validate_create_data"),
                 (CreateProblem.execute, "execute_create"),
                 (CreateProblem.format, "format_output"),
             ),
