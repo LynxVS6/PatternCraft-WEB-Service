@@ -32,7 +32,7 @@ class ProblemService(ROPPService):
         per_page,
         current_user,
     ) -> Result:
-        print("1-"*40)
+        print("1-" * 40)
         """Frontend filtering for problem hub page"""
         return RailwayService.execute_flow(
             {

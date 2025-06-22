@@ -62,14 +62,11 @@ class CreateProblem(AuthenticationMixin):
                 error_code=400,
             )
         if not isinstance(input_data["difficulty"], str):
-            return Result.fail( error="Difficulty must be a string", error_code=400
-            )
+            return Result.fail(error="Difficulty must be a string", error_code=400)
         if not isinstance(input_data["language"], str):
-            return Result.fail( error="Language must be a string", error_code=400
-            )
+            return Result.fail(error="Language must be a string", error_code=400)
         if not isinstance(input_data["status"], str):
-            return Result.fail( error="Status must be a string", error_code=400
-            )
+            return Result.fail(error="Status must be a string", error_code=400)
 
         return Result.ok(input_data)
 

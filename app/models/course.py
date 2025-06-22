@@ -3,15 +3,15 @@ from datetime import datetime, timezone
 
 # Association tables for many-to-many relationships
 course_problems = db.Table(
-    'course_problems',
-    db.Column('course_id', db.Integer, db.ForeignKey('courses.id'), primary_key=True),
-    db.Column('problem_id', db.Integer, db.ForeignKey('problems.id'), primary_key=True)
+    "course_problems",
+    db.Column("course_id", db.Integer, db.ForeignKey("courses.id"), primary_key=True),
+    db.Column("problem_id", db.Integer, db.ForeignKey("problems.id"), primary_key=True),
 )
 
 course_theories = db.Table(
-    'course_theories',
-    db.Column('course_id', db.Integer, db.ForeignKey('courses.id'), primary_key=True),
-    db.Column('theory_id', db.Integer, db.ForeignKey('theories.id'), primary_key=True)
+    "course_theories",
+    db.Column("course_id", db.Integer, db.ForeignKey("courses.id"), primary_key=True),
+    db.Column("theory_id", db.Integer, db.ForeignKey("theories.id"), primary_key=True),
 )
 
 
@@ -24,25 +24,42 @@ class Course(db.Model):
     image_url = db.Column(db.String(500), nullable=True)
     server_course_id = db.Column(db.Integer, nullable=True)  # For sync with lab version
     creator_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
-    status = db.Column(db.String(20), nullable=False, default="active")  # active, draft, archived
+    status = db.Column(
+        db.String(20), nullable=False, default="active"
+    )  # active, draft, archived
     is_hidden = db.Column(db.Boolean, default=False, nullable=False)
     positive_vote = db.Column(db.Integer, default=0)
     negative_vote = db.Column(db.Integer, default=0)
     neutral_vote = db.Column(db.Integer, default=0)
-    created_at = db.Column(db.DateTime, nullable=False, default=datetime.now(timezone.utc))
-    updated_at = db.Column(db.DateTime, default=datetime.now(timezone.utc), onupdate=datetime.now(timezone.utc))
+    created_at = db.Column(
+        db.DateTime, nullable=False, default=datetime.now(timezone.utc)
+    )
+    updated_at = db.Column(
+        db.DateTime,
+        default=datetime.now(timezone.utc),
+        onupdate=datetime.now(timezone.utc),
+    )
 
     # Relationships
     creator = db.relationship("User", back_populates="created_courses")
-    problems = db.relationship("Problem", secondary=course_problems, back_populates="courses")
-    theories = db.relationship("Theory", secondary=course_theories, back_populates="courses")
-    course_votes = db.relationship("CourseVote", back_populates="course", cascade="all, delete-orphan")
-    bookmarks = db.relationship("CourseBookmark", back_populates="course", cascade="all, delete-orphan")
+    problems = db.relationship(
+        "Problem", secondary=course_problems, back_populates="courses"
+    )
+    theories = db.relationship(
+        "Theory", secondary=course_theories, back_populates="courses"
+    )
+    course_votes = db.relationship(
+        "CourseVote", back_populates="course", cascade="all, delete-orphan"
+    )
+    bookmarks = db.relationship(
+        "CourseBookmark", back_populates="course", cascade="all, delete-orphan"
+    )
 
     @property
     def user_vote(self):
         """Get the current user's vote for this course"""
         from flask_login import current_user
+
         if not current_user.is_authenticated:
             return None
         vote = CourseVote.query.filter_by(
@@ -102,9 +119,15 @@ class CourseVote(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
     target_id = db.Column(db.Integer, db.ForeignKey("courses.id"), nullable=False)
-    vote_type = db.Column(db.String(10), nullable=False)  # 'positive', 'neutral', 'negative'
+    vote_type = db.Column(
+        db.String(10), nullable=False
+    )  # 'positive', 'neutral', 'negative'
     created_at = db.Column(db.DateTime, default=datetime.now(timezone.utc))
-    updated_at = db.Column(db.DateTime, default=datetime.now(timezone.utc), onupdate=datetime.now(timezone.utc))
+    updated_at = db.Column(
+        db.DateTime,
+        default=datetime.now(timezone.utc),
+        onupdate=datetime.now(timezone.utc),
+    )
 
     # Relationships
     user = db.relationship("User", back_populates="course_votes")
@@ -129,4 +152,4 @@ class CourseBookmark(db.Model):
 
     __table_args__ = (
         db.UniqueConstraint("user_id", "course_id", name="unique_user_course_bookmark"),
-    ) 
+    )

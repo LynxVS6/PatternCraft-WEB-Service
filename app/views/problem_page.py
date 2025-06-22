@@ -1,3 +1,4 @@
+from .. import db
 from flask import Blueprint, jsonify, render_template, request
 from flask_login import login_required, current_user
 from .problem_hub import get_problem_query
@@ -64,6 +65,33 @@ def problem_page(problem_id):
         solutions=solutions,
         discourse_comments=discourse_comments,
         comment_form=comment_form,
+    )
+
+
+@bp.route("/api/problems/<int:problem_id>", methods=["GET"])
+def get_problem(problem_id: int):
+    print("request for problem", problem_id)
+    
+    problem = db.session.get(Problem, problem_id)
+
+    if not problem:
+        return jsonify({"error": "Problem not found"}), 404
+    return jsonify(
+        {
+            "id": problem.id,
+            "name": problem.name,
+            "description": problem.description,
+            "tags_json": problem.tags_json,
+            "difficulty": problem.difficulty,
+            "author_id": problem.author_id,
+            "language": problem.language,
+            "status": problem.status,
+            "bookmark_count": problem.bookmark_count,
+            "positive_vote": problem.positive_vote,
+            "negative_vote": problem.negative_vote,
+            "neutral_vote": problem.neutral_vote,
+            "created_at": problem.created_at.strftime("%Y-%m-%d %H:%M"),
+        }
     )
 
 
