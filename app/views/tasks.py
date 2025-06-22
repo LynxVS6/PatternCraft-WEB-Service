@@ -22,30 +22,20 @@ def filter_tasks():
 @bp.route("/api/create-task", methods=["POST"])
 def create_task():
     data = request.get_json()
-    if not isinstance(data, list):
-        data = [data]
 
-    results = []
-    for item in data:
-        result = ProblemService.create_problem(item, current_user)
-        if not result.success:
-            return jsonify({"error": result.error}), result.error_code
-        results.append(result.data)
+    result = ProblemService.create_problem(data, current_user)
+    if not result.success:
+        return jsonify({"error": result.error}), result.error_code
 
-    return jsonify(results), 201
+    return jsonify(result.data), 201
 
 
 @bp.route("/api/submit-solution", methods=["POST"])
 def submit_solution():
     data = request.get_json()
-    if not isinstance(data, list):
-        data = [data]
 
-    results = []
-    for item in data:
-        result = SolutionService.submit_solution(Problem, item["problem_id"], item, current_user)
-        if not result.success:
-            return jsonify({"error": result.error}), result.error_code
-        results.append(result.data)
+    result = SolutionService.submit_solution(Problem, data["server_problem_id"], data, current_user)
+    if not result.success:
+        return jsonify({"error": result.error}), result.error_code
 
-    return jsonify(results), 201
+    return jsonify(result.data), 201

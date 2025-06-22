@@ -11,7 +11,7 @@ class SubmitSolution(AuthenticationMixin):
         return Result.ok(
             data={
                 "target_model": input_data["target_model"],
-                "target_id": raw_json["problem_id"],
+                "target_id": raw_json["server_problem_id"],
                 "solution": raw_json["solution"],
                 "current_user": input_data["current_user"],
             },
