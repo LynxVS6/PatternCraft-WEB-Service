@@ -13,35 +13,6 @@ def is_safe_url(target: str) -> bool:
     return test_url.scheme in ("http", "https") and ref_url.netloc == test_url.netloc
 
 
-@bp.route("/register", methods=["GET", "POST"])
-def register():
-    if current_user.is_authenticated:
-        return redirect(url_for("main.index"))
-
-    register_form = RegistrationForm(prefix="register")
-    login_form = LoginForm(prefix="login")
-
-    if request.method == "POST" and register_form.validate_on_submit():
-        result = AuthService.register(
-            {
-                "username": register_form.username.data,
-                "email": register_form.email.data,
-                "password": register_form.password.data,
-            },
-            current_user,
-        )
-
-        if not result.success:
-            flash(result.error, "error")
-        else:
-            flash(result.data["message"], "info")
-            return redirect(url_for("auth.login"))
-
-    return render_template(
-        "auth.html", login_form=login_form, register_form=register_form
-    )
-
-
 @bp.route("/confirm-email/<token>")
 def confirm_email(token):
     if (
@@ -72,28 +43,44 @@ def login():
     login_form = LoginForm(prefix="login")
     register_form = RegistrationForm(prefix="register")
 
-    if request.method == "POST" and login_form.validate_on_submit():
-        result = AuthService.login(
-            {
-                "identity": login_form.identity.data,
-                "password": login_form.password.data,
-                "remember_me": login_form.remember_me.data,
-            },
-            current_user,
-        )
-
-        if not result.success:
-            flash(result.error, "error")
-        else:
-            user = result.data["user"]
-            login_user(user, remember=login_form.remember_me.data)
-            flash("Успешный вход в аккаунт!", "success")
-            next_page = request.args.get("next")
-            return (
-                redirect(next_page)
-                if next_page and is_safe_url(next_page)
-                else redirect(url_for("main.index"))
+    if request.method == "POST":
+        if "login" in request.form and login_form.validate_on_submit():
+            result = AuthService.login(
+                {
+                    "identity": login_form.identity.data,
+                    "password": login_form.password.data,
+                    "remember_me": login_form.remember_me.data,
+                },
+                current_user,
             )
+
+            if not result.success:
+                flash(result.error, "error")
+            else:
+                user = result.data["user"]
+                login_user(user, remember=login_form.remember_me.data)
+                flash("Успешный вход в аккаунт!", "success")
+                next_page = request.args.get("next")
+                return (
+                    redirect(next_page)
+                    if next_page and is_safe_url(next_page)
+                    else redirect(url_for("main.index"))
+                )
+        elif "register" in request.form and register_form.validate_on_submit():
+            result = AuthService.register(
+                {
+                    "username": register_form.username.data,
+                    "email": register_form.email.data,
+                    "password": register_form.password.data,
+                },
+                current_user,
+            )
+
+            if not result.success:
+                flash(result.error, "error")
+            else:
+                flash(result.data["message"], "info")
+                return redirect(url_for("auth.login"))
 
     return render_template(
         "auth.html", login_form=login_form, register_form=register_form

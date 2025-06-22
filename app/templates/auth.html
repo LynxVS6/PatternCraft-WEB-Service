@@ -20,6 +20,7 @@
             <form id="login" class="auth-form active" method="POST" action="{{ url_for('auth.login') }}">
                 <h2>{{ _('auth_login_heading') }}</h2>
                 {{ login_form.hidden_tag() }}
+                <input type="hidden" name="login" value="1">
 
                 <div class="form-group">
                     <label for="login-identity">{{ _('auth_login_identity_label') }}</label>
@@ -55,9 +56,10 @@
                 </p>
             </form>
 
-            <form id="register" class="auth-form" method="POST" action="{{ url_for('auth.register') }}">
+            <form id="register" class="auth-form" method="POST" action="{{ url_for('auth.login') }}">
                 <h2>{{ _('auth_register_heading') }}</h2>
                 {{ register_form.hidden_tag() }}
+                <input type="hidden" name="register" value="1">
 
                 <div class="form-group">
                     <label for="reg-username">{{ _('auth_register_username_label') }}</label>

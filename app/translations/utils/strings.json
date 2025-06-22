@@ -180,12 +180,8 @@
     "ru": "Выйти"
   },
   "base_nav_login": {
-    "en": "Login",
-    "ru": "Войти"
-  },
-  "base_nav_register": {
-    "en": "Register",
-    "ru": "Регистрация"
+    "en": "Account",
+    "ru": "Профиль"
   },
   "base_footer_title": {
     "en": "PatternCraft Lab",
@@ -328,36 +324,12 @@
     "ru": "PatternCraft Lab"
   },
   "index_project_description": {
-    "en": "— is an interactive laboratory for learning and practicing",
-    "ru": "— это интерактивная лаборатория для изучения и практики"
+    "en": "— is your personal lab: AI generates unique challenges, you get instant feedback.",
+    "ru": "— ваша персональная лаборатория: ИИ генерирует уникальные задачи, вы получаете мгновенную обратную связь."
   },
-  "index_design_patterns": {
-    "en": "design patterns",
-    "ru": "шаблонов проектирования"
-  },
-  "index_in_programming": {
-    "en": "in programming",
-    "ru": "в программировании"
-  },
-  "index_find_theory": {
-    "en": "Here you will find theory, examples, and visual cards for the most popular patterns:",
-    "ru": "Здесь вы найдете теорию, примеры и наглядные карточки по самым популярным паттернам:"
-  },
-  "index_pattern_creational": {
-    "en": "Creational",
-    "ru": "Creational"
-  },
-  "index_pattern_structural": {
-    "en": "Structural",
-    "ru": "Structural"
-  },
-  "index_pattern_and": {
-    "en": "and",
-    "ru": "и"
-  },
-  "index_pattern_behavioral": {
-    "en": "Behavioral",
-    "ru": "Behavioral"
+  "index_task_info": {
+    "en": "Get in on the practice: our AI is already generating personalized tasks for you.",
+    "ru": "Приступите к практике: наш ИИ уже генерирует персонализированные задания для вас."
   },
   "index_go_to_solved": {
     "en": "Go to Solved Problems",
@@ -368,8 +340,8 @@
     "ru": "О проекте"
   },
   "index_project_description_full": {
-    "en": "PatternCraft Lab is a convenient and modern resource for learning design patterns. In the laboratory, you will find detailed descriptions, code examples, and practical tasks that will help reinforce your knowledge.",
-    "ru": "PatternCraft Lab — это удобный и современный ресурс для изучения шаблонов проектирования. В лаборатории вы найдете подробные описания, примеры кода и практические задания, которые помогут закрепить знания."
+    "en": "PatternCraft Lab — is an innovative platform for effective programming education. We combine theory and practice in an interactive environment with personalized tasks from AI. Instant feedback and flexibility make it an ideal tool for both self-learning and teaching.",
+    "ru": "PatternCraft Lab — инновационная платформа для эффективного обучения программированию. Мы объединяем теорию и практику в интерактивной среде с персонализированными задачами от ИИ. Мгновенная обратная связь и гибкость делают её идеальным инструментом как для самообразования, так и для преподавания."
   },
   "index_download_info": {
     "en": "You can download the entire laboratory and use it offline for learning and development.",

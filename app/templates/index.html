@@ -4,7 +4,10 @@
   <div class="info-block">
     <h2>{{ _('index_welcome_heading') }}</h2>
     <p class="info-text">
-      <strong>{{ _('index_project_name') }}</strong> {{ _('index_project_description') }} <b>{{ _('index_design_patterns') }}</b> {{ _('index_in_programming') }}. {{ _('index_find_theory') }} <span class="primary-text">{{ _('index_pattern_creational') }}</span>, <span class="secondary-text">{{ _('index_pattern_structural') }}</span> {{ _('index_pattern_and') }} <span class="behavioral-text">{{ _('index_pattern_behavioral') }}</span>.
+      <strong>{{ _('index_project_name') }}</strong> {{ _('index_project_description') }}
+    </p>
+    <p class="info-text">
+      {{ _('index_task_info') }}
     </p>
     <a href="{{ url_for('problem_hub.problem_hub') }}" class="download-btn">
       <i class="fas fa-tasks"></i> {{ _('index_go_to_solved') }}
@@ -23,30 +26,4 @@
       <i class="fas fa-download"></i> {{ _('index_download_lab') }}
     </a>
   </section>
-
-  <h3>{{ _('index_sections_heading') }}</h3>
-  <div class="divider"></div>
-  <div class="nav-cards-container">
-    <a href="{{ url_for('main.creational') }}" class="nav-card">
-      <i class="fas fa-cubes"></i>
-      <div class="nav-card-title">{{ _('index_creational_title') }}</div>
-      <div class="nav-card-desc">
-        {{ _('index_creational_description') }}
-      </div>
-    </a>
-    <a href="{{ url_for('main.structural') }}" class="nav-card">
-      <i class="fas fa-project-diagram"></i>
-      <div class="nav-card-title">{{ _('index_structural_title') }}</div>
-      <div class="nav-card-desc">
-        {{ _('index_structural_description') }}
-      </div>
-    </a>
-    <a href="{{ url_for('main.behavioral') }}" class="nav-card">
-      <i class="fas fa-brain"></i>
-      <div class="nav-card-title">{{ _('index_behavioral_title') }}</div>
-      <div class="nav-card-desc">
-        {{ _('index_behavioral_description') }}
-      </div>
-    </a>
-  </div>
 {% endblock %}

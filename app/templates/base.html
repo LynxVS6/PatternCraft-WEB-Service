@@ -32,8 +32,7 @@
             <li><a href="{{ url_for('users.account') }}"><i class="fas fa-user"></i> {{ _('base_nav_account') }}</a></li>
             <li><a href="{{ url_for('auth.logout') }}"><i class="fas fa-sign-out-alt"></i> {{ _('base_nav_logout') }}</a></li>
           {% else %}
-            <li><a href="{{ url_for('auth.login') }}"><i class="fas fa-sign-in-alt"></i> {{ _('base_nav_login') }}</a></li>
-            <li><a href="{{ url_for('auth.register') }}"><i class="fas fa-user-plus"></i> {{ _('base_nav_register') }}</a></li>
+            <li><a href="{{ url_for('auth.login') }}"><i class="fa-solid fa-user"></i> {{ _('base_nav_login') }}</a></li>
           {% endif %}
         </ul>
       </nav>
