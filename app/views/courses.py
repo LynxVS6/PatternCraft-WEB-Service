@@ -1,5 +1,7 @@
-from flask import Blueprint, render_template, abort, jsonify
+from flask import Blueprint, render_template, abort, jsonify, request
 from app.models.course import Course
+from app.services import CourseService
+from flask_login import current_user
 
 
 courses_bp = Blueprint('courses', __name__, url_prefix='/courses')
@@ -82,3 +84,14 @@ def download_course(course_id):
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+
+@courses_bp.route('/api/create_course', methods=['POST'])
+def create_course():
+    data = request.get_json()
+
+    result = CourseService.create_course(data, current_user)
+    if not result.success:
+        return jsonify({"error": result.error}), result.error_code
+
+    return jsonify(result.data), 201

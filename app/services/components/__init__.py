@@ -7,6 +7,7 @@ from .problem import CreateProblem, FilterProblemsAPI, FilterProblemsFrontend
 from .solution.submit_solution import SubmitSolution
 from .user import ChangePassword, EditProfile
 from .vote.submit_vote import SubmitVote
+from .course import CreateCourse, DeleteCourse
 
 __all__ = (
     "ConfirmEmail",
@@ -25,5 +26,7 @@ __all__ = (
     "SubmitSolution",
     "ChangePassword",
     "EditProfile",
-    "SubmitVote"
+    "SubmitVote",
+    "CreateCourse",
+    "DeleteCourse"
 )

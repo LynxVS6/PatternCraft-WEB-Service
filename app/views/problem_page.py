@@ -71,7 +71,7 @@ def problem_page(problem_id):
 @bp.route("/api/problems/<int:problem_id>", methods=["GET"])
 def get_problem(problem_id: int):
     print("request for problem", problem_id)
-    
+
     problem = db.session.get(Problem, problem_id)
 
     if not problem:
