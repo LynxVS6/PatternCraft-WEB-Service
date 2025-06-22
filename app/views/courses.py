@@ -51,6 +51,7 @@ def download_course(course_id):
                 'name': problem.name,
                 'description': problem.description,
                 'tags_json': problem.tags_json,
+                'tests': problem.tests,
                 'difficulty': problem.difficulty,
                 'language': problem.language,
                 'status': problem.status,

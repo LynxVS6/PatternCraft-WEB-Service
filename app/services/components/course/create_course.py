@@ -16,7 +16,6 @@ class CreateCourse(AuthenticationMixin):
             "is_hidden",
             "image_url",
             "theories",
-            "image_url",
             "problems",
         ]
         for field in required_fields:
@@ -25,17 +24,9 @@ class CreateCourse(AuthenticationMixin):
                     success=False, error=f"{field} is required", error_code=400
                 )
 
-        return Result.ok(
-            data={
-                "name": raw_json["name"],
-                "description": raw_json["description"],
-                "image_url": raw_json["image_url"],
-                "is_hidden": raw_json["is_hidden"],
-                "theories": raw_json["image_url"],
-                "problems": raw_json["is_hidden"],
-                "current_user": input_data["current_user"],
-            },
-        )
+        input_data.update(raw_json)
+
+        return Result.ok(data=input_data)
 
     @staticmethod
     def validate_course_data(input_data) -> Result:
@@ -79,7 +70,7 @@ class CreateCourse(AuthenticationMixin):
             is_hidden=input_data["is_hidden"],
             theories=input_data["theories"],
             problems=input_data["problems"],
-            author_id=current_user.id
+            author_id=current_user.id,
         )
 
         db.session.add(new_course)

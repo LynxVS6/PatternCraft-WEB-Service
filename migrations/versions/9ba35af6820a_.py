@@ -58,6 +58,7 @@ def upgrade():
     sa.Column('difficulty', sa.String(length=20), nullable=False),
     sa.Column('author_id', sa.Integer(), nullable=False),
     sa.Column('language', sa.String(length=50), nullable=False),
+    sa.Column('tests', sa.JSON(), nullable=False, default=list),
     sa.Column('status', sa.String(length=20), nullable=False),
     sa.Column('bookmark_count', sa.Integer(), nullable=False),
     sa.Column('positive_vote', sa.Integer(), nullable=True),

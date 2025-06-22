@@ -15,6 +15,7 @@ class Problem(db.Model):
     difficulty = db.Column(db.String(20), nullable=False, default="Легкое")
     author_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
     language = db.Column(db.String(50), nullable=False, default="python")
+    tests = db.Column(db.JSON, nullable=False, default=list)
     status = db.Column(
         db.String(20), nullable=False, default="active"
     )  # verified, beta

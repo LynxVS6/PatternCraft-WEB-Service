@@ -8,33 +8,33 @@ class CreateProblem(AuthenticationMixin):
     @staticmethod
     def parse_json(input_data):
         raw_json = input_data["raw_json"]
-        return Result.ok(
-            data={
-                "name": raw_json["name"],
-                "description": raw_json["description"],
-                "tags_json": raw_json.get("tags", []),
-                "difficulty": raw_json["difficulty"],
-                "language": raw_json["language"],
-                "status": "beta",
-                "current_user": input_data["current_user"],
-            },
-        )
 
-    @staticmethod
-    def validate_create_data(input_data) -> Result:
         # Validate task data
         required_fields = [
             "name",
             "description",
             "difficulty",
             "language",
+            "tags",
+            "tests",
         ]
         for field in required_fields:
-            if field not in input_data:
+            if field not in raw_json:
                 return Result(
                     success=False, error=f"{field} is required", error_code=400
                 )
 
+        input_data["status"] = "beta"  # remove when status logic added
+        input_data.update(raw_json)
+
+        return Result.ok(
+            data={
+                "current_user": input_data["current_user"],
+            },
+        )
+
+    @staticmethod
+    def validate_create_data(input_data) -> Result:
         if not isinstance(input_data["name"], str) or not (
             1 <= len(input_data["name"]) <= 100
         ):
@@ -75,11 +75,11 @@ class CreateProblem(AuthenticationMixin):
             difficulty=input_data["difficulty"],
             language=input_data["language"],
             status=input_data["status"],
+            tests=input_data["tests"],
             author_id=current_user.id,
         )
 
         db.session.add(new_problem)
-        # db.session.flush()
         db.session.commit()
         return Result.ok({"problem": new_problem})
 
@@ -95,6 +95,7 @@ class CreateProblem(AuthenticationMixin):
                 "difficulty": problem.difficulty,
                 "language": problem.language,
                 "status": problem.status,
+                "tests": problem.tests,
                 "author_id": problem.author_id,
                 "bookmark_count": problem.bookmark_count,
                 "created_at": (
