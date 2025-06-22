@@ -172,8 +172,8 @@
     "ru": "Главное меню"
   },
   "base_nav_account": {
-    "en": "Account",
-    "ru": "Аккаунт"
+    "en": "Profile",
+    "ru": "Профиль"
   },
   "base_nav_logout": {
     "en": "Logout",
