@@ -56,7 +56,7 @@
                 </p>
             </form>
 
-            <form id="register" class="auth-form" method="POST" action="{{ url_for('auth.login') }}">
+            <form id="register" class="auth-form" method="POST" action="{{ url_for('auth.register') }}">
                 <h2>{{ _('auth_register_heading') }}</h2>
                 {{ register_form.hidden_tag() }}
                 <input type="hidden" name="register" value="1">

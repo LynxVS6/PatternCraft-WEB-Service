@@ -35,6 +35,40 @@ def confirm_email(token):
     return redirect(url_for("main.index"))
 
 
+@bp.route("/register", methods=["GET", "POST"])
+def register():
+    if current_user.is_authenticated:
+        return redirect(url_for("main.index"))
+
+    register_form = RegistrationForm(prefix="register")
+    login_form = LoginForm(prefix="login")
+    print(request.method == "POST", register_form.validate_on_submit())
+
+    if not register_form.validate_on_submit():
+        flash("Invalid register form! Please check it again.", "error")
+        redirect(url_for("auth.register"))
+
+    if request.method == "POST" and register_form.validate_on_submit():
+        result = AuthService.register(
+            {
+                "username": register_form.username.data,
+                "email": register_form.email.data,
+                "password": register_form.password.data,
+            },
+            current_user,
+        )
+
+        if not result.success:
+            flash(result.error, "error")
+        else:
+            flash(result.data["message"], "info")
+            return redirect(url_for("auth.login"))
+
+    return render_template(
+        "auth.html", login_form=login_form, register_form=register_form
+    )
+
+
 @bp.route("/login", methods=["GET", "POST"])
 def login():
     if current_user.is_authenticated:
