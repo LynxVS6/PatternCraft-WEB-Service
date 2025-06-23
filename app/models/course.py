@@ -1,5 +1,6 @@
 from app.extensions import db
 from datetime import datetime, timezone
+from sqlalchemy import text
 
 # Association tables for many-to-many relationships
 course_problems = db.Table(
@@ -38,6 +39,13 @@ class Course(db.Model):
         db.DateTime,
         default=datetime.now(timezone.utc),
         onupdate=datetime.now(timezone.utc),
+    )
+
+    is_hidden = db.Column(
+        db.Boolean,
+        default=False,
+        server_default=text('0'),
+        nullable=False
     )
 
     # Relationships

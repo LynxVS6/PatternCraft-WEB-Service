@@ -2,7 +2,7 @@ from app.extensions import db
 from app.models.solution import Solution
 from flask_login import current_user
 from datetime import datetime, timezone
-from sqlalchemy import exists
+from sqlalchemy import exists, text
 
 
 class Problem(db.Model):
@@ -25,6 +25,12 @@ class Problem(db.Model):
     neutral_vote = db.Column(db.Integer, default=0)
     created_at = db.Column(
         db.DateTime, nullable=False, default=datetime.now(timezone.utc)
+    )
+    is_hidden = db.Column(
+        db.Boolean,
+        default=False,
+        server_default=text('0'),
+        nullable=False
     )
 
     solutions = db.relationship(

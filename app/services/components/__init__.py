@@ -8,6 +8,7 @@ from .solution.submit_solution import SubmitSolution
 from .user import ChangePassword, EditProfile
 from .vote.submit_vote import SubmitVote
 from .course import CreateCourse, DeleteCourse
+from .theory import CreateTheory
 
 __all__ = (
     "ConfirmEmail",
@@ -28,5 +29,6 @@ __all__ = (
     "EditProfile",
     "SubmitVote",
     "CreateCourse",
-    "DeleteCourse"
+    "DeleteCourse",
+    "CreateTheory"
 )

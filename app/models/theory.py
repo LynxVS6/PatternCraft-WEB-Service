@@ -1,5 +1,6 @@
 from app.extensions import db
 from datetime import datetime, timezone
+from sqlalchemy import text
 
 
 class Theory(db.Model):
@@ -23,6 +24,13 @@ class Theory(db.Model):
         db.DateTime,
         default=datetime.now(timezone.utc),
         onupdate=datetime.now(timezone.utc),
+    )
+
+    is_hidden = db.Column(
+        db.Boolean,
+        default=False,
+        server_default=text('0'),
+        nullable=False
     )
 
     author = db.relationship("User", back_populates="authored_theories")

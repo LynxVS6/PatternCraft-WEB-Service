@@ -32,6 +32,19 @@ class SubmitSolution(AuthenticationMixin):
         target = input_data["target"]
         solution = input_data["solution"]
 
+        # Check if solution already exists for this user and problem
+        existing_solution = Solution.query.filter_by(
+            user_id=current_user.id,
+            problem_id=target.id,
+            solution=solution
+        ).first()
+
+        if existing_solution:
+            return Result.fail(
+                error="Такое решение уже существует",
+                error_code=409
+            )
+
         new_solution = Solution(
             user_id=current_user.id,
             problem_id=target.id,

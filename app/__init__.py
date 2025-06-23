@@ -10,7 +10,7 @@ from .extensions import (
     get_timezone,
     get_locale,
 )
-from .views import auth, main, problem_hub, problem_page, users, tasks, courses
+from .views import auth, main, problem_hub, problem_page, users, tasks, courses, theories
 
 
 def monthyearformat(value):
@@ -40,5 +40,6 @@ def create_app():
     app.register_blueprint(tasks.bp)
     app.register_blueprint(problem_page.bp)
     app.register_blueprint(courses.courses_bp)
+    app.register_blueprint(theories.bp)
 
     return app

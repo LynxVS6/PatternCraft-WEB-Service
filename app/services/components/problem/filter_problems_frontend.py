@@ -148,6 +148,8 @@ class FilterProblemsFrontend(AuthenticationMixin):
         elif input_data["order_by"] == "name asc":
             query = query.order_by(asc(Problem.name))
 
+        query = query.filter((Problem.is_hidden == False) | (Problem.author_id == input_data["current_user"].id))
+
         # Get total count for pagination
         total_problems = query.count()
         total_pages = (total_problems + input_data["per_page"] - 1) // input_data[
@@ -161,6 +163,8 @@ class FilterProblemsFrontend(AuthenticationMixin):
             error_out=False,
         )
         problems = problems_query.items
+
+
 
         return Result.ok(
             data={

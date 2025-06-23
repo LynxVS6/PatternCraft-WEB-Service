@@ -17,6 +17,7 @@ class CreateProblem(AuthenticationMixin):
             "language",
             "tags",
             "tests",
+            "is_hidden"
         ]
         for field in required_fields:
             if field not in raw_json:
@@ -32,22 +33,22 @@ class CreateProblem(AuthenticationMixin):
     @staticmethod
     def validate_create_data(input_data) -> Result:
         if not isinstance(input_data["name"], str) or not (
-            1 <= len(input_data["name"]) <= 100
+            1 <= len(input_data["name"]) <= 300
         ):
             return Result.fail(
-                error="Name must be a string between 1 and 100 characters",
+                error="Name must be a string between 1 and 300 characters",
                 error_code=400,
             )
         if not isinstance(input_data["description"], str) or not (
-            1 <= len(input_data["description"]) <= 2000
+            1 <= len(input_data["description"]) <= 5000
         ):
             return Result.fail(
-                error="Description must be a string between 1 and 2000 characters",
+                error="Description must be a string between 1 and 5000 characters",
                 error_code=400,
             )
 
         # Handle tags_json - make it optional
-        tags_json = input_data.get("tags_json", [])
+        tags_json = input_data.get("tags", [])
         if not isinstance(tags_json, str):
             return Result.fail(
                 error="tags_json must be a string",
@@ -72,6 +73,7 @@ class CreateProblem(AuthenticationMixin):
             language=input_data["language"],
             status=input_data["status"],
             tests=input_data["tests"],
+            is_hidden=input_data["is_hidden"],
             author_id=current_user.id,
         )
 
@@ -92,6 +94,7 @@ class CreateProblem(AuthenticationMixin):
                 "language": problem.language,
                 "status": problem.status,
                 "tests": problem.tests,
+                "is_hidden": problem.is_hidden,
                 "author_id": problem.author_id,
                 "bookmark_count": problem.bookmark_count,
                 "created_at": (

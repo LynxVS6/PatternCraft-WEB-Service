@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, abort, jsonify, request
 from app.models.course import Course
 from app.services import CourseService
 from flask_login import current_user
+import base64
 
 
 courses_bp = Blueprint('courses', __name__, url_prefix='/courses')
@@ -9,7 +10,11 @@ courses_bp = Blueprint('courses', __name__, url_prefix='/courses')
 
 @courses_bp.route('/catalog')
 def catalog():
-    courses = Course.query.filter_by(status='active', is_hidden=False).order_by(Course.created_at.desc()).all()
+    courses = (Course.query
+        .filter_by(status='active')
+        .filter((Course.is_hidden == False) | (Course.creator_id == current_user.id)) 
+        .order_by(Course.created_at.desc()).all()
+    )
     return render_template('catalog.html', courses=courses)
 
 
@@ -25,15 +30,21 @@ def detail(course_id):
 def download_course(course_id):
     """Get full course information for download (theories and problems only)"""
     try:
-        course = Course.query.filter_by(id=course_id, status='active', is_hidden=False).first()
+        course = Course.query.filter_by(id=course_id, status='active').first()
         if course is None:
             return jsonify({'error': 'Course not found'}), 404
+
+        if course.image_url:
+            image = course.image_url
+        else:
+            with open(f'app/static/img/courses/{course.id}.png', 'rb') as img_file:
+                image = 'data:image/png;base64,' + base64.b64encode(img_file.read()).decode('utf-8')
 
         course_data = {
             'id': course.id,
             'name': course.name,
             'description': course.description,
-            'image_url': course.image_url,
+            'image': image,
             'server_course_id': course.server_course_id,
             'created_at': course.created_at.isoformat() if course.created_at else None,
             'updated_at': course.updated_at.isoformat() if course.updated_at else None,
@@ -87,7 +98,7 @@ def download_course(course_id):
         return jsonify({'error': str(e)}), 500
 
 
-@courses_bp.route('/api/create_course', methods=['POST'])
+@courses_bp.route('/api/create-course', methods=['POST'])
 def create_course():
     data = request.get_json()
 

@@ -22,7 +22,7 @@
   <!-- Изображение курса -->
   <div class="course-image-wrapper">
     <img
-      src="{{ course.image_url or url_for('static', filename='img/default-course.jpg') }}"
+      src="{{ course.image_url or '/static/img/courses/' ~ course.id ~ '.png' }}"
       alt="Изображение курса {{ course.name }}"
       class="course-image"
       loading="lazy"
@@ -39,17 +39,6 @@
     <div class="tasks-grid" role="list">
       {% for problem in course.problems %}
       <div class="course-card" role="listitem">
-        <div class="course-card-image-wrapper">
-          <img
-            src="{{ url_for('static', filename='img/task-placeholder.jpg') }}"
-            alt="Изображение задачи {{ problem.name }}"
-            class="course-card-image"
-            loading="lazy"
-          >
-          <div class="course-card-overlay">
-            <span class="course-card-btn">Подробнее</span>
-          </div>
-        </div>
         <div class="course-card-content">
           <h3 class="course-card-title">{{ problem.name }}</h3>
           <p class="course-card-desc">{{ problem.description | truncate(100, true) if problem.description else 'Описание задачи отсутствует' }}</p>
@@ -76,7 +65,7 @@
       <div class="course-card" role="listitem">
         <div class="course-card-image-wrapper">
           <img
-            src="{{ theory.image_url }}"
+            src="{{ theory.image_url or '/static/img/theories/' ~ theory.id ~ '.png' }}"
             alt="Изображение теории {{ theory.name }}"
             class="course-card-image"
             loading="lazy"

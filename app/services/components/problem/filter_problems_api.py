@@ -31,6 +31,7 @@ class FilterProblemsAPI(AuthenticationMixin):
     @staticmethod
     def execute(input_data) -> Result:
         query = Problem.query
+        query = query.filter(Problem.is_hidden == False)
         lab_ids = input_data["lab_ids"]
         tags_json = input_data["tags_json"]
         current_user = input_data["current_user"]

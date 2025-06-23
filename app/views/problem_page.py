@@ -81,6 +81,7 @@ def get_problem(problem_id: int):
             "id": problem.id,
             "name": problem.name,
             "description": problem.description,
+            "tests": problem.tests,
             "tags_json": problem.tags_json,
             "difficulty": problem.difficulty,
             "author_id": problem.author_id,
