@@ -30,7 +30,6 @@
           <li><a href="{{ url_for('courses.catalog') }}"><i class="fas fa-th-list"></i> {{ _('Каталог курсов') }}</a></li>
           {% if current_user.is_authenticated %}
             <li><a href="{{ url_for('users.account') }}"><i class="fas fa-user"></i> {{ _('base_nav_account') }}</a></li>
-            <li><a href="{{ url_for('auth.logout') }}"><i class="fas fa-sign-out-alt"></i> {{ _('base_nav_logout') }}</a></li>
           {% else %}
             <li><a href="{{ url_for('auth.login') }}"><i class="fa-solid fa-user"></i> {{ _('base_nav_login') }}</a></li>
           {% endif %}

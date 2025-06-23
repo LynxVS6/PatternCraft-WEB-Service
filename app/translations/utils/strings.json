@@ -43,6 +43,14 @@
     "en": "Change Password",
     "ru": "Изменить пароль"
   },
+  "account_logout_button_aria_label": {
+    "en": "Logout",
+    "ru": "Выйти из аккаунта"
+  },
+  "base_nav_logout": {
+    "en": "Logout",
+    "ru": "Выйти"
+  },
   "auth_title": {
     "en": "Authorization | PatternCraft Lab",
     "ru": "Авторизация | PatternCraft Lab"
@@ -171,13 +179,13 @@
     "en": "Main Menu",
     "ru": "Главное меню"
   },
+  "Каталог курсов": {
+    "en": "",
+    "ru": ""
+  },
   "base_nav_account": {
     "en": "Profile",
     "ru": "Профиль"
-  },
-  "base_nav_logout": {
-    "en": "Logout",
-    "ru": "Выйти"
   },
   "base_nav_login": {
     "en": "Account",
@@ -328,8 +336,8 @@
     "ru": "— ваша персональная лаборатория: ИИ генерирует уникальные задачи, вы получаете мгновенную обратную связь."
   },
   "index_task_info": {
-    "en": "Get in on the practice: our AI is already generating personalized tasks for you.",
-    "ru": "Приступите к практике: наш ИИ уже генерирует персонализированные задания для вас."
+    "en": "You can download the entire laboratory and use it offline for learning and development.",
+    "ru": "Вы можете скачать всю лабораторию целиком и использовать её офлайн для обучения и разработки."
   },
   "index_go_to_solved": {
     "en": "Go to Solved Problems",
@@ -351,33 +359,29 @@
     "en": "Download Laboratory",
     "ru": "Скачать лабораторию"
   },
-  "index_sections_heading": {
-    "en": "Sections",
-    "ru": "Разделы"
+  "solved_problems_search_placeholder": {
+    "en": "Search...",
+    "ru": "Искать..."
   },
-  "index_creational_title": {
-    "en": "Creational Patterns",
-    "ru": "Creational Patterns"
+  "solved_problems_search_label": {
+    "en": "Search",
+    "ru": "Поиск"
   },
-  "index_creational_description": {
-    "en": "Patterns that help create objects flexibly and efficiently. Factory, Singleton, Builder, and others.",
-    "ru": "Паттерны, которые помогают создавать объекты гибко и эффективно. Factory, Singleton, Builder и другие."
+  "solved_problems_search_button": {
+    "en": "Search Button",
+    "ru": "Кнопка поиска"
   },
-  "index_structural_title": {
-    "en": "Structural Patterns",
-    "ru": "Structural Patterns"
+  "solved_problems_votes": {
+    "en": "of",
+    "ru": "из"
   },
-  "index_structural_description": {
-    "en": "Patterns that describe ways to build relationships between objects and classes. Adapter, Decorator, Facade, and others.",
-    "ru": "Паттерны, которые описывают способы построения связей между объектами и классами. Adapter, Decorator, Facade и др."
+  "pagination.previous": {
+    "en": "Previous",
+    "ru": "Назад"
   },
-  "index_behavioral_title": {
-    "en": "Behavioral Patterns",
-    "ru": "Behavioral Patterns"
-  },
-  "index_behavioral_description": {
-    "en": "Patterns that define ways of interaction between objects. Observer, Strategy, Command, and others.",
-    "ru": "Паттерны, которые определяют способы взаимодействия между объектами. Observer, Strategy, Command и другие."
+  "pagination.next": {
+    "en": "Next",
+    "ru": "Вперед"
   },
   "stats.votes": {
     "en": "of",
@@ -407,6 +411,10 @@
     "en": "Cancel",
     "ru": "Отмена"
   },
+  "actions.reply": {
+    "en": "Reply",
+    "ru": "Ответить"
+  },
   "placeholders.write_comment": {
     "en": "Write a comment...",
     "ru": "Напишите комментарий..."
@@ -418,121 +426,5 @@
   "sections.discourse": {
     "en": "Discourse",
     "ru": "Обсуждения"
-  },
-  "actions.reply": {
-    "en": "Reply",
-    "ru": "Ответить"
-  },
-  "solved_problems_votes": {
-    "en": "of",
-    "ru": "из"
-  },
-  "solved_problems_search_placeholder": {
-    "en": "Search...",
-    "ru": "Искать..."
-  },
-  "solved_problems_search_label": {
-    "en": "Search",
-    "ru": "Поиск"
-  },
-  "solved_problems_search_button": {
-    "en": "Search Button",
-    "ru": "Кнопка поиска"
-  },
-  "solved_problems_sort_by": {
-    "en": "Sort by",
-    "ru": "Сортировать по"
-  },
-  "solved_problems_sort_newest": {
-    "en": "Newest",
-    "ru": "Новые"
-  },
-  "solved_problems_sort_oldest": {
-    "en": "Oldest",
-    "ru": "Старые"
-  },
-  "solved_problems_sort_popular": {
-    "en": "Popular",
-    "ru": "Популярные"
-  },
-  "solved_problems_sort_high_rating": {
-    "en": "High rating",
-    "ru": "Высокий рейтинг"
-  },
-  "solved_problems_sort_low_rating": {
-    "en": "Low rating",
-    "ru": "Низкий рейтинг"
-  },
-  "solved_problems_sort_name": {
-    "en": "Name",
-    "ru": "Имя"
-  },
-  "solved_problems_languages": {
-    "en": "Language",
-    "ru": "Язык"
-  },
-  "solved_problems_all_languages": {
-    "en": "All Languages",
-    "ru": "Все языки"
-  },
-  "solved_problems_selected_languages": {
-    "en": "Selected Languages",
-    "ru": "Выбранные языки"
-  },
-  "solved_problems_status": {
-    "en": "Status",
-    "ru": "Статус"
-  },
-  "solved_problems_verified": {
-    "en": "Problems Verified",
-    "ru": "Проверенные задачи"
-  },
-  "solved_problems_beta": {
-    "en": "Problems Beta",
-    "ru": "Задачи в тестировке"
-  },
-  "solved_problems_progress": {
-    "en": "Progress",
-    "ru": "Прогресс"
-  },
-  "solved_problems_all": {
-    "en": "All",
-    "ru": "Все"
-  },
-  "solved_problems_not_started": {
-    "en": "Not Started Problems",
-    "ru": "Неначатые задачи"
-  },
-  "solved_problems_completed": {
-    "en": "Completed Problems",
-    "ru": "Завершенные задачи"
-  },
-  "solved_problems_difficulty": {
-    "en": "Difficulty",
-    "ru": "Сложность"
-  },
-  "solved_problems_easy": {
-    "en": "Easy",
-    "ru": "Легкая"
-  },
-  "solved_problems_medium": {
-    "en": "Medium",
-    "ru": "Средняя"
-  },
-  "solved_problems_hard": {
-    "en": "Hard",
-    "ru": "Сложная"
-  },
-  "solved_problems_tags": {
-    "en": "Tags",
-    "ru": "Тэги"
-  },
-  "pagination.previous": {
-    "en": "Previous",
-    "ru": "Назад"
-  },
-  "pagination.next": {
-    "en": "Next",
-    "ru": "Вперед"
   }
 }
