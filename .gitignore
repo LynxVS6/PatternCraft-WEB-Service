@@ -176,3 +176,7 @@ cython_debug/
 
 # Seeded data for testing
 seed_data
+
+# User images
+app/static/img/courses
+app/static/img/theories

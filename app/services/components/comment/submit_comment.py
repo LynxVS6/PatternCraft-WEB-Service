@@ -15,7 +15,7 @@ class SubmitComment(CommentUpdateMixin):
         comment_model = input_data["comment_model"]
         current_user = input_data["current_user"]
         target_id = input_data["target_id"]
-        comment_text = input_data["comment_text"]
+        comment_text = input_data["comment"]
         comment = comment_model(
             comment=comment_text,
             user_id=current_user.id,

@@ -15,7 +15,7 @@ class EditComment(CommentGetMixin, CommentUpdateMixin, CommentAuthorMixin):
     @staticmethod
     def execute(input_data):
         comment = input_data["comment"]
-        comment_text = input_data["comment_text"]
+        comment_text = input_data["comment"]
         comment.comment = comment_text
         db.session.commit()
         print("2-" * 40)

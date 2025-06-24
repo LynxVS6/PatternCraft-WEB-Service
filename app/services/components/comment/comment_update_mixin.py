@@ -4,7 +4,7 @@ from ...ropp_service import Result
 class CommentUpdateMixin:
     @staticmethod
     def validate_comment_data(input_data) -> Result:
-        comment_text = input_data["comment_text"]
+        comment_text = input_data["comment"]
 
         if not isinstance(comment_text, str):
             return Result.fail(error="Comment must be a string", error_code=400)
@@ -19,7 +19,7 @@ class CommentUpdateMixin:
     @staticmethod
     def format(input_data):
         comment_id = input_data["comment_id"]
-        comment_text = input_data["comment_text"]
+        comment_text = input_data["comment"]
         current_user = input_data["current_user"]
         return Result.ok(
             data={
