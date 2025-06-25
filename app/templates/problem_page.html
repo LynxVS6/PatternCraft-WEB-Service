@@ -102,6 +102,12 @@
             <h2>{{ _('sections.solutions') }}</h2>
             {% for solution in solutions %}
             <div class="solution-card">
+                <div class="solution-header">
+                    <div class="solution-author">
+                        <i class="fas fa-user"></i>
+                        <span>{{ solution.user.username }}</span>
+                    </div>
+                </div>
                 <pre><code class="solution-content language-python">{{ solution.solution }}</code></pre>
                 <div class="solution-actions">
                     <button class="btn btn-like" onclick="toggleLike({{ solution.id }})">

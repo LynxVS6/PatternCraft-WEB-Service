@@ -602,6 +602,33 @@ pre[class*="language-"] {
     margin-bottom: 1rem;
 }
 
+.solution-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 0.8rem;
+    border-bottom: 1px solid var(--divider);
+}
+
+.solution-author {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--secondary);
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.solution-author i {
+    color: var(--primary);
+    font-size: 1rem;
+}
+
+.solution-author span {
+    color: var(--text-primary);
+}
+
 .solution-card pre {
     margin: 0;
     padding: 1rem;
