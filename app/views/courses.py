@@ -5,100 +5,121 @@ from flask_login import current_user
 import base64
 
 
-courses_bp = Blueprint('courses', __name__, url_prefix='/courses')
+courses_bp = Blueprint("courses", __name__, url_prefix="/courses")
 
 
-@courses_bp.route('/catalog')
+@courses_bp.route("/catalog")
 def catalog():
-    courses = (Course.query
-        .filter_by(status='active')
-        .filter((Course.is_hidden == False) | (Course.creator_id == current_user.id)) 
-        .order_by(Course.created_at.desc()).all()
-    )
-    return render_template('catalog.html', courses=courses)
+    if current_user.is_authenticated:
+        courses = (
+            Course.query.filter_by(status="active")
+            .filter((not Course.is_hidden) | (Course.creator_id == current_user.id))
+            .order_by(Course.created_at.desc())
+            .all()
+        )
+    else:
+        courses = (
+            Course.query.filter_by(status="active", is_hidden=False)
+            .order_by(Course.created_at.desc())
+            .all()
+        )
+    return render_template("catalog.html", courses=courses)
 
 
-@courses_bp.route('/<int:course_id>')
+@courses_bp.route("/<int:course_id>")
 def detail(course_id):
-    course = Course.query.filter_by(id=course_id, status='active', is_hidden=False).first()
+    course = Course.query.filter_by(
+        id=course_id, status="active", is_hidden=False
+    ).first()
     if course is None:
         abort(404)
-    return render_template('course.html', course=course)
+    return render_template("course.html", course=course)
 
 
-@courses_bp.route('/api/<int:course_id>/download', methods=['GET'])
+@courses_bp.route("/api/<int:course_id>/download", methods=["GET"])
 def download_course(course_id):
     """Get full course information for download (theories and problems only)"""
     try:
-        course = Course.query.filter_by(id=course_id, status='active').first()
+        course = Course.query.filter_by(id=course_id, status="active").first()
         if course is None:
-            return jsonify({'error': 'Course not found'}), 404
+            return jsonify({"error": "Course not found"}), 404
 
         if course.image_url:
             image = course.image_url
         else:
-            with open(f'app/static/img/courses/{course.id}.png', 'rb') as img_file:
-                image = 'data:image/png;base64,' + base64.b64encode(img_file.read()).decode('utf-8')
+            with open(f"app/static/img/courses/{course.id}.png", "rb") as img_file:
+                image = "data:image/png;base64," + base64.b64encode(
+                    img_file.read()
+                ).decode("utf-8")
 
         course_data = {
-            'id': course.id,
-            'name': course.name,
-            'description': course.description,
-            'image': image,
-            'server_course_id': course.server_course_id,
-            'created_at': course.created_at.isoformat() if course.created_at else None,
-            'updated_at': course.updated_at.isoformat() if course.updated_at else None,
-            'creator': {
-                'id': course.creator.id,
-                'username': course.creator.username
-            } if course.creator else None,
-            'problems': [],
-            'theories': []
+            "id": course.id,
+            "name": course.name,
+            "description": course.description,
+            "image": image,
+            "server_course_id": course.server_course_id,
+            "created_at": course.created_at.isoformat() if course.created_at else None,
+            "updated_at": course.updated_at.isoformat() if course.updated_at else None,
+            "creator": (
+                {"id": course.creator.id, "username": course.creator.username}
+                if course.creator
+                else None
+            ),
+            "problems": [],
+            "theories": [],
         }
 
         for problem in course.problems:
             problem_data = {
-                'id': problem.id,
-                'name': problem.name,
-                'description': problem.description,
-                'tags_json': problem.tags_json,
-                'tests': problem.tests,
-                'difficulty': problem.difficulty,
-                'language': problem.language,
-                'status': problem.status,
-                'created_at': problem.created_at.isoformat() if problem.created_at else None,
-                'author': {
-                    'id': problem.author.id,
-                    'username': problem.author.username
-                } if problem.author else None
+                "id": problem.id,
+                "name": problem.name,
+                "description": problem.description,
+                "tags_json": problem.tags_json,
+                "tests": problem.tests,
+                "difficulty": problem.difficulty,
+                "language": problem.language,
+                "status": problem.status,
+                "created_at": (
+                    problem.created_at.isoformat() if problem.created_at else None
+                ),
+                "author": (
+                    {"id": problem.author.id, "username": problem.author.username}
+                    if problem.author
+                    else None
+                ),
             }
-            course_data['problems'].append(problem_data)
+            course_data["problems"].append(problem_data)
 
         for theory in course.theories:
             theory_data = {
-                'id': theory.id,
-                'name': theory.name,
-                'content': theory.content,
-                'description': theory.description,
-                'image_url': theory.image_url,
-                'in_practice': theory.in_practice,
-                'status': theory.status,
-                'created_at': theory.created_at.isoformat() if theory.created_at else None,
-                'updated_at': theory.updated_at.isoformat() if theory.updated_at else None,
-                'author': {
-                    'id': theory.author.id,
-                    'username': theory.author.username
-                } if theory.author else None
+                "id": theory.id,
+                "name": theory.name,
+                "content": theory.content,
+                "description": theory.description,
+                "image_url": theory.image_url,
+                "in_practice": theory.in_practice,
+                "status": theory.status,
+                "created_at": (
+                    theory.created_at.isoformat() if theory.created_at else None
+                ),
+                "updated_at": (
+                    theory.updated_at.isoformat() if theory.updated_at else None
+                ),
+                "author": (
+                    {"id": theory.author.id, "username": theory.author.username}
+                    if theory.author
+                    else None
+                ),
             }
-            course_data['theories'].append(theory_data)
+            course_data["theories"].append(theory_data)
 
         return jsonify(course_data), 200
 
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        return jsonify({"error": str(e)}), 500
 
 
-@courses_bp.route('/api/create-course', methods=['POST'])
+@courses_bp.route("/api/create-course", methods=["POST"])
 def create_course():
     data = request.get_json()
 
