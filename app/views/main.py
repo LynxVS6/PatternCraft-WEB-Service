@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, redirect, url_for
 
 bp = Blueprint("main", __name__)
 
@@ -8,16 +8,7 @@ def index():
     return render_template("index.html")
 
 
-@bp.route("/creational")
-def creational():
-    return render_template("main.html")
-
-
-@bp.route("/structural")
-def structural():
-    return render_template("main.html")
-
-
-@bp.route("/behavioral")
-def behavioral():
-    return render_template("main.html")
+@bp.route("/change_language/<language_code>")
+def change_language(language_code):
+    lang_codes = {'en': 'English', 'ru': 'Русский'}
+    return redirect(url_for("main.index"))

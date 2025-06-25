@@ -34,6 +34,17 @@
           {% else %}
             <li><a href="{{ url_for('auth.login') }}"><i class="fa-solid fa-user"></i> {{ _('base_nav_login') }}</a></li>
           {% endif %}
+          <li class="language-dropdown">
+            <button type="button" class="language-toggle">
+              <i class="fas fa-globe"></i> 
+              <span class="current-lang">RU</span>
+              <i class="fas fa-angle-down angle-icon"></i>
+            </button>
+            <ul class="language-menu">
+              <li><a href="{{ url_for('main.change_language', language_code='en') }}">English</a></li>
+              <li><a href="{{ url_for('main.change_language', language_code='ru') }}">Русский</a></li>
+            </ul>
+          </li>
         </ul>
       </nav>
     </div>
@@ -93,6 +104,75 @@
         document.querySelector('.main-nav').classList.remove('active');
         document.body.classList.remove('nav-open');
       });
+    });
+
+    // Language dropdown functionality
+    document.addEventListener('DOMContentLoaded', function() {
+      const languageToggle = document.querySelector('.language-toggle');
+      const languageMenu = document.querySelector('.language-menu');
+      const angleIcon = document.querySelector('.angle-icon');
+      
+      if (languageToggle && languageMenu) {
+        // Toggle dropdown on button click
+        languageToggle.addEventListener('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          
+          const isActive = languageMenu.classList.contains('active');
+          
+          // Close all other dropdowns if any
+          document.querySelectorAll('.language-menu.active').forEach(menu => {
+            if (menu !== languageMenu) {
+              menu.classList.remove('active');
+              menu.previousElementSibling.classList.remove('active');
+            }
+          });
+          
+          // Toggle current dropdown
+          languageMenu.classList.toggle('active');
+          languageToggle.classList.toggle('active');
+        });
+        
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+          if (!languageToggle.contains(e.target) && !languageMenu.contains(e.target)) {
+            languageMenu.classList.remove('active');
+            languageToggle.classList.remove('active');
+          }
+        });
+        
+        // Keyboard navigation
+        languageToggle.addEventListener('keydown', function(e) {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            languageToggle.click();
+          }
+        });
+        
+        // Close dropdown on Escape key
+        document.addEventListener('keydown', function(e) {
+          if (e.key === 'Escape' && languageMenu.classList.contains('active')) {
+            languageMenu.classList.remove('active');
+            languageToggle.classList.remove('active');
+            languageToggle.focus();
+          }
+        });
+        
+        // Handle language option clicks
+        languageMenu.querySelectorAll('a').forEach(link => {
+          link.addEventListener('click', function(e) {
+            // Add visual feedback
+            languageMenu.querySelectorAll('a').forEach(a => a.classList.remove('active'));
+            this.classList.add('active');
+            
+            // Close dropdown after a short delay to show the selection
+            setTimeout(() => {
+              languageMenu.classList.remove('active');
+              languageToggle.classList.remove('active');
+            }, 150);
+          });
+        });
+      }
     });
 
     // Alert system
