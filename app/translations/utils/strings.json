@@ -23,6 +23,10 @@
     "en": "Email",
     "ru": "Email"
   },
+  "account_lab_url_label": {
+    "en": "Link to the laboratory",
+    "ru": "Ссылка на лабораторию"
+  },
   "account_registration_date_label": {
     "en": "Registration Date",
     "ru": "Дата регистрации"
@@ -318,6 +322,10 @@
   "edit_profile_email_label": {
     "en": "Email",
     "ru": "Email"
+  },
+  "edit_profile_lab_url_label": {
+    "en": "Link to the laboratory",
+    "ru": "Ссылка на лабораторию"
   },
   "edit_profile_submit": {
     "en": "Save Changes",

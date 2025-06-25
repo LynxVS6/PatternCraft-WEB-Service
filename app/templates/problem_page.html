@@ -41,7 +41,7 @@
                         <i class="{% if problem.user_vote == 'negative' %}fas{% else %}far{% endif %} fa-face-frown"></i>
                     </button>
                 </div>
-                <button class="btn btn-train" data-problem-id="{{ problem.id }}" onclick="startTraining({{ problem.id }})">
+                <button class="btn btn-train" data-problem-id="{{ problem.id }}" onclick="startTraining({{ problem.id }}, '{{ current_user.lab_url }}')">
                     <i class="fas fa-play"></i>
                 </button>
             </div>

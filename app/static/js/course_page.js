@@ -1,5 +1,8 @@
+const getCsrfToken = () => {
+    return document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+};
 
-async function downloadCourse(courseId) {
+async function downloadCourse(courseId, labUrl) {
     console.log('downloadCourse called with courseId:', courseId);
     
     try {
@@ -10,16 +13,12 @@ async function downloadCourse(courseId) {
 
         // Отправляем запрос для получения данных курса
         const response = await fetch(`/courses/api/${courseId}/download`, {
-            method: 'POST',
+            method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
                 'X-CSRFToken': csrfToken
             },
-            credentials: 'include',
-            body: JSON.stringify({
-                course_id: courseId,
-                timestamp: new Date().toISOString(),
-            })
+            credentials: 'include'
         });
 
         console.log('Response status:', response.status);
@@ -34,10 +33,10 @@ async function downloadCourse(courseId) {
         const result = await response.json();
         console.log('Course data received:', result);
 
-        const labUrl = `http://localhost:3000/courses/${courseId}`;
-        console.log('Redirecting to lab:', labUrl);
+        const courseLabUrl = `${labUrl}/course/${courseId}`;
+        console.log('Redirecting to lab:', courseLabUrl);
 
-        window.open(labUrl, '_blank');
+        window.open(courseLabUrl, '_blank');
 
         alert('Курс открыт в лаборатории!');
 

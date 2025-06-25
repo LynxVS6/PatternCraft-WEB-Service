@@ -842,7 +842,7 @@ async function toggleBookmark(problemId) {
     }
 }
 
-async function startTraining(problemId) {
+async function startTraining(problemId, labUrl) {
     try {
         // Get the button and disable it temporarily
         const trainBtn = document.querySelector(`.btn-train[data-problem-id="${problemId}"]`);
@@ -851,7 +851,7 @@ async function startTraining(problemId) {
         }
         trainBtn.disabled = true;
 
-        const response = await fetch(`http://localhost:8000/api/training/${problemId}`, {
+        const response = await fetch(`${labUrl}/api/training/${problemId}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -872,7 +872,7 @@ async function startTraining(problemId) {
         alert('Training session started! The training application will open shortly.');
 
         // Переход на страницу задачи
-        window.location.href = `http://localhost:8000/problem/${problemId}`;
+        window.location.href = `${labUrl}/problem/${problemId}`;
 
         // Add animation
         trainBtn.style.transform = 'scale(1.2)';

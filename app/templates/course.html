@@ -101,7 +101,7 @@
     </a>
 
     
-    <button onclick="downloadCourse({{ course.id }})" class="download-btn">
+    <button onclick="downloadCourse({{ course.id }}, '{{ current_user.lab_url }}')" class="download-btn">
       Скачать курс
     </button>
   </div>
@@ -109,62 +109,6 @@
 {% endblock %}
 
 {% block extra_css %}
-
-<script>
- const getCsrfToken = () => {
-    return document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
-};
-async function downloadCourse(courseId) {
-    console.log('downloadCourse called with courseId:', courseId);
-    
-    try {
-       
-        const csrfToken = getCsrfToken();
-        if (!csrfToken) {
-            throw new Error('CSRF token not found');
-        }
-
-        // Отправляем запрос для получения данных курса
-        const response = await fetch(`http://localhost:8000/api/courses/${courseId}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': csrfToken
-            },
-            credentials: 'include',
-            
-        });
-
-        console.log('Response status:', response.status);
-        console.log('Response ok:', response.ok);
-
-        if (!response.ok) {
-            const errorText = await response.text();
-            console.error('Server error:', errorText);
-            throw new Error(`Failed to get course data: ${response.status} ${response.statusText}`);
-        }
-
-        const result = await response.json();
-        console.log('Course data received:', result);
-
-        const labUrl = `http://localhost:8000/course/${courseId}`;
-        console.log('Redirecting to lab:', labUrl);
-
-        window.open(labUrl, '_blank');
-
-        alert('Курс открыт в лаборатории!');
-
-
-
-    } catch (error) {
-        console.error('Error downloading course:', error);
-        alert('Failed to download course. Please try again.');
-    } finally {
-    }
-}
-
-</script>
-
 
 <style>
   .course-section {
@@ -462,6 +406,6 @@ async function downloadCourse(courseId) {
 </style>
 {% endblock %}
 
-{% block extra_js %}
+{% block scripts %}
 <script src="{{ url_for('static', filename='js/course_page.js') }}"></script>
 {% endblock %}

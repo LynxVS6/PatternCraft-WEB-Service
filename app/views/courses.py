@@ -13,7 +13,7 @@ def catalog():
     if current_user.is_authenticated:
         courses = (
             Course.query.filter_by(status="active")
-            .filter((not Course.is_hidden) | (Course.creator_id == current_user.id))
+            .filter((Course.is_hidden == False) | (Course.creator_id == current_user.id))
             .order_by(Course.created_at.desc())
             .all()
         )

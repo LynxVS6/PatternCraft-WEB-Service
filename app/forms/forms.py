@@ -138,6 +138,12 @@ class EditProfileForm(FlaskForm):
             Email(message="Введите корректный email адрес"),
         ],
     )
+    lab_url = StringField(
+        "Ссылка на лабораторию",
+        validators=[
+            DataRequired(message="Введите ссылку"),
+        ],
+    )
     submit = SubmitField("Сохранить изменения")
 
 

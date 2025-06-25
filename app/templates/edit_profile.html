@@ -25,6 +25,14 @@
       {% endif %}
     </div>
 
+    <div class="form-group">
+      <label for="lab_url">{{ _('edit_profile_lab_url_label') }}</label>
+      {{ form.lab_url(id="lab_url", class="form-control") }}
+      {% if form.lab_url.errors %}
+        <div class="error-message">{{ form.lab_url.errors[0] }}</div>
+      {% endif %}
+    </div>
+
     <button type="submit" class="btn"><i class="fas fa-save"></i> {{ _('edit_profile_submit') }}</button>
   </form>
 {% endblock %}

@@ -22,6 +22,7 @@ def edit_profile():
             {
                 "username": form.username.data,
                 "email": form.email.data,
+                "lab_url": form.lab_url.data,
             },
             current_user,
         )
@@ -36,6 +37,7 @@ def edit_profile():
     elif request.method == "GET":
         form.username.data = current_user.username
         form.email.data = current_user.email
+        form.lab_url.data = current_user.lab_url
 
     return render_template("edit_profile.html", form=form)
 
