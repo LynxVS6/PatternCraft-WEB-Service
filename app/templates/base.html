@@ -28,6 +28,7 @@
       <nav class="main-nav" aria-label="{{ _('base_main_nav_aria_label') }}">
         <ul>
           <li><a href="{{ url_for('courses.catalog') }}"><i class="fas fa-th-list"></i> {{ _('Каталог курсов') }}</a></li>
+          <li><a href="{{ url_for('problem_hub.problem_hub') }}"><i class="fas fa-tasks"></i> Доступные задачи</a></li>
           {% if current_user.is_authenticated %}
             <li><a href="{{ url_for('users.account') }}"><i class="fas fa-user"></i> {{ _('base_nav_account') }}</a></li>
           {% else %}
