@@ -13,8 +13,8 @@ class User(UserMixin, db.Model):
     new_email = db.Column(db.String(120), unique=True, nullable=True)
     email_confirmed = db.Column(db.Boolean, default=False)
     password_hash = db.Column(db.String(255), nullable=False)
-    created_at = db.Column(db.DateTime, default=lambda: datetime.utcnow)
-    updated_at = db.Column(db.DateTime, default=lambda: datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     last_login = db.Column(db.DateTime, nullable=True)
     lab_url = db.Column(db.String(255), nullable=False, default="http://127.0.0.1:8000")
 
