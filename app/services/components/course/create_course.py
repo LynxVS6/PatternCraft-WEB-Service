@@ -32,17 +32,17 @@ class CreateCourse(AuthenticationMixin):
     @staticmethod
     def validate_course_data(input_data) -> Result:
         if not isinstance(input_data["name"], str) or not (
-            1 <= len(input_data["name"]) <= 100
+            1 <= len(input_data["name"]) <= 500
         ):
             return Result.fail(
-                error="Name must be a string between 1 and 100 characters",
+                error="Name must be a string between 1 and 500 characters",
                 error_code=400,
             )
         if not isinstance(input_data["description"], str) or not (
-            1 <= len(input_data["description"]) <= 2000
+            len(input_data["description"]) <= 10000
         ):
             return Result.fail(
-                error="Description must be a string between 1 and 2000 characters",
+                error="Description must be a string between 0 and 10000 characters",
                 error_code=400,
             )
 
